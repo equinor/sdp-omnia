@@ -1,0 +1,59 @@
+#!/bin/bash
+# Take down script for removing the Heptio Ark and cleaning up any service principals that is remaining
+
+source .env
+set -e
+
+# Make sure you want to teardown
+while true; do
+    read -p "Are you _SURE_ you want to teardown? " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# Check for prerequisites binaries
+echo
+echo " Check for neccesary executables"
+hash az || { echo "Error: Azure-CLI not found in PATH. Exiting...";  exit 1; }
+
+# Login to Azure if not already logged inn
+echo
+echo " Logging you in to Azure if not already logged in"
+az account show > /dev/null || az login > /dev/null
+
+# Set Azure-CLI config
+az account set --subscription "$AZ_SUBSCRIPTION" > /dev/null
+az configure --defaults group=$AZ_BACKUP_GROUP > /dev/null
+
+# Removing secret from cluster
+echo
+echo " Deleting ARK credentials from cluster"
+kubectl --namespace infrastructure delete secret arkcreds > /dev/null || true
+
+# Removing service if exist
+echo
+echo " Removing all ARK services deployed"
+kubectl delete -f manifests/ark/ > /dev/null || true
+
+# Remove resource group created for ARK
+while true; do
+    read -p "Do you wish to remove resource group ($AZ_BACKUP_GROUP) with contents? " yn
+    case $yn in
+        [Yy]* ) az group delete --name $AZ_BACKUP_GROUP --yes > /dev/null; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# Remove the ARK storage account
+echo
+echo " Removing ARK storage account and data"
+az storage account delete --resource-group $AZ_BACKUP_GROUP --name $AZ_BACKUP_NAME --yes > /dev/null || true
+
+# Delete the ARK service principal
+echo
+echo " Deleting the ARK service principal (http://$AZ_BACKUP_SP_NAME)"
+az ad sp delete --id http://$AZ_BACKUP_SP_NAME > /dev/null

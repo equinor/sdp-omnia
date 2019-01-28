@@ -1,0 +1,74 @@
+#!/bin/bash
+# Bootstrap script for setting up a DNS Zone in Azure and providing 
+# This script is assumed to be run from repo root
+
+source .env
+set -e
+
+# Check for prerequisites binaries
+echo
+echo " Check for neccesary executables"
+hash az || { echo "Error: Azure-CLI not found in PATH. Exiting...";  exit 1; }
+
+# Login to Azure if not already logged inn
+echo
+echo " Logging you in to Azure if not already logged in"
+az account show > /dev/null || az login > /dev/null
+
+# Set Azure-CLI config
+echo
+echo " Creating resource group ($AZ_DNS_GROUP)"
+az account set --subscription "$AZ_SUBSCRIPTION" > /dev/null
+az group create --name $AZ_DNS_GROUP --location $AZ_LOCATION > /dev/null
+az configure --defaults group=$AZ_DNS_GROUP > /dev/null
+
+# Create DNS Zone
+echo
+echo " Creating the DNS Zone ($AZ_DNS_ZONE)"
+az network dns zone create --resource-group $AZ_DNS_GROUP --name $AZ_DNS_ZONE > /dev/null
+
+# Create a Service Principal used to configure the Azure DNS
+echo
+echo " Creating Azure AD service principal (http://$AZ_DNS_SP_NAME) to access DNS Zone"
+AZ_DNS_SP_PASSWORD=$(az ad sp create-for-rbac --name $AZ_DNS_SP_NAME --query password -o tsv)
+AZ_DNS_SP_ID=$(az ad sp show --id http://$AZ_DNS_SP_NAME --query appId -o tsv)
+
+# Give Access to DNS Zone
+echo
+echo " Giving the service principal DNS Zone Contributor rights to DNS Zone"
+AZ_DNS_ID=$(az network dns zone show --name $AZ_DNS_ZONE --resource-group $AZ_DNS_GROUP --query "id" -o tsv)
+az role assignment create --assignee $AZ_DNS_SP_ID --role "DNS Zone Contributor" --scope $AZ_DNS_ID --resource-group "" > /dev/null
+
+# Fetch Azure ID's
+AZ_SUBSCRIPTION_ID=$(az account show --query "id"  -o tsv)
+AZ_TENANT_ID=$(az account show --query "tenantId"  -o tsv)
+
+# Use custom configuration file
+echo
+echo " Creating azure.json file with DNS service principal information"
+cat << EOF > azure.json
+{
+  "tenantId": "$AZ_TENANT_ID",
+  "subscriptionId": "$AZ_SUBSCRIPTION_ID",
+  "aadClientId": "$AZ_DNS_SP_ID",
+  "aadClientSecret": "$AZ_DNS_SP_PASSWORD",
+  "resourceGroup": "$AZ_DNS_GROUP"
+}
+EOF
+
+# Create a secret so that external-dns can connect to the DNS zone
+echo
+echo " Creating Kubernetes secret (infrastructure/azure-dns-config-file) from azure.json file"
+kubectl create secret generic azure-dns-config-file --from-file=azure.json --namespace infrastructure > /dev/null
+
+# Create the configmap containing your domain
+echo
+echo " Creating Kubernetes configmap (infrastructure/external-dns) with domain-filter=$AZ_DNS_ZONE"
+kubectl create configmap external-dns --from-literal=domain-filter=$AZ_DNS_ZONE --namespace infrastructure > /dev/null
+
+# Letting the user know we have finished
+echo
+echo " We have now created a DNS Zone in Azure ($AZ_DNS_ZONE) and given a Azure Service Principal"
+echo " rights to edit this zone. This information has been uploaded to the Kubernetes cluster as a secret (azure-dns-config-file)"
+echo " in the infrastructure namespace. We have also created a ConfigMap (external-dns) in the same namespace with the search domain"
+echo " to be used when adding new entries in the DNS Zone. You can now carry on with the cluster set up."

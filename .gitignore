@@ -1,0 +1,8 @@
+.*secrets
+.envexternal-dns/azure.json
+.env
+azure.json
+acr.properties
+ark.properties
+.idea
+/manifests/ark/*

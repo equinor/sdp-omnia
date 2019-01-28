@@ -1,0 +1,49 @@
+#!/bin/bash
+# Take down script for removing the Azure Container Registry and cleaning up any service principals that is remaining
+
+source .env
+set -e
+
+# Make sure you want to teardown
+while true; do
+    read -p "Are you _SURE_ you want to teardown? " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# Check for prerequisites binaries
+echo
+echo " Check for neccesary executables"
+hash az || { echo "Error: Azure-CLI not found in PATH. Exiting...";  exit 1; }
+
+# Login to Azure if not already logged inn
+echo
+echo " Logging you in to Azure if not already logged in"
+az account show > /dev/null || az login > /dev/null
+
+# Set Azure-CLI config
+az account set --subscription "$AZ_SUBSCRIPTION" > /dev/null
+az configure --defaults group=$AZ_ACR_GROUP > /dev/null
+
+# Remove resource group created for ACR
+while true; do
+    read -p "Do you wish to remove resource group ($AZ_ACR_GROUP) with contents? " yn
+    case $yn in
+        [Yy]* ) az group delete --name $AZ_ACR_GROUP --yes > /dev/null; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# Delete the ACR
+echo
+echo " Deleting ACR ($AZ_ACR_NAME)"
+az acr delete --name $AZ_ACR_NAME > /dev/null || true
+
+# Delete the ACR service principal
+echo
+echo " Deleting the ACR service principal (http://$AZ_ACR_SP_NAME)"
+az ad sp delete --id http://$AZ_ACR_SP_NAME > /dev/null

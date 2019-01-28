@@ -1,0 +1,73 @@
+#!/bin/bash
+# Take down script for removing the Kubernetes cluster and cleaning up any service principals that is remaining
+
+source .env
+set -e
+
+# Make sure you want to teardown
+while true; do
+    read -p "Are you _SURE_ you want to teardown? " yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# Check for prerequisites binaries
+echo
+echo " Check for neccesary executables"
+hash az || { echo "Error: Azure-CLI not found in PATH. Exiting...";  exit 1; }
+
+# Login to Azure if not already logged inn
+echo
+echo " Logging you in to Azure if not already logged in"
+az account show > /dev/null || az login > /dev/null
+
+# Set Azure-CLI config
+az account set --subscription "$AZ_SUBSCRIPTION" > /dev/null
+az configure --defaults group=$AZ_GROUP > /dev/null
+
+# Get the Kubernetes service principal
+AZ_AKS_SP_ID=$(az aks show --name $AZ_AKS_NAME --query servicePrincipalProfile.clientId -o tsv)
+
+# Remove resource group created for Kubernetes cluster
+while true; do
+    read -p "Do you wish to remove resource group ($AZ_GROUP) with contents? " yn
+    case $yn in
+        [Yy]* ) az group delete --name $AZ_GROUP --yes > /dev/null; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
+# Delete the Kubernetes cluster
+echo
+echo " Deleting the AKS cluster ($AZ_AKS_NAME)"
+az aks delete --name $AZ_AKS_NAME --yes > /dev/null || true
+
+# Delete the Kubernetes service principal
+echo
+echo " Deleting the Kubernetes service principal ($AZ_AKS_SP_ID)"
+az ad sp delete --id $AZ_AKS_SP_ID > /dev/null || true
+
+# Delete the cached info of Kubernetes service principal
+echo
+echo " Deleting the Azure CLI AKS service principal file"
+rm -rf ~/.azure/aksServicePrincipal.json
+
+# Delete the DNS service principal
+echo
+echo " Deleting the DNS service principal (http://$AZ_DNS_SP_NAME)"
+az ad sp delete --id http://$AZ_DNS_SP_NAME > /dev/null || true
+
+# Remove stale kubernetes config
+## WARNING! This can remove other kubernetes config ##
+while true; do
+    read -p "Do you wish remove ~/.kube folder? (This can remove other kubernetes config) " yn
+    case $yn in
+        [Yy]* ) rm -rf ~/.kube; break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
