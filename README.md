@@ -42,7 +42,7 @@ Kured is a simple solution to the problem on rebooting nodes to enable security 
 
 Note: Installing and using kubectl commands does not work through the Equinor proxy. You should therefore be on the 'approved network' to avoid the proxy.
 
-### Setup Cluster
+### Cluster Setup
 
 1. Create and populate `.env` from `env.template`
 2. Create kubernetes cluster and install Helm  
@@ -58,10 +58,8 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
 7. You now have three files with secrets, namely `azure.json`, `acr.properties` and `ark.properties`, secure these and share with the rest of the group
   
 ## How-to's
-* [Using Azure Container Registry](https://github.com/Statoil/sdp-flux/blob/basic_acr_usage/docs/ACR.md)
-
+* [Use of Azure Container Registry](https://github.com/Statoil/sdp-flux/blob/basic_acr_usage/docs/ACR.md)
 * Get access to created cluster
-
   * `az aks get-credentials --resource-group $AZ_GROUP --name $AZ_AKS_NAME`  
   This populates `~/.kube/config` with certs and keys 
 * [Expand Persistent Volume Claims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims)
