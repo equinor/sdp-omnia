@@ -10,10 +10,9 @@ It contains some basic overview information on these topics;
 Flux GitOps Manifests - https://github.com/equinor/sdp-flux  
 AKS Node Puppet - https://github.com/equinor/sdp-aks-node-puppet
 
+## Technologies
 ![Architecture](/images/sdp-aks.png)
 AKS Stack with example services
-
-## Technologies
 ### AKS
 With AKS, Azure provides virtual machines running Ubuntu preconfigured with Kubernetes setup as a cluster. AKS also includes the preconfigured Azure resources _Network security group_, _Route table_, _Disk_, _Network interface_, _Virtual network_, _Public IP address_, and _Load balancer_.
 ### Helm
