@@ -14,7 +14,7 @@ AKS Node Puppet - https://github.com/equinor/sdp-aks-node-puppet
 ![Architecture](/images/sdp-aks.png)
 AKS Stack with example services
 ### AKS
-With AKS, Azure provides virtual machines running Ubuntu preconfigured with Kubernetes setup as a cluster. AKS also includes the preconfigured Azure resources _Network security group_, _Route table_, _Disk_, _Network interface_, _Virtual network_, _Public IP address_, and _Load balancer_.
+With AKS, Azure provides virtual machines running Ubuntu preconfigured with Kubernetes setup as a cluster. AKS also includes the preconfigured Azure resources _Network security group_, _Route table_, _Disk_, _Network interface_, _Virtual network_, _Public IP address_, and _Load balancer_. The K8s master node(s) are fully controlled by Azure. This include etcd, kube-scheduler, kube-controller-manager, and the kube-apiserver.
 ### Helm
 On top of Kubernetes we run Helm. Helm is a way of deploying configurable _packages_ of K8s manifests into a K8s cluster.
 ### Flux
