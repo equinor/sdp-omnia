@@ -1,7 +1,12 @@
 # Security considerations
 This document describes some of the security considerations that have gone into SDP's AKS deployment.  
-We have identified four main levels of concern that are, to a degree, unique to the AKS/Kubernetes technologies: The Azure Portal, The AKS Nodes, Kubernetes and Cluster Supporting Services, and Pods and Applications.  
-For each of these levels we will describe the main threats, and the most important security measures to remedy these threads.  
+We have identified four main levels of concern that are, to a degree, unique to the AKS/Kubernetes technologies: 
+- The Azure Portal
+- The AKS Nodes
+- Kubernetes and Cluster Supporting Services
+- Pods and Applications.  
+
+For each of these levels we will describe the main threats, and the most important security measures to remedy these threats.  
 The CIS(Center for Internet Security) Benchmarks have been used as a guideline for this work. Primarily the "CIS Benchmark for Ubuntu Linux 16.04 LTS", the "CIS Benchmark for Containers", and the "CIS Benchmark for Kubernetes".
 
 ## Azure Portal
