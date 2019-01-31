@@ -39,6 +39,7 @@ The CIS(Center for Internet Security) Benchmarks have been used as a guideline f
 * !TODO: Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
 * !Confirm: Restrict traffic between containers (Docker daemon)
 * !Investigate: Enforce AppArmor
+* TODO: Ensure kubelet configuration files permissions
 
 ## Kubernetes and Cluster Supporting Services
 
@@ -49,42 +50,38 @@ Services: Helm, flux, puppet, github, ark, kured, sealed secrets, azure dns, azu
 * Access to Azure container registry
 * Compromised cluster access keys
 * Compromised private key for sealed secrets
-* Vulnerabilities in Kubernetes and services
+* Vulnerabilities in cluster and services
 
 ### Measures
-* Master nodes w/cluster services in AKS is fully managed by Azure.  
+* Master nodes and it's services in AKS is fully managed by Azure.  
 * TODO: RBAC - Look into service account improvements
-* Keep up-to-date
-* !Consider: NetworkPolicies
-* TODO: Don't allow dangerous runtime options. This include mounting the docker socket, using priviliged flag, --pid=host, --network=host, --device. This can be done with PodSecurityPolicy
-* TODO: Ensure kubelet configuration files permissions
-* Consider: NetworkPolicies
+* Keep cluster and services up-to-date
+  * TODO: Get notification when new releases
+* !Investigate (later): NetworkPolicies
+* TODO (later): Don't allow dangerous runtime options. This include mounting the docker socket, using priviliged flag, --pid=host, --network=host, --device. This can be done with PodSecurityPolicy
+* Limit number of users that has access to GitHub repositories.
 
 ## Pods and Applications
 ### Threats
-* 
+* Malicious docker images
+* Resource hogging
+* Vulnerable applications
+
 ### Measures
-* Secrets stored as SealedSecrets in Github
-* TODO: Don't use latest tags
-* Consider: Pod Security (Is this the same as docker run's --security-opt where you can specify an AppArmor profile?)
-* !TODO: Set resource limits for all pods
-* Untrusted Images
-* Vulnerability scanned images
-* Untrusted HelmCharts
-
-
-
+* TODO: Don't use latest tags. Pin versions on docker images and helm charts.
+  * TODO: Turn off automated docker images/helm chart annotations. This should be done manually. 
+* Consider (later): Pod Security (Is this the same as docker run's --security-opt where you can specify an AppArmor profile?)
+* TODO: Set resource limits for all pods
+* TODO (later): Vulnerability scanned images
+* Audit HelmCharts and docker images.
 
 ## BOYH CIS Ubuntu ##
 Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77-40a4-4e08-a6c0-93b39b92abd8.pdf
 
 # Burde gjøres
-- 1.1.1 - DIsable unused filesystems (Scored)
+- 1.1.1 Disable unused filesystems (Scored)
 - 1.1.2 Ensure separate partition exist for /tmp (Scored)
 - 1.1.21 Disable Automounting (Scored)
-
-- 1.3.1 Ensure AIDE is installed (Scored)
-- 1.3.2 Ensure filesystem integrity is regularly checked (Scored)
 
 - 1.4.1 Ensure permissions on bootloader config are configured (Scored)
 
