@@ -14,29 +14,43 @@ The CIS(Center for Internet Security) Benchmarks have been used as a guideline f
 * Accidental deletion/misconfiguration of resources or entire cluster
 * Unauthorized access to Azure resources
 ### Measures
-* TODO: Limit user in the "SDP Tools" subscriptions, or get own subscriptions 
+* Own Azure subscription for SDP admins.
+  * TODO: Limit user in the "SDP Tools" subscriptions, or get own subscriptions. 
 * Equinor security standard for Azure Portal/az CLI login (Equinor organization + Two-factor authentication(2FA))
 
 ## AKS Nodes
 ### Threats
-* 
-* 
+* Not hardened from Azure by default
+  * Not restarted by default to get latest security patches
+  * Missing minimum security settings/features
+* If somebody get access to the VNET the default security is not sufficient
+  * Big attack surface
+
+
 ### Measures
 * !TODO: Disabled/uninstalled all unnecessary services
 * !Confirm: Removed unnecessary users
 * The K8s cluster runs in a virtual network protected by a Azure Network Security Group firewall. This firewall only allows ports 80 and 443 inbound.
-* !(confirm this)The nodes are configured to use the 'unattended-upgrades' package for automatic seurity patching.
-* Automatically reboots if nessecary to apply security updates.
-* !Consider: IDS (like AIDE)
-* !Consider: local Firewall
+* Automatic security patches from Azure.
+  * !TODO: Update manually packages that are not upated by Azure.
+  * Automatically reboots if nessecary to apply security updates.
+* !TODO: local Firewall
 * !TODO: Filter and monitor audit logs. Log events that modify date&time, user&groups, AppArmor, login&logout, access rights, unsuccessful authorization, docker files
-* !Consider: Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
-* !Consider: Enforce AppArmor
+* !TODO: Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
 * !Confirm: Restrict traffic between containers (Docker daemon)
+* !Investigate: Enforce AppArmor
 
 ## Kubernetes and Cluster Supporting Services
+
+Services: Helm, flux, puppet, github, ark, kured, sealed secrets, azure dns, azure container registry, azure AD
+
 ### Threats
-* 
+* Access to GitHub repo - flux and puppet
+* Access to Azure container registry
+* Compromised cluster access keys
+* Compromised private key for sealed secrets
+* Vulnerabilities in Kubernetes and services
+
 ### Measures
 * Master nodes w/cluster services in AKS is fully managed by Azure.  
 * TODO: RBAC - Look into service account improvements
