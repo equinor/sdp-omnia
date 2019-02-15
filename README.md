@@ -70,6 +70,8 @@ To change the branch Flux uses, you "upgrade" Flux and set some variables.
   2. `helm upgrade flux --reuse-values --set git.branch=dev --version 0.5.1 weaveworks/flux`
 * [Upgrade Kubernetes cluster](/docs/upgrade-kubernetes-cluster.md)
 * [Usage of Heptio Ark Backup solution](docs/heptio-ark.md)
+* Get last version of AKS `az aks get-versions --location northeurope`
+* Open kubernetes dashboard `az aks browse --resource-group $AZ_GROUP --name $AZ_AKS_NAME`
 
 ## Troubleshooting 
 
