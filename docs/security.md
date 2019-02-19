@@ -75,22 +75,40 @@ Services: Helm, flux, puppet, github, ark, kured, sealed secrets, azure dns, azu
 * TODO (later): Vulnerability scanned images
 * Audit HelmCharts and docker images.
 
-## BOYH CIS Ubuntu ##
+# BOYH CIS Ubuntu
 Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77-40a4-4e08-a6c0-93b39b92abd8.pdf
 
-# Burde gjøres
-- 1.1.1 Disable unused filesystems (Scored)
-- 1.1.2 Ensure separate partition exist for /tmp (Scored)
-- 1.1.21 Disable Automounting (Scored)
+## Burde gjøres
 
-- 1.4.1 Ensure permissions on bootloader config are configured (Scored)
-
-- 1.5.4 Ensure prelink is disabled (Scored)
-
-- 1.7.1 Command Line Warning Banners
-
+### Høy
 - 1.8 Ensure updates, patches, and additional security software are installed (Not Scored)
 
+- 4.1.1.1 Ensure audit log storage size is configured (Not Scored)
+- 4.1.2 Ensure auditd service is enabled (Scored)
+- 4.1.4 Ensure events that modify date and time information are collected (Scored)
+- 4.1.5 Ensure events that modify user/group information are collected (Scored)
+- 4.1.6 Ensure events that modify the system's network environment are collected (Scored)
+- 4.1.7 Ensure events that modify the system's Mandatory Access Controls are collected (Scored)
+- 4.1.8 Ensure login and logout events are collected (Scored)
+- 4.1.11 Ensure unsuccessful unauthorized file access attempts are collected (Scored)
+- 4.1.12 Ensure use of privileged commands is collected (Scored)
+- 4.1.14 Ensure file deletion events by users are collected (Scored)
+- 4.1.15 Ensure changes to system administration scope (sudoers) is collected (Scored)
+- 4.1.16 Ensure system administrator actions (sudolog) are collected (Scored)
+- 4.1.17 Ensure kernel module loading and unloading is collected (Scored)
+
+- 4.3 Ensure logrotate is configured (Not Scored)
+
+- 6.1.2 Ensure permissions on /etc/passwd are configured (Scored)
+- 6.1.3 Ensure permissions on /etc/shadow are configured (Scored)
+- 6.1.4 Ensure permissions on /etc/group are configured (Scored)
+- 6.1.5 Ensure permissions on /etc/gshadow are configured (Scored)
+- 6.1.6 Ensure permissions on /etc/passwd- are configured (Scored)
+- 6.1.7 Ensure permissions on /etc/shadow- are configured (Scored)
+- 6.1.8 Ensure permissions on /etc/group- are configured (Scored)
+- 6.1.9 Ensure permissions on /etc/gshadow- are configured (Scored)
+
+### Medium
 - 2.1.1 Ensure chargen services are not enabled (Scored)
 - 2.1.2 Ensure daytime services are not enabled (Scored)
 - 2.1.3 Ensure discard services are not enabled (Scored)
@@ -125,6 +143,21 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 2.3.4 Ensure telnet client is not installed (Scored)
 - 2.3.5 Ensure LDAP client is not installed (Scored)
 
+- 3.6 Firewall Configuration
+
+- 4.2.4 Ensure permissions on all logfiles are configured (Scored)
+
+### Lav
+- 1.1.1 Disable unused filesystems (Scored)
+- 1.1.2 Ensure separate partition exist for /tmp (Scored)
+- 1.1.21 Disable Automounting (Scored)
+
+- 1.4.1 Ensure permissions on bootloader config are configured (Scored)
+
+- 1.5.4 Ensure prelink is disabled (Scored)
+
+- 1.7.1 Command Line Warning Banners
+
 - 3.2.2 Ensure ICMP redirects are not accepted (Scored)
 - 3.2.3 Ensure secure ICMP redirects are not accepted (Scored)
 - 3.2.4 Ensure suspicious packets are logged (Scored)
@@ -137,26 +170,6 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 
 - 3.5 Uncommon Network Protocols
 
-- 3.6 Firewall Configuration
-
-- 4.1.1.1 Ensure audit log storage size is configured (Not Scored)
-- 4.1.2 Ensure auditd service is enabled (Scored)
-- 4.1.4 Ensure events that modify date and time information are collected (Scored)
-- 4.1.5 Ensure events that modify user/group information are collected (Scored)
-- 4.1.6 Ensure events that modify the system's network environment are collected (Scored)
-- 4.1.7 Ensure events that modify the system's Mandatory Access Controls are collected (Scored)
-- 4.1.8 Ensure login and logout events are collected (Scored)
-- 4.1.11 Ensure unsuccessful unauthorized file access attempts are collected (Scored)
-- 4.1.12 Ensure use of privileged commands is collected (Scored)
-- 4.1.14 Ensure file deletion events by users are collected (Scored)
-- 4.1.15 Ensure changes to system administration scope (sudoers) is collected (Scored)
-- 4.1.16 Ensure system administrator actions (sudolog) are collected (Scored)
-- 4.1.17 Ensure kernel module loading and unloading is collected (Scored)
-
-- 4.2.4 Ensure permissions on all logfiles are configured (Scored)
-
-- 4.3 Ensure logrotate is configured (Not Scored)
-
 - 5.1 Configure cron
 
 - 5.2 Configure SSH
@@ -164,15 +177,6 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 5.4.2 Ensure system accounts are non-login (Scored)
 - 5.4.3 Ensure default group for the root account is GID 0 (Scored)
 - 5.4.4 Ensure default user umask is 027 or more restrictive (Scored)
-
-- 6.1.2 Ensure permissions on /etc/passwd are configured (Scored)
-- 6.1.3 Ensure permissions on /etc/shadow are configured (Scored)
-- 6.1.4 Ensure permissions on /etc/group are configured (Scored)
-- 6.1.5 Ensure permissions on /etc/gshadow are configured (Scored)
-- 6.1.6 Ensure permissions on /etc/passwd- are configured (Scored)
-- 6.1.7 Ensure permissions on /etc/shadow- are configured (Scored)
-- 6.1.8 Ensure permissions on /etc/group- are configured (Scored)
-- 6.1.9 Ensure permissions on /etc/gshadow- are configured (Scored)
 
 - 6.2.5 Ensure root is the only UID 0 account (Scored)
 - 6.2.6 Ensure root PATH Integrity (Scored)
@@ -186,7 +190,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 6.2.14 Ensure no users have .rhosts files (Scored)
 - 6.2.15 Ensure all groups in /etc/passwd exist in /etc/group (Scored)
 
-# Kan gjøres / Bør vurderes
+## Kan gjøres / Bør vurderes
 - 1.1.3 Ensure nodev option set on /tmp partition (Scored)
 - 1.1.4 Ensure nosuid option set on /tmp partition (Scored)
 - 1.1.10 Ensure separate partition exists for /var/log (Scored)
@@ -263,7 +267,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 6.2.19 Ensure no duplicate group names exist (Scored)
 - 6.2.20 Ensure shadow group is empty (Scored)
 
-# Irrelevant / Vanskelig å gjennomføre
+## Irrelevant / Vanskelig å gjennomføre
 - 1.1.5 Ensure separate partition exists for /var (Scored)
 - 1.1.6 Ensure separate partition exists for /var/tmp (Scored)
 - 1.1.7 Ensure nodev option set on /var/tmp partition (Scored)
