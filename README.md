@@ -8,7 +8,8 @@ It contains some basic overview information on these topics;
 
 ### Related Repositories
 Flux GitOps Manifests - https://github.com/equinor/sdp-flux  
-AKS Node Puppet - https://github.com/equinor/sdp-aks-node-puppet
+AKS Puppet - https://github.com/equinor/sdp-aks-puppet  
+AKS Node Puppet Setup - https://github.com/equinor/sdp-aks-node-puppet
 
 ## Technologies
 ![Architecture](/images/sdp-aks.png)
