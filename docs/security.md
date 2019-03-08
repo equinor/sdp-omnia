@@ -28,7 +28,7 @@ The CIS(Center for Internet Security) Benchmarks have been used as a guideline f
 
 
 ### Measures
-* !TODO: Disabled/uninstalled all unnecessary services
+* Disabled/uninstalled all unnecessary services
 * !Confirm: Removed unnecessary users
 * The K8s cluster runs in a virtual network protected by a Azure Network Security Group firewall. This firewall only allows ports 80 and 443 inbound.
 * Automatic security patches from Azure.
@@ -109,7 +109,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 6.1.9 Ensure permissions on /etc/gshadow- are configured (Scored)
 
 ### Medium
-- 2.1.1 Ensure chargen services are not enabled (Scored)
+<!-- - 2.1.1 Ensure chargen services are not enabled (Scored)
 - 2.1.2 Ensure daytime services are not enabled (Scored)
 - 2.1.3 Ensure discard services are not enabled (Scored)
 - 2.1.4 Ensure echo services are not enabled (Scored)
@@ -117,11 +117,11 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 2.1.6 Ensure rsh server is not enabled (Scored)
 - 2.1.7 Ensure talk server is not enabled (Scored)
 - 2.1.8 Ensure telnet server is not enabled (Scored)
-- 2.1.9 Ensure tftp server is not enabled (Scored)
+- 2.1.9 Ensure tftp server is not enabled (Scored) -->
 
 - 2.2.1.1 Ensure time synchronization is in use (Not Scored)
 - 2.2.1.2 Ensure ntp is configured (Scored)
-- 2.2.2 Ensure X Window System is not installed (Scored)
+<!-- - 2.2.2 Ensure X Window System is not installed (Scored)
 - 2.2.3 Ensure Avahi Server is not enabled (Scored)
 - 2.2.4 Ensure CUPS is not enabled (Scored)
 - 2.2.5 Ensure DHCP Server is not enabled (Scored)
@@ -132,16 +132,16 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 2.2.11 Ensure IMAP and POP3 server is not enabled (Scored)
 - 2.2.12 Ensure Samba is not enabled (Scored)
 - 2.2.13 Ensure HTTP Proxy Server is not enabled (Scored)
-- 2.2.14 Ensure SNMP Server is not enabled (Scored)
+- 2.2.14 Ensure SNMP Server is not enabled (Scored) -->
 - 2.2.15 Ensure mail transfer agent is configured for local-only mode (Scored)
-- 2.2.16 Ensure rsync service is not enabled (Scored)
-- 2.2.17 Ensure NIS Server is not enabled (Scored)
+<!-- - 2.2.16 Ensure rsync service is not enabled (Scored)
+- 2.2.17 Ensure NIS Server is not enabled (Scored) -->
 
-- 2.3.1 Ensure NIS Client is not installed (Scored)
+<!-- - 2.3.1 Ensure NIS Client is not installed (Scored)
 - 2.3.2 Ensure rsh client is not installed (Scored)
 - 2.3.3 Ensure talk client is not installed (Scored)
 - 2.3.4 Ensure telnet client is not installed (Scored)
-- 2.3.5 Ensure LDAP client is not installed (Scored)
+- 2.3.5 Ensure LDAP client is not installed (Scored) -->
 
 - 3.6 Firewall Configuration
 
