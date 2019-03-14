@@ -81,14 +81,6 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 ## Burde gjøres
 
 ### Høy
-- 6.1.2 Ensure permissions on /etc/passwd are configured (Scored)
-- 6.1.3 Ensure permissions on /etc/shadow are configured (Scored)
-- 6.1.4 Ensure permissions on /etc/group are configured (Scored)
-- 6.1.5 Ensure permissions on /etc/gshadow are configured (Scored)
-- 6.1.6 Ensure permissions on /etc/passwd- are configured (Scored)
-- 6.1.7 Ensure permissions on /etc/shadow- are configured (Scored)
-- 6.1.8 Ensure permissions on /etc/group- are configured (Scored)
-- 6.1.9 Ensure permissions on /etc/gshadow- are configured (Scored)
 
 ### Medium
 - 2.2.1.1 Ensure time synchronization is in use (Not Scored)
@@ -283,3 +275,11 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 4.1.16 Ensure system administrator actions (sudolog) are collected (Scored)
 - 4.1.17 Ensure kernel module loading and unloading is collected (Scored)
 - 4.3 Ensure logrotate is configured (Not Scored)
+- 6.1.2 Ensure permissions on /etc/passwd are configured (Scored)
+- 6.1.3 Ensure permissions on /etc/shadow are configured (Scored)
+- 6.1.4 Ensure permissions on /etc/group are configured (Scored)
+- 6.1.5 Ensure permissions on /etc/gshadow are configured (Scored)
+- 6.1.6 Ensure permissions on /etc/passwd- are configured (Scored)
+- 6.1.7 Ensure permissions on /etc/shadow- are configured (Scored)
+- 6.1.8 Ensure permissions on /etc/group- are configured (Scored)
+- 6.1.9 Ensure permissions on /etc/gshadow- are configured (Scored)
