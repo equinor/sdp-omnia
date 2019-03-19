@@ -83,8 +83,6 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 ### Høy
 
 ### Medium
-- 2.2.1.1 Ensure time synchronization is in use (Not Scored)
-- 2.2.1.2 Ensure ntp is configured (Scored)
 - 2.2.15 Ensure mail transfer agent is configured for local-only mode (Scored)
 
 - 3.6 Firewall Configuration
@@ -242,6 +240,8 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 2.1.7 Ensure talk server is not enabled (Scored)
 - 2.1.8 Ensure telnet server is not enabled (Scored)
 - 2.1.9 Ensure tftp server is not enabled (Scored)
+- 2.2.1.1 Ensure time synchronization is in use (Not Scored)
+- 2.2.1.2 Ensure ntp is configured (Scored)
 - 2.2.2 Ensure X Window System is not installed (Scored)
 - 2.2.3 Ensure Avahi Server is not enabled (Scored)
 - 2.2.4 Ensure CUPS is not enabled (Scored)
