@@ -64,12 +64,21 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
   This populates `~/.kube/config` with certs and keys 
 * [Expand Persistent Volume Claims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#expanding-persistent-volumes-claims)
 * [Upgrade Flux](/docs/upgrade-flux.md)
+* Check Helm charts for updates
+  1. `helm plugin install https://github.com/bacongobbler/helm-whatup` 
+  2. `helm whatup`
 * Changing run settings for Flux (e.g. branch or repository)  
 To change the branch Flux uses, you "upgrade" Flux and set some variables.
   1. Find the installed version of Flux  
   `helm list --all flux`  
   2. `helm upgrade flux --reuse-values --set git.branch=dev --version 0.5.1 weaveworks/flux`
 * [Upgrade Kubernetes cluster](/docs/upgrade-kubernetes-cluster.md)
+* Revoke Let's Encrypt Certificates
+  1. Extract key and cert to PEM-format  
+ `kubectl get secret my-tls-secret -o jsonpath='{.data.tls\.crt}' | base64 --decode > crt.pem`  
+ `kubectl get secret my-tls-secret -o jsonpath='{.data.tls\.key}' | base64 --decode > key.pem`
+  2. Issue revoke request  
+  `sudo certbot revoke --cert-path ./crt.pem  --key-path ./key.pem`
 * [Usage of Heptio Ark Backup solution](docs/heptio-ark.md)
 
 ## Troubleshooting 
@@ -79,8 +88,6 @@ https://docs.microsoft.com/en-us/azure/aks/troubleshooting
 - Port forward application  
   `kubectl port-forward --namespace default $POD_NAME $LOCAL_PORT:$APP_PORT`
 
-- Get Token request returned http error: 400 and server response . 
-  ```
-  az account clear
-  az login
-  ```
+- Get Token request returned http error: 400 and server response .   
+    `az account clear`  
+    `az login`
