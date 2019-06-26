@@ -1,6 +1,17 @@
+
+
 # How do we use Heptio Ark
 
-[Heptio Ark](https://github.com/heptio/ark) is the backup solution we use to backup our cluster. It takes backups by storing the manifests in an Azure Blob Storage and creates snapshots of the persistent disks. With this information we can restore the state of the cluster/workload.
+[Heptio Ark](https://github.com/heptio/ark) is the backup solution we used originally, and is described in this repo. It takes backups by storing the manifests in an Azure Blob Storage and creates snapshots of the persistent disks. With this information we can restore the state of the cluster/workload.
+
+## Note
+
+SDP-aks has migrated its backup solution from Heptio Ark to Velero. 
+It is now recommended to download Velero and use the command ``` velero install ``` to get Velero running in your cluster from scratch.
+
+If you wish to migrate your existing Ark v0.10 you will need to follow the guides below with some modification (mostly namespace related):
+[0.10 -> 0.11.1 migration](https://velero.io/docs/v0.11.0/migrating-to-velero/) and
+[0.11.1 -> 1.0 migration](https://velero.io/docs/v1.0.0/upgrade-to-1.0/)
 
 ## Backup
 Our prod cluster uses this backup schema;  
