@@ -39,7 +39,7 @@ The CIS(Center for Internet Security) Benchmarks have been used as a guideline f
 * !TODO: Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
 * !Confirm: Restrict traffic between containers (Docker daemon)
 * !Investigate: Enforce AppArmor
-* TODO: Ensure kubelet configuration files permissions
+* !Confirm Ensure kubelet configuration files permissions
 
 ## Kubernetes and Cluster Supporting Services
 
