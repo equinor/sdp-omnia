@@ -1,0 +1,35 @@
+#!/bin/bash
+
+
+source .env
+set -e
+
+# Fetch Azure ID's
+
+AZ_BACKUP_SP_PASSWORD=$(az ad sp create-for-rbac --name $AZ_BACKUP_SP_NAME --role "Contributor" --query 'password' -o tsv)
+AZ_BACKUP_SP_ID=$(az ad sp show --id http://$AZ_BACKUP_SP_NAME --query appId -o tsv)
+
+AZ_SUBSCRIPTION_ID=$(az account show --query "id"  -o tsv)
+AZ_TENANT_ID=$(az account show --query "tenantId"  -o tsv)
+AZ_CLUSTER_GROUP=$(az aks show --resource-group $AZ_GROUP --name $AZ_AKS_NAME --query nodeResourceGroup -o tsv)
+
+# Save output to credentials-velero file
+
+cat << EOF > credentials-velero
+
+AZURE_SUBSCRIPTION_ID=${AZ_SUBSCRIPTION_ID}
+AZURE_TENANT_ID=${AZ_TENANT_ID} 
+AZURE_CLIENT_ID=${AZ_BACKUP_SP_ID} 
+AZURE_CLIENT_SECRET=${AZ_BACKUP_SP_PASSWORD} 
+AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} 
+EOF
+
+# Install using credentials file and .env variables
+
+velero install \
+--provider azure \
+--bucket $AZ_BACKUP_CONTAINER_NAME \
+--secret-file ./credentials-velero \
+--backup-location-config resourceGroup=$AZ_BACKUP_RESOURCE_GROUP,storageAccount=$AZ_STORAGE_ACCOUNT_ID \
+--snapshot-location-config apiTimeout=2m \
+--namespace infrastructure
