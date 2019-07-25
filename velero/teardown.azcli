@@ -31,7 +31,7 @@ az configure --defaults group=$AZ_BACKUP_GROUP > /dev/null
 # Removing secret from cluster
 echo
 echo " Deleting velero credentials from cluster"
-kubectl --namespace infrastructure delete secret velerocreds > /dev/null || true
+kubectl --namespace infrastructure delete secret cloud-credentials > /dev/null || true
 
 # Removing service if exist
 echo
