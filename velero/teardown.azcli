@@ -36,6 +36,7 @@ kubectl --namespace infrastructure delete secret cloud-credentials > /dev/null |
 # Removing service if exist
 echo
 echo " Removing all velero services deployed"
+kubectl delete deployment velero -n infrastructure
 kubectl delete crds -l component=velero -n infrastructure
 
 # Remove resource group created for velero
