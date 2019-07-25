@@ -56,7 +56,6 @@ az storage account update --resource-group $AZ_BACKUP_GROUP --name $AZ_BACKUP_NA
 # comment out the first line below and try to reuse existing client secret 
 # Manually into the credentials-velero file.
 
-echo
 echo " Creating service principal ($AZ_BACKUP_SP_NAME )"
 AZ_BACKUP_SP_PASSWORD=$(az ad sp create-for-rbac --name $AZ_BACKUP_SP_NAME --role "Contributor" --query 'password' -o tsv)
 AZ_BACKUP_SP_ID=$(az ad sp show --id http://$AZ_BACKUP_SP_NAME --query appId -o tsv)
@@ -87,7 +86,7 @@ velero install \
 --provider azure \
 --bucket $AZ_BACKUP_CONTAINER_NAME \
 --secret-file ./credentials-velero \
---backup-location-config resourceGroup=$AZ_BACKUP_RESOURCE_GROUP,storageAccount=$AZ_STORAGE_ACCOUNT_ID \
+--backup-location-config resourceGroup=$AZ_BACKUP_GROUP,storageAccount=$AZ_BACKUP_NAME \
 --snapshot-location-config apiTimeout=2m \
 --namespace infrastructure
 
