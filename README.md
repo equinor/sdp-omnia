@@ -20,8 +20,8 @@ With AKS, Azure provides virtual machines running Ubuntu preconfigured with Kube
 On top of Kubernetes we run Helm. Helm is a way of deploying configurable _packages_ of K8s manifests into a K8s cluster.
 ### Flux
 To operate a K8s cluster that has a _Single Source of Truth_, deploy K8s resources in a _declarative way_, and provide _configuration traceability_, we use Weaveworks Flux as a GitOps controller. This ensures that the cluster state mirrors the configuration in our Git repository.
-### Heptio Ark
-To backup both Persistent Volumes and K8s manifests, we deploy Heptio Ark. Ark is configured with a seperate Azure Resource group and Storage account. Ark runs on a schedule to take snapshots of the Azure Disks and the deployed K8s manifests.
+### Vmware velero
+To backup both Persistent Volumes and K8s manifests, we deploy Vmware Velero. Velero is configured with a seperate Azure Resource group and Storage account. Velero runs on a schedule to take snapshots of the Azure Disks and the deployed K8s manifests.
 ### Sealed Secrets
 To be able to maintain our GitOps workflow, we would like to commit secrets(SSL Keys, Oauth keys, Container Registry Keys etc.) to Git. These secrets are encrypted with asymmetric cryptography, where the private key only resides within the Sealed-Secrets controller in the K8s cluster. We deploy a CRD(Custom Resource Definition) called SealedSecret, which the controller picks up and "translates" to regular K8s secrets.
 ### External-DNS
@@ -53,9 +53,9 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
   `./flux/bootstrap.azcli`
 5. Create a Azure Container Registry.  
   `./acr/bootstrap.azcli`
-6. Setup Heptio Ark backup infrastructure  
-  `./ark/bootstrap.azcli`
-7. You now have three files with secrets, namely `azure.json`, `acr.properties` and `ark.properties`, secure these and share with the rest of the group
+6. Setup Vmware Velero backup infrastructure  
+  `./velero/bootstrap.azcli`
+7. You now have three files with secrets, namely `azure.json`, `acr.properties` and `velero-credentials`, secure these and share with the rest of the group
   
 ## How-to's
 * [Use of Azure Container Registry](https://github.com/Statoil/sdp-flux/blob/basic_acr_usage/docs/ACR.md)
@@ -79,7 +79,7 @@ To change the branch Flux uses, you "upgrade" Flux and set some variables.
  `kubectl get secret my-tls-secret -o jsonpath='{.data.tls\.key}' | base64 --decode > key.pem`
   2. Issue revoke request  
   `sudo certbot revoke --cert-path ./crt.pem  --key-path ./key.pem`
-* [Usage of Heptio Ark Backup solution](docs/heptio-ark.md)
+* [Usage of Vmware velero Backup solution](docs/velero.md)
 
 ## Troubleshooting 
 
