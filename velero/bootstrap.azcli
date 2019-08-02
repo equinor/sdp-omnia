@@ -87,7 +87,7 @@ velero install \
 --bucket $AZ_BACKUP_CONTAINER_NAME \
 --secret-file ./credentials-velero \
 --backup-location-config resourceGroup=$AZ_BACKUP_GROUP,storageAccount=$AZ_BACKUP_NAME \
---snapshot-location-config apiTimeout=2m \
+--snapshot-location-config resourceGroup=$AZ_BACKUP_GROUP apiTimeout=2m \
 --namespace infrastructure
 
 # Set default client context to infrastructure
