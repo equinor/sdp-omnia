@@ -79,8 +79,9 @@ To change the branch Flux uses, you "upgrade" Flux and set some variables.
  `kubectl get secret my-tls-secret -o jsonpath='{.data.tls\.key}' | base64 --decode > key.pem`
   2. Issue revoke request  
   `sudo certbot revoke --cert-path ./crt.pem  --key-path ./key.pem`
-* [Usage of Vmware velero Backup solution](docs/velero.md)
-
+* Usage of Vmware velero Backup solution
+  1. [Configuration](/docs/velero.md)
+  2. [Disaster recovery and backup testing](/docs/velero-backup-routine.md)
 ## Troubleshooting 
 
 https://docs.microsoft.com/en-us/azure/aks/troubleshooting
