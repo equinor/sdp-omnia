@@ -10,11 +10,15 @@ Most sdp-aks resources including secrets can be restored or recreated easily wit
 Say for example that the volume of your deployment "verdaccio-verdaccio" has gone corrupt. 
 You only wish to restore the volume without altering other deployments in the cluster.
 
-* First, scale down your deployment
+* First, scale down the flux deployment in your infrastructure namespace
+
+`kubectl scale deployments/flux -n infrastructure --replicas=0  `
+
+* Scale down your corrupted deployment
 
 `kubectl scale deployments/verdaccio-verdaccio --replicas=0` 
 
-* Next, delete the PVC which points to the corrupted PV.  Note that the `-l release=verdaccio` will delete any PVC containing the label `release: verdaccio`
+* Next, delete the PVC which points to the corrupted PV.  Note that the `-l release=verdaccio` will delete any PVC containing the label `release: verdaccio`. __Also note that label tags will vary from helm chart to helm chart. Commonly used tags are "app" and "release".__
 
 `kubectl delete pvc -l release=verdaccio`
 
@@ -31,8 +35,12 @@ This will recreate the PVC and with a new PV, which in turn points to a newly cr
 
 Check out the log files for your deployment if the restore is not successful.
 
+* If successful, scale the flux deployment back up
+
+`kubectl scale deployments/flux -n infrastructure --replicas=0  `
+
 ### Troubleshooting 
-In some cases you might need to delete the entire deployment as opposed to just the PVC. We reccomend doing this only after you've tried the steps above.
+In some cases you might need to delete the entire deployment as opposed to just the PVC. We recommend doing this only after you've tried the steps above.
 
 `kubectl delete deployment verdaccio/verdaccio`
 `velero restore create --from-schedule prod-ns -l release=verdaccio`:
