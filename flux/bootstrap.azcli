@@ -12,19 +12,20 @@ hash helm || { echo "Error: helm not found in PATH. Exiting..."; exit 1; }
 
 # Add flux repo to helm
 echo
-echo " Adding Weaveworks repository to Helm"
-helm repo add weaveworks https://weaveworks.github.io/flux > /dev/null
+echo " Adding fluxcd/flux repository to Helm"
+helm repo add fluxcd https://fluxcd.github.io/flux > /dev/null
 
 # Install flux with helmoperator
 echo
-echo " Installing Flux with Helm operator in the infrastructure namespace"
-helm install --name flux \
+echo " Installing or upgrading Flux with Helm operator in the infrastructure namespace"
+helm upgrade --install --name flux \
     --set rbac.create=true \
     --set helmOperator.create=true \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch=$FLUX_GITOPS_BRANCH \
+    --set git.path=$FLUX_GITOPS_PATH \
     --namespace infrastructure \
-    weaveworks/flux > /dev/null
+    fluxcd/flux > /dev/null
 
 # User feedback
 echo
