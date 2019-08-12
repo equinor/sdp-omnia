@@ -21,10 +21,12 @@ echo " Installing or upgrading Flux with Helm operator in the infrastructure nam
 helm upgrade --install --name flux \
     --set rbac.create=true \
     --set helmOperator.create=true \
+    --set helmOperator.createCRD=false \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch=$FLUX_GITOPS_BRANCH \
     --set git.path=$FLUX_GITOPS_PATH \
     --namespace infrastructure \
+    --set additionalArgs={--manifest-generation=true} \
     fluxcd/flux > /dev/null
 
 # User feedback
