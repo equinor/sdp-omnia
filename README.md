@@ -71,7 +71,7 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
 To change the branch Flux uses, you "upgrade" Flux and set some variables.
   1. Find the installed version of Flux  
   `helm list --all flux`  
-  2. `helm upgrade flux --reuse-values --set git.branch=dev --version 0.5.1 fluxcd/flux`
+  2. `helm upgrade flux --reuse-values --set git.branch=dev fluxcd/flux`
 * [Upgrade Kubernetes cluster](/docs/upgrade-kubernetes-cluster.md)
 * Revoke Let's Encrypt Certificates
   1. Extract key and cert to PEM-format  
