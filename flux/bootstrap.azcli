@@ -18,7 +18,7 @@ helm repo add fluxcd https://fluxcd.github.io/flux > /dev/null
 # Install flux with helmoperator
 echo
 echo " Installing or upgrading Flux with Helm operator in the infrastructure namespace"
-helm upgrade --install --name flux \
+helm upgrade --install flux \
     --set rbac.create=true \
     --set helmOperator.create=true \
     --set helmOperator.createCRD=false \
