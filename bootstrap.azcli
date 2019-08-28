@@ -45,18 +45,10 @@ echo
 echo " Initialising Helm"
 helm init --service-account tiller
 
-# Give the service account "kubernetes-dashboard" the "cluster-admin" role so it can access data
-echo
-echo " Creating Kubernetes Dashboard cluster role bindings"
-kubectl create -f manifests/k8s-dashboard-crbinding.yml > /dev/null || true
-
 # Create a namespace for the infrastructure components
 echo
 echo " Creating infrastructure namespace"
 kubectl create -f manifests/infrastructure-namespaces.yml > /dev/null || true
-
-# Patch kube-dns for metrics
-kubectl patch deployment -n kube-system kube-dns-v20 --patch "$(cat patches/kube-dns-metrics-patch.yml)" > /dev/null
 
 # User feedback
 echo
