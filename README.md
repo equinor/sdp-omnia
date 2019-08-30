@@ -56,6 +56,8 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
 6. Setup Vmware Velero backup infrastructure  
   `./velero/bootstrap.azcli`
 7. You now have three files with secrets, namely `azure.json`, `acr.properties` and `velero-credentials`, secure these and share with the rest of the group
+8. Inject private key from sealedSecret into the new sealedSecret deployment.
+9. Add flux's public-key to Github as a Deploy key
   
 ## How-to's
 * [Use of Azure Container Registry](https://github.com/Statoil/sdp-flux/blob/basic_acr_usage/docs/ACR.md)
