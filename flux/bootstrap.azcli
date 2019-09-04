@@ -28,6 +28,10 @@ helm upgrade --install flux \
     --namespace infrastructure \
     --set additionalArgs={--manifest-generation=true} \
     fluxcd/flux > /dev/null
+    
+
+# Apply CRDs for cert-manager 0.9 (required for cert-manager to be deployed)
+kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.9/deploy/manifests/00-crds.yaml
 
 # User feedback
 echo
