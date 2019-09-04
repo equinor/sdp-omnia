@@ -19,7 +19,7 @@ With AKS, Azure provides virtual machines running Ubuntu preconfigured with Kube
 ### Helm
 On top of Kubernetes we run Helm. Helm is a way of deploying configurable _packages_ of K8s manifests into a K8s cluster.
 ### Flux
-To operate a K8s cluster that has a _Single Source of Truth_, deploy K8s resources in a _declarative way_, and provide _configuration traceability_, we use Weaveworks Flux as a GitOps controller. This ensures that the cluster state mirrors the configuration in our Git repository.
+To operate a K8s cluster that has a _Single Source of Truth_, deploy K8s resources in a _declarative way_, and provide _configuration traceability_, we use (FluxCD/Flux)[https://github.com/fluxcd/flux] as a GitOps controller. This ensures that the cluster state mirrors the configuration in our Git repository.
 ### Vmware velero
 To backup both Persistent Volumes and K8s manifests, we deploy Vmware Velero. Velero is configured with a seperate Azure Resource group and Storage account. Velero runs on a schedule to take snapshots of the Azure Disks and the deployed K8s manifests.
 ### Sealed Secrets
@@ -73,7 +73,7 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
 To change the branch Flux uses, you "upgrade" Flux and set some variables.
   1. Find the installed version of Flux  
   `helm list --all flux`  
-  2. `helm upgrade flux --reuse-values --set git.branch=dev --version 0.5.1 weaveworks/flux`
+  2. `helm upgrade flux --reuse-values --set git.branch=dev fluxcd/flux`
 * [Upgrade Kubernetes cluster](/docs/upgrade-kubernetes-cluster.md)
 * Revoke Let's Encrypt Certificates
   1. Extract key and cert to PEM-format  

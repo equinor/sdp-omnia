@@ -9,7 +9,7 @@ source .env
 helm repo update
 
 # Upgrade flux in place with the same values/settings
-helm upgrade flux --reuse-values weaveworks/flux
+helm upgrade flux --reuse-values fluxcd/flux
 ```
 
 If Flux fails to upgrade you need to remove Flux and install it again. But be aware that if you just try `helm delete flux` you __WILL__ get all your HelmReleases removed from the cluster. This is considered as bad. The procedure is therefore as follows.
