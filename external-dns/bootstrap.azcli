@@ -27,6 +27,9 @@ echo
 echo " Creating the DNS Zone ($AZ_DNS_ZONE)"
 az network dns zone create --resource-group $AZ_DNS_GROUP --name $AZ_DNS_ZONE > /dev/null
 
+echo "create dns record-set"
+az network dns record-set caa create -g $AZ_DNS_GROUP -z $AZ_DNS_ZONE -n @
+
 # Create a Service Principal used to configure the Azure DNS
 echo
 echo " Creating Azure AD service principal (http://$AZ_DNS_SP_NAME) to access DNS Zone"
