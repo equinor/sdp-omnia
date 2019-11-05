@@ -59,6 +59,12 @@
       "type": "String",
       "defaultValue": "gateway azure"
     },
+    "minioAccessKey": {
+      "type": "SecureString"
+    },
+    "minioSecretKey": {
+      "type": "SecureString"
+    },
     "buckets": {
       "type": "array",
       "defaultValue": [
@@ -132,9 +138,29 @@
       ],
       "properties": {
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
+        "httpsOnly": true,
         "siteConfig": {
           "appSettings": [
-
+            {
+              "name": "DOCKER_REGISTRY_SERVER_URL",
+              "value": "https://index.docker.io"
+            },
+            {
+              "name": "MINIO_ACCESS_KEY",
+              "value": "[parameters('minioAccessKey')]"
+            },
+            {
+              "name": "MINIO_SECRET_KEY",
+              "value": "[parameters('minioSecretKey')]"
+            },
+            {
+              "name": "PORT",
+              "value": "9000"
+            },
+            {
+              "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
+              "value": "30"
+            }
           ],
           "linuxFxVersion": "[parameters('linuxFxVersion')]",
           "appCommandLine": "[parameters('dockerRegistryStartupCommand')]",
@@ -143,10 +169,18 @@
       }
     }
   ],
-    "outputs": {
-      "storageAccountName": {
-        "type": "string",
-        "value": "[variables('storageAccountName')]"
-      }
+  "outputs": {
+    "storageAccountName": {
+      "type": "string",
+      "value": "[variables('storageAccountName')]"
+    },
+    "webAppName": {
+      "type": "string",
+      "value": "[variables('webAppPortalName')]"
+    },
+    "appPlanName": {
+      "type": "string",
+      "value": "[variables('appServicePlanName')]"
     }
   }
+}
