@@ -1,0 +1,58 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environmentBranch": {
+            "type": "string",
+            "defaultValue": "aks-arm",
+            "metadata": {
+                "description": "The name of the git branch to fetch templates from."
+            }
+        },
+        "environmentParametersFolder": {
+            "type": "string",
+            "defaultValue": "development",
+            "metadata": {
+                "description": "The name of the parameters folder within git repo."
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "apiVersion": "2018-05-01",
+            "name": "aksTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[resourceGroup().name]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/base/deploy-aks.json')]"
+                },
+                "parametersLink": {
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/',parameters('environmentParametersFolder'), '/deploy-aks.parameters.json')]",
+                    "contentVersion":"1.0.0.0"
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-05-01",
+            "name": "aksTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "[concat(resourceGroup().name, 'Dns')]",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/base/deploy-dns.json')]"
+                },
+                "parametersLink": {
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/',parameters('environmentParametersFolder'), '/deploy-dns.parameters.json')]",
+                    "contentVersion":"1.0.0.0"
+                }
+            }
+        }
+    ],
+    "outputs": {}
+}
