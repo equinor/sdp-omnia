@@ -2,12 +2,12 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "dnsZonesName": {
+        "dnsZoneName": {
             "type": "string"
         },
         "principalId": {
             "metadata": {
-                "description": "Client ID (used by cloudprovider)."
+                "description": "Object id of service principal."
             },
             "type": "string"
         }
@@ -16,7 +16,7 @@
         {
             "apiVersion": "2016-04-01",
             "type": "Microsoft.Network/dnsZones",
-            "name": "[parameters('dnsZonesName')]",
+            "name": "[parameters('dnsZoneName')]",
             "location": "global",
             "dependsOn": [],
             "tags": {},
@@ -25,13 +25,32 @@
         {
             "type": "Microsoft.Network/dnsZones/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[concat(parameters('dnsZonesName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('dnsZonesName'))))]",
+            "name": "[concat(parameters('dnsZoneName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('dnsZonesName'))))]",
             "dependsOn": [
-                "[parameters('dnsZonesName')]"
+                "[parameters('dnsZoneName')]"
             ],
             "properties": {
                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'befefa01-2a29-4197-83a8-272ff33ce314')]",
                 "principalId": "[parameters('principalId')]"
+            }
+        },
+        {
+            "type": "Microsoft.Network/dnszones/CAA",
+            "apiVersion": "2018-05-01",
+            "name": "[concat(parameters('dnsZoneName'), '/@')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/dnszones', parameters('dnsZoneName'))]"
+            ],
+            "properties": {
+                "TTL": 3600,
+                "caaRecords": [
+                    {
+                        "flags": 0,
+                        "tag": "issue",
+                        "value": "letsencrypt.org"
+                    }
+                ],
+                "targetResource": {}
             }
         }
     ]

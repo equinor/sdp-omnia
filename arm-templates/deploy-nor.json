@@ -15,15 +15,41 @@
             "metadata": {
                 "description": "The name of the parameters folder within git repo."
             }
+        },
+        "rgName": {
+            "type": "string",
+            "defaultValue": "sdpaksNor",
+            "metadata": {
+                "description": "The name of the resource group with the k8s cluster."
+            }
         }
     },
-    "variables": {},
+    "variables": {
+        "dnsRgName": "[concat(parameters('rgName'),'Dns')]"
+    },
     "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "norwayeast",
+            "name": "[parameters('rgName')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "norwayeast",
+            "name": "[variables('dnsRgName')]",
+            "properties": {}
+        },
         {
             "apiVersion": "2018-05-01",
             "name": "aksTemplate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[resourceGroup().name]",
+            "resourceGroup": "[parameters('rgName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', parameters('rgName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -40,7 +66,10 @@
             "apiVersion": "2018-05-01",
             "name": "aksTemplate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[concat(resourceGroup().name, 'Dns')]",
+            "resourceGroup": "[concat(parameters('rgName'), 'Dns')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('dnsRgName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {

@@ -8,13 +8,6 @@
                 "description": "The name of the Managed Cluster resource."
             }
         },
-        "location": {
-            "type": "string",
-            "defaultValue": "norwayeast",
-            "metadata": {
-                "description": "The location of AKS resource."
-            }
-        },
         "agentCount": {
             "type": "int",
             "defaultValue": 2,
@@ -56,7 +49,7 @@
             "apiVersion": "2019-08-01",
             "dependsOn": [],
             "type": "Microsoft.ContainerService/managedClusters",
-            "location": "[parameters('location')]",
+            "location": "[resourceGroup().location]",
             "name": "[parameters('resourceName')]",
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesVersion')]",
