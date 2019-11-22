@@ -36,5 +36,5 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          az deployment validate --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} ${{ env.PARAM1 }} --debug
-          az deployment create --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} ${{ env.PARAM1 }}
+          az deployment validate --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} --parameters ${{ env.PARAM1 }} --debug
+          az deployment create --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} --parameters ${{ env.PARAM1 }}
