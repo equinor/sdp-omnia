@@ -4,6 +4,12 @@
     "parameters": {
         "dnsZonesName": {
             "type": "string"
+        },
+        "principalId": {
+            "metadata": {
+                "description": "Client ID (used by cloudprovider)."
+            },
+            "type": "string"
         }
     },
     "resources": [
@@ -15,6 +21,18 @@
             "dependsOn": [],
             "tags": {},
             "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/dnsZones/providers/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[concat(parameters('dnsZonesName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('dnsZonesName'))))]",
+            "dependsOn": [
+                "[parameters('dnsZonesName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'befefa01-2a29-4197-83a8-272ff33ce314')]",
+                "principalId": "[parameters('principalId')]"
+            }
         }
     ]
 }
