@@ -5,14 +5,17 @@ on:
   push:
     branches:
       - master
-  schedule:
-  - cron: "20  * * *"
+      - develop
+    paths:
+    - 'arm-templates/*'
 
 env:
-  AZURE_WEBAPP_NAME: your-app-name    # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
-  NODE_VERSION: '10.x'                # set this to the node version to use
-  AZURE_CREDENTIALS: ''
+  LOCATION: 'norwayeast' 
+  ROOTPATH: 'arm-templates/'
+  FILE1: '${{ env.ROOTPATH }}/deploy-minio.json'
+  FILE2: '${{ env.ROOTPATH }}/deploy-psql.json'
+  PARAM1: '${{ env.ROOTPATH }}/deploy-minio.parameters.json'
+  PARAM2: '${{ env.ROOTPATH }}/deploy-psql.parameters.json'
 
 jobs:
   build-and-deploy:
@@ -23,15 +26,15 @@ jobs:
     - name: Azure Login
       uses: Azure/login@v1
       with:
-        # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+        # Paste output of `az ad sp create-for-rbac --scopes /subscriptions/<subId>/resourceGroups/<rgName1> /subscriptions/<subId>/resourceGroups/<rgNameN> --name Apply-ARMTemplate --role "Contributor"` as value of secret variable: AZURE_CREDENTIALS
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
         
-      # Validate, then deploy ARM templates
+    # Validate, then deploy ARM templates
     - name: Azure CLI script to validate
       uses: azure/CLI@v1
       with:
         azcliversion: latest
         inlineScript: |
-          az deployment validate --location norwayeast --template-file {template-file} --debug
-          az deployment create --location norwayeast
+          az deployment validate --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} ${{ env.PARAM1 }} --debug
+          az deployment create --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} ${{ env.PARAM1 }}
