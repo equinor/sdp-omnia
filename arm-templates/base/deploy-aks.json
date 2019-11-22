@@ -1,0 +1,98 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "resourceName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Managed Cluster resource."
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "norwayeast",
+            "metadata": {
+                "description": "The location of AKS resource."
+            }
+        },
+        "agentCount": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "The number of agent nodes for the cluster."
+            },
+            "minValue": 1,
+            "maxValue": 100
+        },
+        "agentVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_DS12_v2",
+            "metadata": {
+                "description": "The size of the Virtual Machine."
+            }
+        },
+        "servicePrincipalClientId": {
+            "metadata": {
+                "description": "Client ID (used by cloudprovider)."
+            },
+            "type": "securestring"
+        },
+        "servicePrincipalClientSecret": {
+            "metadata": {
+                "description": "The Service Principal Client Secret."
+            },
+            "type": "securestring"
+        },
+        "kubernetesVersion": {
+            "type": "string",
+            "defaultValue": "1.14.8",
+            "metadata": {
+                "description": "The version of Kubernetes."
+            }
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-08-01",
+            "dependsOn": [],
+            "type": "Microsoft.ContainerService/managedClusters",
+            "location": "[parameters('location')]",
+            "name": "[parameters('resourceName')]",
+            "properties": {
+                "kubernetesVersion": "[parameters('kubernetesVersion')]",
+                "enableRBAC": true,
+                "dnsPrefix": "[concat(parameters('resourceName'),'-dns')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "count": "[parameters('agentCount')]",
+                        "vmSize": "[parameters('agentVMSize')]",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "type": "VirtualMachineScaleSets"
+                    }
+                ],
+                "servicePrincipalProfile": {
+                    "ClientId": "[parameters('servicePrincipalClientId')]",
+                    "Secret": "[parameters('servicePrincipalClientSecret')]"
+                },
+                "networkProfile": {
+                    "loadBalancerSku": "standard",
+                    "networkPlugin": "kubenet"
+                },
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": false
+                    }
+                }
+            },
+            "tags": {}
+        }
+    ],
+    "outputs": {
+        "controlPlaneFQDN": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('resourceName'))).fqdn]"
+        }
+    }
+}
