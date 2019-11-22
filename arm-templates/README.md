@@ -5,6 +5,11 @@ If you are used to scripts and are sceptical, know this: Any administrative task
 
 A detailed intro to IaC on Azure can be found here https://github.com/starkfell/100DaysOfIaC
 
+## Set up
+
+In true GitOps fashion, arm templates should be synced regularly, and Dev and Prod should also be in sync.
+Put common values - e.g. default ARM-template in the /base folder. Put "diffs" - paramteter files in /development or /production folders. 
+
 ## Info and limitations
 
 Please note that ARM templates are not perfect. They do not contain state, for this you should use Terraform, which has its own limitations. Also, just as the CLI and portal, you cannot do illegal operations. E.g. decreasing the size of a VM in an AKS cluster "just because I can" in the arm-template. 
