@@ -3,6 +3,8 @@
 # It also configures the client to run kubectl commands on the cluster (.kube/config)
 # All variables should be defined in a file called ".env"
 
+az ad sp show --id http://sdpaksNorK8sSP-20191120161820 --query objectId -o tsv
+
 source .env
 set -e
 
@@ -18,43 +20,32 @@ echo
 echo " Logging you in to Azure if not already logged in"
 az account show > /dev/null || az login > /dev/null
 
+AZ_SUBSCRIPTION="SDP Tools"
+AZ_GROUP="sdpaksNor"
+
 # Set Azure-CLI config
 echo
 echo " Creating resource group ($AZ_GROUP)"
 az account set --subscription "$AZ_SUBSCRIPTION" > /dev/null
-az group create --name $AZ_GROUP --location $AZ_LOCATION > /dev/null
 az configure --defaults group=$AZ_GROUP > /dev/null
+
+
+# Create service principals and store the credentials in Azure Key Vault
+echo " Creating service principal for dns zone"
+SP_NAME="${AZ_GROUP}-dns-sp"
+SP_PASSWORD=$(az ad sp create-for-rbac --skip-assignment --name $SP_NAME --query password -o tsv)
+az keyvault secret set --name "$SP_NAME-password" --vault-name SDPVault --value $SP_PASSWORD
+SP_OBJECT_ID=$(az ad sp show --id http://$SP_NAME --query objectId -o tsv)
+az keyvault secret set --name "$SP_NAME-object-id" --vault-name SDPVault --value $SP_OBJECT_ID
+
+echo " Creating service principal for aks"
+SP_NAME="${AZ_GROUP}-aks-sp"
+SP_PASSWORD=$(az ad sp create-for-rbac --skip-assignment --name $SP_NAME --query password -o tsv)
+az keyvault secret set --name "$SP_NAME-password" --vault-name SDPVault --value $SP_PASSWORD
+SP_APP_ID=$(az ad sp show --id http://$SP_NAME --query appId -o tsv)
+az keyvault secret set --name "$SP_NAME-app-id" --vault-name SDPVault --value $SP_OBJECT_ID
 
 # Create the AKS cluster (https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough)
 echo
 echo " Creating Azure Kubernetes Service ($AZ_AKS_NAME)"
-az aks create --name $AZ_AKS_NAME --node-count $AZ_AKS_NODES --generate-ssh-keys --enable-addons monitoring --kubernetes-version $AZ_AKS_VERSION --node-vm-size $AZ_AKS_NODE_SIZE > /dev/null
-
-# Register the client in the kubernetes cluster and creates ~/.kube directory with keys and kubectl connection info
-echo
-echo " Getting Kubernetes cluster details"
-az aks get-credentials --name $AZ_AKS_NAME > /dev/null
-
-# Create the helm service account
-echo
-echo " Creating Helm Tiller service account"
-kubectl create -f manifests/tiller-service-account.yml > /dev/null || true
-
-# Deploys the helm service on the cluster
-echo
-echo " Initialising Helm"
-helm init --service-account tiller
-
-# Create a namespace for the infrastructure components
-echo
-echo " Creating infrastructure namespace"
-kubectl create -f manifests/infrastructure-namespaces.yml > /dev/null || true
-
-# User feedback
-echo
-echo " A Kubernetes cluster has been provisioned in Azure. The cluster ($AZ_AKS_NAME v$AZ_AKS_VERSION) has been"
-echo " created with $AZ_AKS_NODES nodes and installed with Helm/Tiller support. Proper rights to use Kubernetes Dashboard"
-echo " has also been provisioned and you can now access the dashboard with the following command:"
-echo "$ az aks browse --resource-group $AZ_GROUP --name $AZ_AKS_NAME"
-echo " or with"
-echo "$ ./dashboard.azcli"
+az deployment create --name "sdpaksNor" --location "norwayeast" --template-file deploy-nor.json --parameters @deploy-nor.parameters.json
