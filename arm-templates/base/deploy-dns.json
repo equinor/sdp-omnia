@@ -25,7 +25,7 @@
         {
             "type": "Microsoft.Network/dnsZones/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[concat(parameters('dnsZoneName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('dnsZonesName'))))]",
+            "name": "[concat(parameters('dnsZoneName'), '/Microsoft.Authorization/', guid(uniqueString(parameters('dnsZoneName'))))]",
             "dependsOn": [
                 "[parameters('dnsZoneName')]"
             ],
