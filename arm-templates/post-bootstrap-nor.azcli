@@ -1,13 +1,13 @@
 #!/bin/bash
-# Bootstrap script for setting up Flux repo in Helm and installing Flux in the Kubernetes cluster
-# This script is assumed to be run from repo root
-
-source .env
+# This script bootstraps a kubernetes cluster on Azure (AKS) with helm,
+# It also configures the client to run kubectl commands on the cluster (.kube/config)
+# All variables should be defined in a file called ".env"
 set -e
 
 # Check for prerequisites binaries
 echo
 echo " Check for neccesary executables"
+hash kubectl || { echo "Error: kubectl not found in PATH. Exiting..."; exit 1; }
 hash helm || { echo "Error: helm not found in PATH. Exiting..."; exit 1; }
 
 # Add flux repo to helm
@@ -28,12 +28,3 @@ helm upgrade --install flux \
     --namespace infrastructure \
     --set additionalArgs={--manifest-generation=true} \
     fluxcd/flux > /dev/null
-
-# User feedback
-echo
-echo " A Flux service has been provisioned in the cluster to follow the GitOps way of thinking."
-echo " At startup Flux generates a SSH key that should be added to git repository."
-echo " Wait for container to start before getting SSH-key with command:"
-echo "$ kubectl -n infrastructure logs deployment/flux | grep identity.pub | cut -d '\"' -f2"
-echo " You can then show the Flux logs (Close with Ctrl+C)"
-echo "$ kubectl -n infrastructure logs deployment/flux -f"

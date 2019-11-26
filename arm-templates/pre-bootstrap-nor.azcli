@@ -1,0 +1,53 @@
+#!/bin/bash
+# This script bootstraps a kubernetes cluster on Azure (AKS) with helm,
+# It also configures the client to run kubectl commands on the cluster (.kube/config)
+# All variables should be defined in a file called ".env"
+set -e
+
+# Check for prerequisites binaries
+echo
+echo " Check for neccesary executables"
+hash az || { echo "Error: Azure-CLI not found in PATH. Exiting...";  exit 1; }
+hash kubectl || { echo "Error: kubectl not found in PATH. Exiting..."; exit 1; }
+hash helm || { echo "Error: helm not found in PATH. Exiting..."; exit 1; }
+
+# Login to Azure if not already logged inn
+echo
+echo " Logging you in to Azure if not already logged in"
+az account show > /dev/null || az login > /dev/null
+
+AZ_SUBSCRIPTION="SDP Tools"
+AZ_GROUP="sdpaksNor"
+
+# Set Azure-CLI config
+echo
+echo " Setting default resource group resource group ($AZ_GROUP)"
+az account set --subscription "$AZ_SUBSCRIPTION" > /dev/null
+az configure --defaults group=$AZ_GROUP > /dev/null
+
+function service_principal_exist {
+    az ad sp show --id http://$1 --query objectId -o tsv;
+}
+
+# Create service principals and store the credentials in Azure Key Vault
+SP_NAME="${AZ_GROUP}-dns-sp"
+if ! service_principal_exist $SP_NAME; then
+    echo " Creating service principal for dns zone"
+    SP_PASSWORD=$(az ad sp create-for-rbac --skip-assignment --name $SP_NAME --query password -o tsv)
+    az keyvault secret set --name "$SP_NAME-password" --vault-name SDPVault --value $SP_PASSWORD > /dev/null
+    SP_OBJECT_ID=$(az ad sp show --id http://$SP_NAME --query objectId -o tsv)
+    az keyvault secret set --name "$SP_NAME-object-id" --vault-name SDPVault --value $SP_OBJECT_ID > /dev/null
+else
+    echo "Service principal for dns zone already exists..."
+fi
+
+echo " Creating service principal for aks"
+SP_NAME="${AZ_GROUP}-aks-sp"
+if ! service_principal_exist $SP_NAME; then
+    SP_PASSWORD=$(az ad sp create-for-rbac --skip-assignment --name $SP_NAME --query password -o tsv)
+    az keyvault secret set --name "$SP_NAME-password" --vault-name SDPVault --value $SP_PASSWORD > /dev/null
+    SP_APP_ID=$(az ad sp show --id http://$SP_NAME --query appId -o tsv)
+    az keyvault secret set --name "$SP_NAME-app-id" --vault-name SDPVault --value $SP_APP_ID > /dev/null
+else
+    echo "Service principal for aks already exists..."
+fi
