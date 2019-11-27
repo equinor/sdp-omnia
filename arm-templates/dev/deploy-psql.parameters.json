@@ -19,37 +19,10 @@
       }
     },
     "location": {
-      "value": "westeurope"
+      "value": "norwayeast"
     },
     "serverName": {
       "value": "gitlab-postgressql-v2"
-    },
-    "skuCapacity": {
-      "value": 2
-    },
-    "skuFamily": {
-      "value": "Gen5"
-    },
-    "skuName": {
-      "value": "GP_Gen5_2"
-    },
-    "skuSizeMB": {
-      "value": 36864
-    },
-    "skuTier": {
-      "value": "GeneralPurpose"
-    },
-    "version": {
-      "value": "9.6"
-    },
-    "backupRetentionDays": {
-      "value": 7
-    },
-    "geoRedundantBackup": {
-      "value": "Disabled"
-    },
-    "previewFeature": {
-      "value": ""
     },
     "tags": {
         "value": {

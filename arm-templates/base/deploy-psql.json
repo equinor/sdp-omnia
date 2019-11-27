@@ -14,41 +14,9 @@
     "serverName": {
       "type": "String"
     },
-    "skuCapacity": {
-      "type": "Int"
-    },
-    "skuFamily": {
-      "type": "String"
-    },
-    "skuName": {
-      "type": "String"
-    },
-    "skuSizeMB": {
-      "type": "Int"
-    },
-    "skuTier": {
-      "type": "String"
-    },
-    "version": {
-      "type": "String"
-    },
-    "backupRetentionDays": {
-      "type": "Int"
-    },
-    "geoRedundantBackup": {
-      "type": "String"
-    },
-    "previewFeature": {
-      "defaultValue": "",
-      "type": "String"
-    },
     "tags": {
       "defaultValue": {},
       "type": "Object"
-    },
-    "storageAutoGrow": {
-      "defaultValue": "Disabled",
-      "type": "String"
     }
   },
   "variables": {},
@@ -60,24 +28,24 @@
       "location": "[parameters('location')]",
       "tags": "[parameters('tags')]",
       "sku": {
-        "name": "[parameters('skuName')]",
-        "tier": "[parameters('skuTier')]",
-        "capacity": "[parameters('skuCapacity')]",
-        "size": "[parameters('skuSizeMB')]",
-        "family": "[parameters('skuFamily')]"
+        "name": "GP_Gen5_2",
+        "tier": "GeneralPurpose",
+        "capacity": 2,
+        "size": 36864,
+        "family": "Gen5"
       },
       "kind": "",
       "properties": {
-        "version": "[parameters('version')]",
+        "version": "9.6",
         "administratorLogin": "[parameters('administratorLogin')]",
         "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
         "storageProfile": {
-          "storageMB": "[parameters('skuSizeMB')]",
-          "backupRetentionDays": "[parameters('backupRetentionDays')]",
-          "geoRedundantBackup": "[parameters('geoRedundantBackup')]",
-          "storageAutoGrow": "[parameters('storageAutoGrow')]"
+          "storageMB": 36864,
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled",
+          "storageAutoGrow": "Disabled"
         },
-        "previewFeature": "[parameters('previewFeature')]"
+        "previewFeature": ""
       }
     }
   ]
