@@ -18,6 +18,12 @@
         },
         "secretName": "minioSecretKey"
       }
-    }
+    },
+    "webAppName": {
+      "value": "sdp-minio-prod"
+    },
+  "storageAccountName": {
+    "value": "sdpaksminioprod"
+  }
   }
 }

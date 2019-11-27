@@ -1,18 +1,14 @@
 ﻿{
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "storageAccountType": {
+  "parameters": 
+  
+    {
+    "webAppName": {
       "type": "string",
-      "defaultValue": "Standard_GRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Standard_ZRS",
-        "Premium_LRS"
-      ],
+      "defaultValue": "sdp-minio-prod",
       "metadata": {
-        "description": "Storage Account type"
+        "description": "Base name of the resource such as web app name and app service plan"
       }
     },
     "location": {
@@ -22,42 +18,8 @@
         "description": "Location for all resources."
       }
     },
-    "location2": {
-      "type": "string",
-      "defaultValue": "northeurope",
-      "metadata": {
-        "description": "Secondary location if location 1 is unavailable."
-      }
-    },
-    "webAppName": {
-      "type": "string",
-      "defaultValue": "sdp-minio-prod",
-      "metadata": {
-        "description": "Base name of the resource such as web app name and app service plan "
-      },
-      "minLength": 2
-    },
-    "sku": {
-      "type": "string",
-      "defaultValue": "S1",
-      "metadata": {
-        "description": "The SKU of App Service Plan "
-      }
-    },
-    "linuxFxVersion": {
-      "type": "string",
-      "defaultValue": "DOCKER|minio/minio",
-      "metadata": {
-        "description": "The Runtime stack of current web app"
-      }
-    },
-    "dockerRegistryUrl": {
-      "type": "String",
-      "defaultValue": "https://index.docker.io"
-    },
-    "dockerRegistryStartupCommand": {
-      "type": "String",
-      "defaultValue": "gateway azure"
+    "storageAccountName": {
+      "type": "string"
     },
     "minioAccessKey": {
       "type": "SecureString"
@@ -79,20 +41,19 @@
       ]
     }
   },
-    "variables": {
-      "storageAccountName": "sdpaksminioprod",
-      "webAppPortalName": "[concat(parameters('webAppName'), '-webapp')]",
-      "appServicePlanName": "[concat('AppServicePlan-', parameters('webAppName'))]"
-    },
+  "variables": {
+    "webAppPortalName": "[concat(parameters('webAppName'), '-webapp')]",
+    "appServicePlanName": "[concat('AppServicePlan-', parameters('webAppName'))]"
+  },
   "resources": [
     {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('storageAccountName')]",
+      "name": "[parameters('storageAccountName')]",
       "location": "[parameters('location')]",
       "comments": "Storage account for minio to save data to",
       "apiVersion": "2019-04-01",
       "sku": {
-        "name": "[parameters('storageAccountType')]"
+        "name": "Standard_GRS"
       },
       "kind": "StorageV2",
       "properties": {
@@ -100,12 +61,12 @@
       }
     },
     {
-      "name": "[concat(variables('storageAccountName'), '/default/', 'gitlab-', parameters('buckets')[copyIndex()], '-storage')]",
+      "name": "[concat(parameters('storageAccountName'), '/default/', 'gitlab-', parameters('buckets')[copyIndex()], '-storage')]",
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "comments": "Buckets under the selected storage account",
       "apiVersion": "2018-07-01",
       "dependsOn": [
-        "[variables('storageAccountName')]"
+        "[parameters('storageAccountName')]"
       ],
       "copy": {
         "name": "storagecopy",
@@ -116,10 +77,10 @@
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-02-01",
       "name": "[variables('appServicePlanName')]",
-      "location": "[parameters('location2')]",
+      "location": "[parameters('location')]",
       "comments": "App service plan required for the web app to run",
       "sku": {
-        "name": "[parameters('sku')]"
+        "name": "S1"
       },
       "kind": "linux",
       "properties": {
@@ -130,7 +91,7 @@
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
       "name": "[variables('webAppPortalName')]",
-      "location": "[parameters('location2')]",
+      "location": "[parameters('location')]",
       "comments": "Instance of minio",
       "kind": "app",
       "dependsOn": [
@@ -162,8 +123,8 @@
               "value": "30"
             }
           ],
-          "linuxFxVersion": "[parameters('linuxFxVersion')]",
-          "appCommandLine": "[parameters('dockerRegistryStartupCommand')]",
+          "linuxFxVersion": "DOCKER|minio/minio",
+          "appCommandLine": "gateway azure --compat",
           "alwaysOn": true
         }
       }
@@ -172,7 +133,7 @@
   "outputs": {
     "storageAccountName": {
       "type": "string",
-      "value": "[variables('storageAccountName')]"
+      "value": "[parameters('storageAccountName')]"
     },
     "webAppName": {
       "type": "string",
