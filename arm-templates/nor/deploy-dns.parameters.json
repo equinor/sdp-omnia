@@ -10,7 +10,7 @@
               "keyVault": {
                 "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s_infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
               },
-              "secretName": "sdpaksNor-dns-sp-object-id"
+              "secretName": "sdpaks-nor-dns-sp-object-id"
             }
         }
     }

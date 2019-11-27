@@ -2,30 +2,22 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "environmentBranch": {
+        "environment": {
             "type": "string",
-            "defaultValue": "aks-arm",
             "metadata": {
-                "description": "The name of the git branch to fetch templates from."
-            }
-        },
-        "environmentParametersFolder": {
-            "type": "string",
-            "defaultValue": "development",
-            "metadata": {
-                "description": "The name of the parameters folder within git repo."
+                "description": "The name of the environment."
             }
         },
         "rgName": {
             "type": "string",
-            "defaultValue": "sdpaksNor",
             "metadata": {
                 "description": "The name of the resource group with the k8s cluster."
             }
         }
     },
     "variables": {
-        "dnsRgName": "[concat(parameters('rgName'),'Dns')]"
+        "rgName": "[concat('sdpaks-', parameters('environment'))]",
+        "dnsRgName": "[concat(variables('rgName'),'-dns')]"
     },
     "resources": [
         {
@@ -54,10 +46,10 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/base/deploy-aks.json')]"
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/base/deploy-aks.json')]"
                 },
                 "parametersLink": {
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/',parameters('environmentParametersFolder'), '/deploy-aks.parameters.json')]",
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/',parameters('environment'), '/deploy-aks.parameters.json')]",
                     "contentVersion":"1.0.0.0"
                 }
             }
@@ -74,10 +66,10 @@
                 "mode": "Incremental",
                 "templateLink": {
                     "contentVersion": "1.0.0.0",
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/base/deploy-dns.json')]"
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/base/deploy-dns.json')]"
                 },
                 "parametersLink": {
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environmentBranch'), '/arm-templates/',parameters('environmentParametersFolder'), '/deploy-dns.parameters.json')]",
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/',parameters('environment'), '/deploy-dns.parameters.json')]",
                     "contentVersion":"1.0.0.0"
                 }
             }

@@ -3,14 +3,14 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "resourceName": {
-            "value": "sdpaksNorK8s"
+            "value": "sdpaks-dev-k8s"
         },
         "servicePrincipalClientId": {
             "reference": {
               "keyVault": {
                 "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s_infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
               },
-              "secretName": "sdpaksNor-aks-sp-app-id"
+              "secretName": "sdpaks-dev-aks-sp-app-id"
             }
         },
         "servicePrincipalClientSecret": {
@@ -18,7 +18,7 @@
               "keyVault": {
                 "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s_infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
               },
-              "secretName": "sdpaksNor-aks-sp-password"
+              "secretName": "sdpaks-dev-aks-sp-password"
             }
         }
     }
