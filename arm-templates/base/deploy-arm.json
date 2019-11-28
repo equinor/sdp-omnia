@@ -12,6 +12,7 @@
     "variables": {
         "rgName": "[concat('sdpaks-', parameters('environment'))]",
         "dnsRgName": "[concat(variables('rgName'),'-dns')]",
+        "gitlabRgName": "[concat(variables('rgName'),'-gitlab-storage')]",
         "location": "norwayeast"
     },
     "resources": [
@@ -27,6 +28,13 @@
             "apiVersion": "2018-05-01",
             "location": "[variables('location')]",
             "name": "[variables('dnsRgName')]",
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[variables('location')]",
+            "name": "[variables('gitlabRgName')]",
             "properties": {}
         },
         {
