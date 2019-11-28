@@ -20,10 +20,10 @@
       }
     },
     "webAppName": {
-      "value": "sdp-minio-prod"
+      "value": "sdpaks-minio-prod"
     },
-  "storageAccountName": {
-    "value": "sdpaksminioprod"
-  }
+    "storageAccountName": {
+      "value": "sdpaksminioprod"
+    }
   }
 }

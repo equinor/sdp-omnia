@@ -9,7 +9,8 @@
       "type": "SecureString"
     },
     "location": {
-      "type": "String"
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]"
     },
     "serverName": {
       "type": "String"

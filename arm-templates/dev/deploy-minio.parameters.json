@@ -20,7 +20,7 @@
       }
     },
     "webAppName": {
-      "value": "sdp-minio-dev"
+      "value": "sdpaks-minio-dev"
     },
     "storageAccountName": {
       "value": "sdpaksminiodev"

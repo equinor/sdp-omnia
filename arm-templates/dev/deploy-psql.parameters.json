@@ -22,12 +22,12 @@
       "value": "norwayeast"
     },
     "serverName": {
-      "value": "gitlab-postgressql-v2"
+      "value": "gitlab-postgressql-dev"
     },
     "tags": {
         "value": {
             "app": "gitlab",
-            "cluster": "prod"
+            "cluster": "dev"
         }
     }
   },
