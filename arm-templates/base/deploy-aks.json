@@ -2,12 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "clusterName": {
-            "type": "string",
-            "metadata": {
-                "description": "The name of the Managed Cluster resource."
-            }
-        },
         "servicePrincipalClientId": {
             "metadata": {
                 "description": "Client ID (used by cloudprovider)."
@@ -28,17 +22,20 @@
             }
         }
     },
+    "variables": {
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
+    },
     "resources": [
         {
             "apiVersion": "2019-08-01",
             "dependsOn": [],
             "type": "Microsoft.ContainerService/managedClusters",
             "location": "[resourceGroup().location]",
-            "name": "[parameters('clusterName')]",
+            "name": "[variables('clusterName')]",
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesVersion')]",
                 "enableRBAC": true,
-                "dnsPrefix": "[concat(parameters('clusterName'),'-dns')]",
+                "dnsPrefix": "[concat(variables('clusterName'),'-dns')]",
                 "agentPoolProfiles": [
                     {
                         "name": "agentpool",
@@ -69,7 +66,7 @@
     "outputs": {
         "controlPlaneFQDN": {
             "type": "string",
-            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', parameters('clusterName'))).fqdn]"
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', variables('clusterName'))).fqdn]"
         }
     }
 }
