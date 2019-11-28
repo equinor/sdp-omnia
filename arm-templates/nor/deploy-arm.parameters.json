@@ -4,9 +4,6 @@
     "parameters": {
         "environment": {
             "value": "nor"
-        },
-        "rgName": {
-            "value": "sdpaks-nor"
         }
     }
 }

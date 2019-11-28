@@ -11,20 +11,21 @@
     },
     "variables": {
         "rgName": "[concat('sdpaks-', parameters('environment'))]",
-        "dnsRgName": "[concat(variables('rgName'),'-dns')]"
+        "dnsRgName": "[concat(variables('rgName'),'-dns')]",
+        "location": "norwayeast"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
-            "location": "norwayeast",
+            "location": "[variables('location')]",
             "name": "[variables('rgName')]",
             "properties": {}
         },
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
-            "location": "norwayeast",
+            "location": "[variables('location')]",
             "name": "[variables('dnsRgName')]",
             "properties": {}
         },
