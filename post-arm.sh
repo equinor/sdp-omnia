@@ -87,7 +87,7 @@ helm upgrade --install flux \
     --namespace flux \
     --set rbac.create=true \
     --set helmOperator.create=true \
-    --set helmOperator.createCRD=false \
+    --set helmOperator.createCRD=true \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch=$FLUX_GITOPS_BRANCH \
     --set git.path=$FLUX_GITOPS_PATH \
