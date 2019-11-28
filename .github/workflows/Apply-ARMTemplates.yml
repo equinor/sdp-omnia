@@ -6,16 +6,14 @@ on:
     branches:
       - master
       - develop
+      - nor
     paths:
     - 'arm-templates/*'
 
 env:
   LOCATION: 'norwayeast' 
-  ROOTPATH: 'arm-templates/'
-  FILE1: '${{ env.ROOTPATH }}/deploy-minio.json'
-  FILE2: '${{ env.ROOTPATH }}/deploy-psql.json'
-  PARAM1: '${{ env.ROOTPATH }}/deploy-minio.parameters.json'
-  PARAM2: '${{ env.ROOTPATH }}/deploy-psql.parameters.json'
+  FILE1: 'https://github.com/equinor/sdp-aks/tree/${GITHUB_REF##*/}/arm-templates/base'
+  PARAM1: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
 
 jobs:
   build-and-deploy:
@@ -36,5 +34,5 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
-          az deployment validate --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} --parameters ${{ env.PARAM1 }} --debug
-          az deployment create --location ${{ env.LOCATION }} --template-file ${{ env.FILE1 }} --parameters ${{ env.PARAM1 }}
+          az deployment validate --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }} --debug
+          az deployment create --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }} --parameters  ${{ env.PARAM1 }}
