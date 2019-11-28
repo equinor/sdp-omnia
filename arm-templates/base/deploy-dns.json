@@ -35,6 +35,18 @@
             }
         },
         {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id)]",
+            "dependsOn": [
+                "[parameters('dnsZoneName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+                "principalId": "[parameters('principalId')]"
+            }
+        },
+        {
             "type": "Microsoft.Network/dnszones/CAA",
             "apiVersion": "2018-05-01",
             "name": "[concat(parameters('dnsZoneName'), '/@')]",

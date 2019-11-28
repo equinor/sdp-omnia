@@ -23,7 +23,7 @@ AZ_SUBSCRIPTION_ID=$(az account show --query "id"  -o tsv)
 AZ_TENANT_ID=$(az account show --query "tenantId"  -o tsv)
 AZ_DNS_SP_NAME="${AZ_GROUP}-dns-sp"
 AZ_DNS_SP_PASSWORD=$(az keyvault secret show --name "${AZ_DNS_SP_NAME}-password" --vault-name SDPVault --query value -o tsv)
-AZ_DNS_SP_ID=$(az ad sp show --id http://$AZ_DNS_SP_NAME --query appId -o tsv)
+AZ_DNS_SP_ID=$(az keyvault secret show --name "${AZ_DNS_SP_NAME}-app-id" --vault-name SDPVault --query value -o tsv)
 
 # Use custom configuration file
 echo
