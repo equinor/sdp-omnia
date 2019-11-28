@@ -35,6 +35,18 @@
             }
         },
         {
+            "type": "Microsoft.Network/dnsZones/providers/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[concat(parameters('dnsZoneName'), '/Microsoft.Authorization/', guid(parameters('dnsZoneName'),'4d97b98b-1d4f-4787-a291-c67834d212e7', parameters('principalId')))]",
+            "dependsOn": [
+                "[parameters('dnsZoneName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+                "principalId": "[parameters('principalId')]"
+            }
+        },
+        {
             "type": "Microsoft.Network/dnszones/CAA",
             "apiVersion": "2018-05-01",
             "name": "[concat(parameters('dnsZoneName'), '/@')]",
