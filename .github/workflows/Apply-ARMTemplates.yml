@@ -16,8 +16,6 @@ env:
   LOCATION: 'norwayeast' 
   FILE1: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json'
   PARAM1: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
-  REF: ${GITHUB_REF##*/}
-  REF2: ${GITHUB_REF}
 
 jobs:
   build-and-deploy:
@@ -29,8 +27,6 @@ jobs:
         # Paste output of `az ad sp create-for-rbac --name Apply-ARMTemplate --role "Contributor" --sdk-auth` as value of secret variable: AZURE_CREDENTIALS, add to Repo settings --> secrets
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - run: |
-          echo ${{ env.REF }}
-          echo ${{ env.REF2 }}
-          echo ${GITHUB_REF##*/}
-          az deployment validate --location ${{ env.LOCATION }} --template-uri https://raw.githubusercontent.com/equinor/sdp-aks/${{ env.REF }}/arm-templates/base/deploy-arm.json  --parameters https://raw.githubusercontent.com/equinor/sdp-aks/${{ env.REF }}/arm-templates/${{ env.REF }}/deploy-arm.parameters.json
-          az deployment create --location ${{ env.LOCATION }} --template-uri https://raw.githubusercontent.com/equinor/sdp-aks/${{ env.REF }}/arm-templates/base  --parameters  https://raw.githubusercontent.com/equinor/sdp-aks/${{ env.REF }}/arm-templates/${{ env.REF }}/deploy-arm.parameters.json
+          echo branchName ${{ env.REF }}
+          az deployment validate --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }} 
+          az deployment create --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }} 
