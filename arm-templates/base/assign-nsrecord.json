@@ -1,0 +1,54 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dnsZoneName": {
+            "type": "string"
+        },
+        "dnsZoneRg":{
+            "type": "string"
+        },
+        "environment": {
+            "type": "string"
+        },
+        "rootdnsZoneName": {
+            "type": "string",
+            "defaultValue": "sdpaks.equinor.com"
+        }
+    },
+    "resources": [
+        {
+        "type": "Microsoft.Network/dnszones/",
+        "apiVersion": "2018-05-01",
+        "name": "[parameters('rootdnsZoneName')]",
+        "location": "global",
+        "dependsOn": [
+            "[resourceId('Microsoft.Network/dnszones', parameters('rootdnsZoneName'))]"
+        ],
+
+            "properties": {
+                "TTL": 1297000,
+                "NSRecords": [
+                    {
+                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[0]]"
+                    },
+                    {
+                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[1]]"
+                    }, 
+                    {
+                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[2]]"
+                    },
+                    {
+                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[3]]"
+                    }
+                ]
+            }
+        }
+    ],
+    "outputs": {
+        "nameServers": {
+            "type": "array",
+                "value": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers]"
+        }
+    }
+}
