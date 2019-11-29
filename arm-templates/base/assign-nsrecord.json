@@ -8,24 +8,19 @@
         "dnsZoneRg":{
             "type": "string"
         },
-        "environment": {
+        "environment":{
             "type": "string"
-        },
-        "rootdnsZoneName": {
-            "type": "string",
-            "defaultValue": "sdpaks.equinor.com"
         }
+    },
+    "variables": {
+        "rootdnsZoneName": "sdpaks.equinor.com"
     },
     "resources": [
         {
-        "type": "Microsoft.Network/dnszones/",
+        "type": "Microsoft.Network/dnszones/NS",
         "apiVersion": "2018-05-01",
-        "name": "[parameters('rootdnsZoneName')]",
+        "name": "[concat(variables('rootdnsZoneName'), '/', parameters('environment'))]",
         "location": "global",
-        "dependsOn": [
-            "[resourceId('Microsoft.Network/dnszones', parameters('rootdnsZoneName'))]"
-        ],
-
             "properties": {
                 "TTL": 1297000,
                 "NSRecords": [
