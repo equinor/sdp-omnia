@@ -24,26 +24,8 @@
             "properties": {
                 "TTL": 1297000,
                 "NSRecords": [
-                    {
-                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[0]]"
-                    },
-                    {
-                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[1]]"
-                    }, 
-                    {
-                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[2]]"
-                    },
-                    {
-                        "nsdname": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers[3]]"
-                    }
                 ]
             }
         }
-    ],
-    "outputs": {
-        "nameServers": {
-            "type": "array",
-                "value": "[reference(resourceId(parameters('dnsZoneRg'), 'Microsoft.Network/dnszones/', parameters('dnsZoneName')), '2018-05-01').nameServers]"
-        }
-    }
+    ]
 }
