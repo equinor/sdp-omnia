@@ -53,20 +53,25 @@ az keyvault secret show --name "sealed-secrets-cert" --vault-name SDPVault --que
 kubectl create secret tls -n sealed-secrets sealed-secret-custom-key --cert=tmp.crt --key=tmp.key > /dev/null || true
 rm -f tmp.key tmp.crt
 
+function key_exists {
+  az keyvault secret show --name $1 --vault-name SDPVault > /dev/null
+}
+
 # Create ssh-key
 FLUX_KEY_NAME="${AZ_GROUP}-flux-key"
-FLUX_KEY="$(az keyvault secret show --name "$FLUX_KEY_NAME" --vault-name SDPVault --query value -o tsv)"
-# TODO: The script stops here when FLUX_KEY_NAME does not exist
-if [ $? -ne 0 ]; then
-    ssh-keygen -q -N "" -f ./identity
+if ! key_exists $FLUX_KEY_NAME; then
+    echo
+    echo " Creating flux ssh key"
+    ssh-keygen -q -N "" -C "flux@${ENVIRONMENT}.sdpaks.equinor.com" -f ./identity
     az keyvault secret set --vault-name SDPVault -n $FLUX_KEY_NAME -f './identity' > /dev/null
     echo
     echo "Add flux public key to flux git repo:"
     echo
     cat identity.pub
     rm -f identity identity.pub
-    FLUX_KEY="$(az keyvault secret show --name $FLUX_KEY_NAME --vault-name SDPVault --query value -o tsv)"
 fi
+
+FLUX_KEY="$(az keyvault secret show --name "$FLUX_KEY_NAME" --vault-name SDPVault --query value -o tsv)"
 
 kubectl -n flux create secret generic flux-ssh --from-literal=identity="$FLUX_KEY" > /dev/null || true
 
@@ -76,13 +81,13 @@ echo " Adding fluxcd/flux repository to Helm"
 helm repo add fluxcd https://fluxcd.github.io/flux > /dev/null
 
 # Install flux with helmoperator
-# echo
-# echo " Installing or upgrading Flux with Helm operator in the infrastructure namespace"
+echo
+echo " Installing or upgrading Flux with Helm operator in the infrastructure namespace"
 helm upgrade --install flux \
     --namespace flux \
     --set rbac.create=true \
     --set helmOperator.create=true \
-    --set helmOperator.createCRD=false \
+    --set helmOperator.createCRD=true \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch=$FLUX_GITOPS_BRANCH \
     --set git.path=$FLUX_GITOPS_PATH \
