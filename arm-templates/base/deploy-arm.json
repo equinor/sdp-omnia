@@ -59,7 +59,7 @@
         },
         {
             "apiVersion": "2018-05-01",
-            "name": "aksTemplate",
+            "name": "dnsTemplate",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('dnsRgName')]",
             "dependsOn": [
@@ -73,6 +73,23 @@
                 },
                 "parametersLink": {
                     "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/',parameters('environment'), '/deploy-dns.parameters.json')]",
+                    "contentVersion":"1.0.0.0"
+                }
+            }
+        },
+        {
+            "apiVersion": "2018-05-01",
+            "name": "nsrecordAssignmentTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "resourceGroup": "k8s_infrastructure",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "contentVersion": "1.0.0.0",
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/base/assign-nsrecord.json')]"
+                },
+                "parametersLink": {
+                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/',parameters('environment'), '/assign-nsrecord.parameters.json')]",
                     "contentVersion":"1.0.0.0"
                 }
             }
