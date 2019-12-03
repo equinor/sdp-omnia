@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "administratorLogin": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
+        },
+        "secretName": "psql-username"
+      }
+    },
+    "administratorLoginPassword": {
+      "reference": {
+        "keyVault": {
+          "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
+        },
+        "secretName": "psql-pw"
+      }
+    },
+    "serverName": {
+      "value": "gitlab-postgressql-nor"
+    },
+    "tags": {
+        "value": {
+            "app": "gitlab",
+            "cluster": "nor"
+        }
+    }
+  }
+  }

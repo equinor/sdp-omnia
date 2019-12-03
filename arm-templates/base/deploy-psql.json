@@ -8,10 +8,6 @@
     "administratorLoginPassword": {
       "type": "SecureString"
     },
-    "location": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]"
-    },
     "serverName": {
       "type": "String"
     },
@@ -20,13 +16,12 @@
       "type": "Object"
     }
   },
-  "variables": {},
   "resources": [
     {
       "type": "Microsoft.DBforPostgreSQL/servers",
       "apiVersion": "2017-12-01-preview",
       "name": "[parameters('serverName')]",
-      "location": "[parameters('location')]",
+      "location": "[resourceGroup().location]",
       "tags": "[parameters('tags')]",
       "sku": {
         "name": "GP_Gen5_2",
