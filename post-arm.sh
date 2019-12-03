@@ -1,4 +1,8 @@
 #!/bin/bash
+source .env
+
+# Ensure correct cluster config
+az aks get-credentials -g "sdpaks-${ENVIRONMENT}"  -n "sdpaks-${ENVIRONMENT}-k8s"
 
 # Create the helm service account
 echo
@@ -41,7 +45,7 @@ EOF
 # Create a secret so that external-dns can connect to the DNS zone
 echo
 echo " Creating Kubernetes secret (infrastructure/azure-dns-config-file) from azure.json file"
-kubectl create secret generic azure-dns-config-file --from-file=azure.json --namespace external-dns > /dev/null || true
+kubectl create secret generic azure-dns-config-file --from-file=azure.json -n external-dns --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 rm -f azure.json
 
 #
@@ -50,7 +54,7 @@ rm -f azure.json
 
 az keyvault secret show --name "sealed-secrets-key" --vault-name SDPVault --query value -o tsv > tmp.key
 az keyvault secret show --name "sealed-secrets-cert" --vault-name SDPVault --query value -o tsv > tmp.crt
-kubectl create secret tls -n sealed-secrets sealed-secret-custom-key --cert=tmp.crt --key=tmp.key > /dev/null || true
+kubectl create secret tls -n sealed-secrets sealed-secret-custom-key --cert=tmp.crt --key=tmp.key --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 rm -f tmp.key tmp.crt
 
 function key_exists {
@@ -62,7 +66,7 @@ FLUX_KEY_NAME="${AZ_GROUP}-flux-key"
 if ! key_exists $FLUX_KEY_NAME; then
     echo
     echo " Creating flux ssh key"
-    ssh-keygen -q -N "" -C "flux@${ENVIRONMENT}.sdpaks.equinor.com" -f ./identity
+    ssh-keygen -q -N "" -C "flux@${PREFIX}sdpaks.equinor.com" -f ./identity
     az keyvault secret set --vault-name SDPVault -n $FLUX_KEY_NAME -f './identity' > /dev/null
     echo
     echo "Add flux public key to flux git repo:"
@@ -73,7 +77,7 @@ fi
 
 FLUX_KEY="$(az keyvault secret show --name "$FLUX_KEY_NAME" --vault-name SDPVault --query value -o tsv)"
 
-kubectl -n flux create secret generic flux-ssh --from-literal=identity="$FLUX_KEY" > /dev/null || true
+kubectl -n flux create secret generic flux-ssh --from-literal=identity="$FLUX_KEY" --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 
 # Add flux repo to helm
 echo
@@ -82,7 +86,7 @@ helm repo add fluxcd https://fluxcd.github.io/flux > /dev/null
 
 # Install flux with helmoperator
 echo
-echo " Installing or upgrading Flux with Helm operator in the infrastructure namespace"
+echo " Installing or upgrading Flux with Helm operator in the flux namespace"
 helm upgrade --install flux \
     --namespace flux \
     --set rbac.create=true \
