@@ -8,6 +8,17 @@ source .env
 function service_principal_exist {
     az ad sp show --id http://$1 --query objectId -o tsv > /dev/null 2>&1
 }
+function keyvault_secret_exist {
+    az keyvault secret show --vault-name SDPVault -n $1 --query value -o tsv > /dev/null 2>&1
+}
+
+if ! keyvault_secret_exist "$AZ_GROUP-psql-username" || ! keyvault_secret_exist "$AZ_GROUP-psql-password"; then
+    echo " PSQL account details for $ENVIRONMENT cluster does not exist, creating it.."
+    az keyvault secret set --name "$AZ_GROUP-psql-username" --vault-name SDPVault --value $PSQL_USERNAME > /dev/null
+    az keyvault secret set --name "$AZ_GROUP-psql-password" --vault-name SDPVault --value $PSQL_PASSWORD > /dev/null
+else
+    echo " PSQL account details already exists..."
+fi
 
 # Create service principals and store the credentials in Azure Key Vault
 SP_NAME="${AZ_GROUP}-dns-sp"
