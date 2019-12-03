@@ -10,9 +10,9 @@
         }
     },
     "variables": {
-        "rgName": "[concat('sdpaks-', parameters('environment'))]",
-        "dnsRgName": "[concat(variables('rgName'),'-dns')]",
-        "gitlabRgName": "[concat(variables('rgName'),'-gitlab-storage')]",
+        "aksRgName": "[concat('sdpaks-', parameters('environment'))]",
+        "dnsRgName": "[concat(variables('aksRgName'),'-dns')]",
+        "gitlabRgName": "[concat(variables('aksRgName'),'-gitlab-storage')]",
         "location": "norwayeast"
     },
     "resources": [
@@ -20,7 +20,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[variables('location')]",
-            "name": "[variables('rgName')]",
+            "name": "[variables('aksRgName')]",
             "properties": {}
         },
         {
@@ -41,9 +41,9 @@
             "apiVersion": "2018-05-01",
             "name": "aksTemplate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('rgName')]",
+            "resourceGroup": "[variables('aksRgName')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/resourceGroups/', variables('rgName'))]"
+                "[variables('aksRgName')]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -63,7 +63,7 @@
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "[variables('dnsRgName')]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/resourceGroups/', variables('dnsRgName'))]"
+                "[variables('dnsRgName')]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -82,6 +82,9 @@
             "name": "nsrecordAssignmentTemplate",
             "type": "Microsoft.Resources/deployments",
             "resourceGroup": "k8s-infrastructure",
+            "dependsOn": [
+                "dnsTemplate"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
