@@ -7,7 +7,7 @@
         "keyVault": {
           "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
         },
-        "secretName": "psql-username"
+        "secretName": "sdpaks-nor-psql-username"
       }
     },
     "administratorLoginPassword": {
@@ -15,7 +15,7 @@
         "keyVault": {
           "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
         },
-        "secretName": "psql-pw"
+        "secretName": "sdpaks-nor-psql-password"
       }
     },
     "serverName": {
