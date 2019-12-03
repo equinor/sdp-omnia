@@ -20,15 +20,30 @@
             "metadata": {
                 "description": "The version of Kubernetes."
             }
+        },
+        "vnetPrefix": {
+            "type": "string",
+            "defaultValue": "10.0.0.0/8"
+        },
+        "defaultSubnetPrefix": {
+            "type": "string",
+            "defaultValue": "10.240.0.0/16"
+        },
+        "aciSubnetPrefix": {
+            "type": "string",
+            "defaultValue": "10.241.0.0/16"
         }
     },
     "variables": {
-        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]",
+        "vnetName": "[concat(resourceGroup().name, '-vnet')]"
     },
     "resources": [
         {
             "apiVersion": "2019-08-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[variables('vnetName')]"
+            ],
             "type": "Microsoft.ContainerService/managedClusters",
             "location": "[resourceGroup().location]",
             "name": "[variables('clusterName')]",
@@ -61,6 +76,59 @@
                 }
             },
             "tags": {}
+        },
+        {
+            "apiVersion": "2019-04-01",
+            "name": "[variables('vnetName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "norwayeast",
+            "properties": {
+                "subnets": [
+                    {
+                        "name": "default",
+                        "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/sdpaks-nor/providers/Microsoft.Network/virtualNetworks/sdpaks-nor-vnet/subnets/default",
+                        "properties": {
+                            "addressPrefix": "[parameters('defaultSubnetPrefix')]"
+                        }
+                    },
+                    {
+                        "name": "virtual-node-aci",
+                        "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/sdpaks-nor/providers/Microsoft.Network/virtualNetworks/sdpaks-nor-vnet/subnets/virtual-node-aci",
+                        "properties": {
+                            "addressPrefix": "[parameters('aciSubnetPrefix')]",
+                            "delegations": [
+                                {
+                                    "name": "aciDelegation",
+                                    "properties": {
+                                        "serviceName": "Microsoft.ContainerInstance/containerGroups",
+                                        "actions": [
+                                            "Microsoft.Network/virtualNetworks/subnets/action"
+                                        ]
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetPrefix')]"
+                    ]
+                }
+            },
+            "tags": {}
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+            "apiVersion": "2017-05-01",
+            "name": "[concat(variables('vnetName'),'/Microsoft.Authorization/', variables('clusterName') ,'/roleAssignment')]",
+            "dependsOn": [
+                "[variables('vnetName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+                "principalId": "[parameters('servicePrincipalClientId')]"
+            }
         }
     ],
     "outputs": {
