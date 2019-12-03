@@ -5,7 +5,7 @@
         "environment": {
             "type": "string",
             "metadata": {
-                "description": "The name of the environment."
+                "description": "The name of the environment. E.g. 'dev' "
             }
         }
     },
@@ -13,90 +13,65 @@
         "aksRgName": "[concat('sdpaks-', parameters('environment'))]",
         "dnsRgName": "[concat(variables('aksRgName'),'-dns')]",
         "gitlabRgName": "[concat(variables('aksRgName'),'-gitlab-storage')]",
-        "location": "norwayeast"
+        "location": "norwayeast",
+
+        "templateBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/base/')]",
+        "parametersBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/', parameters('environment'), '/')]",
+        "commonTemplateUrl": "[concat(variables('templateBaseUrl'), 'deploy-arm.json')]",
+        "commonParametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-arm.parameters.json')]",
+
+        "linkedTemplates": [
+            {
+                "name": "aksTemplate",
+                "rgName": "[variables('aksRgName')]",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-aks.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-aks.parameters.json')]"
+            },
+            {
+                "name": "dnsTemplate",
+                "rgName": "[variables('dnsRgName')]",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-dns.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-dns.parameters.json')]"
+            },
+            {
+                "name": "nsrecordTemplate",
+                "rgName": "k8s-infrastructure",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-nsrecord.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
+            }
+        ]
     },
     "resources": [
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[variables('location')]",
-            "name": "[variables('aksRgName')]",
-            "properties": {}
-        },
-        {
-            "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2018-05-01",
-            "location": "[variables('location')]",
-            "name": "[variables('dnsRgName')]",
-            "properties": {}
-        },
-        {
-            "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2018-05-01",
-            "location": "[variables('location')]",
-            "name": "[variables('gitlabRgName')]",
-            "properties": {}
-        },
-        {
-            "apiVersion": "2018-05-01",
-            "name": "aksTemplate",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('aksRgName')]",
-            "dependsOn": [
-                "[variables('aksRgName')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/base/deploy-aks.json')]"
-                },
-                "parametersLink": {
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/',parameters('environment'), '/deploy-aks.parameters.json')]",
-                    "contentVersion":"1.0.0.0"
-                }
+            "name": "[variables('linkedTemplates')[copyIndex()].name]",
+            "copy": {
+                "name": "rgCopy",
+                "count": "[length(variables('linkedTemplates'))]"
             }
         },
         {
-            "apiVersion": "2018-05-01",
-            "name": "dnsTemplate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "[variables('dnsRgName')]",
-            "dependsOn": [
-                "[variables('dnsRgName')]"
-            ],
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[variables('linkedTemplates')[copyIndex()].rgName]",
+            "name": "[concat('nestedTemplate-', variables('linkedTemplates')[copyIndex()].name)]",
+            "copy": {
+                "name": "templateCopy",
+                "count": "[length(variables('linkedTemplates'))]"
+            },
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/base/deploy-dns.json')]"
+                    "uri": "[variables('linkedTemplates')[copyIndex()].templateUrl]",
+                    "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/',parameters('environment'), '/deploy-dns.parameters.json')]",
-                    "contentVersion":"1.0.0.0"
-                }
-            }
-        },
-        {
-            "apiVersion": "2018-05-01",
-            "name": "nsrecordAssignmentTemplate",
-            "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "k8s-infrastructure",
-            "dependsOn": [
-                "dnsTemplate"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "contentVersion": "1.0.0.0",
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/base/assign-nsrecord.json')]"
-                },
-                "parametersLink": {
-                    "uri": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/',parameters('environment'), '/arm-templates/',parameters('environment'), '/assign-nsrecord.parameters.json')]",
+                    "uri": "[variables('linkedTemplates')[copyIndex()].parametersUrl]",
                     "contentVersion":"1.0.0.0"
                 }
             }
         }
-    ],
-    "outputs": {}
+    ]
 }
