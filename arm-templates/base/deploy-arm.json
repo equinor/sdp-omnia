@@ -81,7 +81,7 @@
             "apiVersion": "2018-05-01",
             "name": "nsrecordAssignmentTemplate",
             "type": "Microsoft.Resources/deployments",
-            "resourceGroup": "k8s_infrastructure",
+            "resourceGroup": "k8s-infrastructure",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
