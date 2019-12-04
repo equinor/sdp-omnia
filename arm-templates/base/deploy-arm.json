@@ -50,7 +50,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[variables('location')]",
-            "name": "[variables('linkedTemplates')[copyIndex()].name]",
+            "name": "[variables('linkedTemplates')[copyIndex()].rgName]",
             "copy": {
                 "name": "rgCopy",
                 "count": "[length(variables('linkedTemplates'))]"
@@ -65,6 +65,9 @@
                 "name": "templateCopy",
                 "count": "[length(variables('linkedTemplates'))]"
             },
+            "dependsOn": [
+                "[variables('linkedTemplates')[copyIndex()].rgName]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
