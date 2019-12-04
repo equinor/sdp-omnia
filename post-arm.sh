@@ -1,8 +1,9 @@
 #!/bin/bash
 source .env
 
-# Ensure correct cluster config
-az aks get-credentials -g "sdpaks-${ENVIRONMENT}"  -n "sdpaks-${ENVIRONMENT}-k8s"
+# Ensure correct cluster context
+az account set --subscription "${AZ_SUBSCRIPTION}"
+az aks get-credentials -g "${AZ_GROUP}"  -n "${AZ_GROUP}-k8s" --overwrite-existing
 
 # Create the helm service account
 echo
@@ -18,16 +19,20 @@ echo
 echo " Creating namespaces"
 kubectl create -f manifests/namespaces.yaml > /dev/null || true
 
-#
-# Create external dns secret
-#
-
-# Fetch Azure ID's
+# Fetch Azure ID's from Keyvault (Created in pre-arm.sh)
 AZ_SUBSCRIPTION_ID=$(az account show --query "id"  -o tsv)
 AZ_TENANT_ID=$(az account show --query "tenantId"  -o tsv)
 AZ_DNS_SP_NAME="${AZ_GROUP}-dns-sp"
 AZ_DNS_SP_PASSWORD=$(az keyvault secret show --name "${AZ_DNS_SP_NAME}-password" --vault-name SDPVault --query value -o tsv)
 AZ_DNS_SP_ID=$(az keyvault secret show --name "${AZ_DNS_SP_NAME}-app-id" --vault-name SDPVault --query value -o tsv)
+AZ_BACKUP_SP_NAME="sdpaks-common-velero-sp"
+AZ_BACKUP_SP_PASSWORD=$(az keyvault secret show --name "${AZ_BACKUP_SP_NAME}-password" --vault-name SDPVault --query value -o tsv)
+AZ_BACKUP_SP_ID=$(az keyvault secret show --name "${AZ_BACKUP_SP_NAME}-app-id" --vault-name SDPVault --query value -o tsv)
+AZ_CLUSTER_GROUP=$(az aks show --resource-group $AZ_GROUP --name "${AZ_GROUP}-k8s" --query nodeResourceGroup -o tsv)
+
+#
+# Create external dns secret
+#
 
 # Use custom configuration file
 echo
@@ -98,3 +103,21 @@ helm upgrade --install flux \
     --set additionalArgs={--manifest-generation=true} \
     --set git.secretName="flux-ssh" \
     fluxcd/flux > /dev/null
+
+# Create cluster secret for velero
+
+echo
+echo " Generating velero credentials..."
+
+cat << EOF > cloud
+AZURE_SUBSCRIPTION_ID=${AZ_SUBSCRIPTION_ID}
+AZURE_TENANT_ID=${AZ_TENANT_ID} 
+AZURE_CLIENT_ID=${AZ_BACKUP_SP_ID} 
+AZURE_CLIENT_SECRET=${AZ_BACKUP_SP_PASSWORD} 
+AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} 
+EOF
+
+kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+rm -f azure.json & rm -f cloud
+
+echo " Script completed."

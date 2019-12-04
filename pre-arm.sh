@@ -47,6 +47,18 @@ else
     echo " Service principal for aks already exists..."
 fi
 
+SP_NAME="sdpaks-common-velero-sp"
+echo
+if ! service_principal_exist $SP_NAME; then
+    echo " Service principal $SP_NAME does not exist, creating it.."
+    SP_PASSWORD=$(az ad sp create-for-rbac --skip-assignment --name $SP_NAME --query password -o tsv)
+    az keyvault secret set --name "$SP_NAME-password" --vault-name SDPVault --value $SP_PASSWORD > /dev/null
+    SP_APP_ID=$(az ad sp show --id http://$SP_NAME --query appId -o tsv)
+    az keyvault secret set --name "$SP_NAME-app-id" --vault-name SDPVault --value $SP_APP_ID > /dev/null
+else
+    echo " Service principal for aks already exists..."
+fi
+
 echo
 echo " If the ARM deployment fails with 'service principal does not exist' run the script again.."
 
