@@ -17,18 +17,6 @@
               },
               "secretName": "sdpaks-nor-aks-sp-password"
             }
-        },
-        "kubernetesVersion": {
-          "value": "1.14.8"
-        },
-        "vnetPrefix": {
-          "value": "12.0.0.0/8"
-        },
-        "defaultSubnetPrefix": {
-          "value": "12.240.0.0/16"
-        },
-        "aciSubnetPrefix": {
-          "value": "12.241.0.0/16"
         }
     }
 }
