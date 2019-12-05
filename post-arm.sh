@@ -49,7 +49,7 @@ EOF
 
 # Create a secret so that external-dns can connect to the DNS zone
 echo
-echo " Creating Kubernetes secret (infrastructure/azure-dns-config-file) from azure.json file"
+echo " Creating Kubernetes secret (external-dns/azure-dns-config-file) from azure.json file"
 kubectl create secret generic azure-dns-config-file --from-file=azure.json -n external-dns --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 rm -f azure.json
 
@@ -67,20 +67,22 @@ function key_exists {
 }
 
 # Create ssh-key
-FLUX_KEY_NAME="${AZ_GROUP}-flux-key"
-if ! key_exists $FLUX_KEY_NAME; then
+FLUX_PRIVATE_KEY="${AZ_GROUP}-flux-private-key"
+if ! key_exists $FLUX_PRIVATE_KEY; then
     echo
     echo " Creating flux ssh key"
     ssh-keygen -q -N "" -C "flux@${PREFIX}sdpaks.equinor.com" -f ./identity
-    az keyvault secret set --vault-name SDPVault -n $FLUX_KEY_NAME -f './identity' > /dev/null
+    az keyvault secret set --vault-name SDPVault -n $FLUX_PRIVATE_KEY -f './identity' > /dev/null
     echo
-    echo "Add flux public key to flux git repo:"
+    echo "Add this flux public key to flux git repo:"
     echo
     cat identity.pub
+    az keyvault secret set --vault-name SDPVault -n "${AZ_GROUP}-flux-public-key" -f './identity.pub' > /dev/null
     rm -f identity identity.pub
 fi
 
-FLUX_KEY="$(az keyvault secret show --name "$FLUX_KEY_NAME" --vault-name SDPVault --query value -o tsv)"
+echo " Creating flux secret"
+FLUX_KEY="$(az keyvault secret show --name "$FLUX_PRIVATE_KEY" --vault-name SDPVault --query value -o tsv)"
 
 kubectl -n flux create secret generic flux-ssh --from-literal=identity="$FLUX_KEY" --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 
@@ -111,10 +113,10 @@ echo " Generating velero credentials..."
 
 cat << EOF > cloud
 AZURE_SUBSCRIPTION_ID=${AZ_SUBSCRIPTION_ID}
-AZURE_TENANT_ID=${AZ_TENANT_ID} 
-AZURE_CLIENT_ID=${AZ_BACKUP_SP_ID} 
-AZURE_CLIENT_SECRET=${AZ_BACKUP_SP_PASSWORD} 
-AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} 
+AZURE_TENANT_ID=${AZ_TENANT_ID}
+AZURE_CLIENT_ID=${AZ_BACKUP_SP_ID}
+AZURE_CLIENT_SECRET=${AZ_BACKUP_SP_PASSWORD}
+AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP}
 EOF
 
 kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run -o yaml | kubectl apply -f - > /dev/null || true
