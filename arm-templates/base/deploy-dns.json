@@ -12,6 +12,10 @@
             "type": "string"
         }
     },
+    "variables":{
+        "dnsZoneContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+        "reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'befefa01-2a29-4197-83a8-272ff33ce314')]"
+    },
     "resources": [
         {
             "apiVersion": "2016-04-01",
@@ -30,7 +34,7 @@
                 "[parameters('dnsZoneName')]"
             ],
             "properties": {
-                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'befefa01-2a29-4197-83a8-272ff33ce314')]",
+                "roleDefinitionId": "[variables('dnsZoneContributor')]",
                 "principalId": "[parameters('principalId')]"
             }
         },
@@ -42,7 +46,7 @@
                 "[parameters('dnsZoneName')]"
             ],
             "properties": {
-                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+                "roleDefinitionId": "[variables('reader')]",
                 "principalId": "[parameters('principalId')]"
             }
         },

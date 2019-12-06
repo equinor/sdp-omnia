@@ -5,7 +5,6 @@
     {
     "webAppName": {
       "type": "string",
-      "defaultValue": "sdpaks-minio-prod",
       "metadata": {
         "description": "Base name of the resource such as web app name and app service plan"
       }
