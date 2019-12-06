@@ -17,9 +17,6 @@
               },
               "secretName": "sdpaks-dev-aks-sp-password"
             }
-        },
-        "kubernetesVersion": {
-          "value": "1.14.8"
         }
     }
 }
