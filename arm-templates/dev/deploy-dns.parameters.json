@@ -3,14 +3,14 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "dnsZoneName": {
-            "value": "nor.sdpaks.equinor.com"
+            "value": "dev.sdpaks.equinor.com"
         },
         "principalId": {
             "reference": {
               "keyVault": {
                 "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
               },
-              "secretName": "sdpaks-nor-dns-sp-object-id"
+              "secretName": "sdpaks-dev-dns-sp-object-id"
             }
         }
     }
