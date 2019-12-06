@@ -19,10 +19,10 @@
         }
       },
       "webAppName": {
-        "value": "sdpaks-minio-nor"
+        "value": "sdpaks-nor-minio"
       },
       "storageAccountName": {
-        "value": "sdpaksminionor"
+        "value": "sdpaksnorminio"
       }
     }
 }

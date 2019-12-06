@@ -19,13 +19,13 @@
       }
     },
     "serverName": {
-      "value": "gitlab-postgressql-dev"
+      "value": "sdpaks-dev-gitlab-psql"
     },
     "tags": {
         "value": {
             "app": "gitlab",
             "cluster": "dev"
         }
-    }
-  }
+      } 
+   }
   }

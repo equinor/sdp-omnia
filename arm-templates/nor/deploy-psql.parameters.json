@@ -19,7 +19,7 @@
       }
     },
     "serverName": {
-      "value": "gitlab-postgressql-nor"
+      "value": "sdpaks-nor-gitlab-psql"
     },
     "tags": {
         "value": {

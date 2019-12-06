@@ -7,7 +7,7 @@
         "keyVault": {
           "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
         },
-        "secretName": "psql-username"
+        "secretName": "sdpaks-prod-psql-username"
       }
     },
     "administratorLoginPassword": {
@@ -15,51 +15,17 @@
         "keyVault": {
           "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
         },
-        "secretName": "psql-pw"
+        "secretName": "sdpaks-prod-psql-password"
       }
     },
-    "location": {
-      "value": "westeurope"
-    },
     "serverName": {
-      "value": "gitlab-postgressql-v2"
-    },
-    "skuCapacity": {
-      "value": 2
-    },
-    "skuFamily": {
-      "value": "Gen5"
-    },
-    "skuName": {
-      "value": "GP_Gen5_2"
-    },
-    "skuSizeMB": {
-      "value": 36864
-    },
-    "skuTier": {
-      "value": "GeneralPurpose"
-    },
-    "version": {
-      "value": "9.6"
-    },
-    "backupRetentionDays": {
-      "value": 7
-    },
-    "geoRedundantBackup": {
-      "value": "Disabled"
-    },
-    "previewFeature": {
-      "value": ""
+      "value": "sdpaks-prod-gitlab-psql"
     },
     "tags": {
-        "value": {
-            "app": "gitlab",
-            "cluster": "prod"
-        }
-    }
-  },
-    "storageAutoGrow": {
-      "defaultValue": "Enabled",
-        "value":  "Enabled"
+      "value": {
+          "app": "gitlab",
+          "cluster": "prod"
+      }
     }
   }
+}
