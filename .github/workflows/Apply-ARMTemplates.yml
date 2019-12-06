@@ -6,7 +6,6 @@ on:
     branches:
       - master
       - dev
-      - nor
     paths:
     - 'arm-templates/*'
     - 'arm-templates/*/*'
