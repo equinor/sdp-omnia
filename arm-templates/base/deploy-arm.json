@@ -42,6 +42,12 @@
                 "rgName": "k8s-infrastructure",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-nsrecord.json')]",
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
+            },
+            {
+                "name": "storageTemplate",
+                "rgName": "sdpaks-common-storage",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-storage.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-storage.parameters.json')]"
             }
         ]
     },
