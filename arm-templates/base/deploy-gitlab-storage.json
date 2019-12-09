@@ -77,7 +77,7 @@
       "comments": "Storage account for minio to save data to",
       "apiVersion": "2019-04-01",
       "sku": {
-        "name": "Standard_ZRS"
+        "name": "Standard_LRS"
       },
       "kind": "StorageV2",
       "properties": {
