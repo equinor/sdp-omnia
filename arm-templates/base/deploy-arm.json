@@ -56,7 +56,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[variables('location')]",
-            "name": "[union(variables('linkedTemplates')[copyIndex()].rgName, variables('linkedTemplates')[copyIndex()].rgName)]",
+            "name": "[variables('linkedTemplates')[copyIndex()].rgName]",
             "copy": {
                 "name": "rgCopy",
                 "count": "[length(variables('linkedTemplates'))]"
@@ -86,11 +86,5 @@
                 }
             }
         }
-    ],
-    "outputs":{
-            "union": {
-            "type": "array",
-            "value": "[union(variables('linkedTemplates')[copyIndex()].rgName, variables('linkedTemplates')[copyIndex()].rgName)]"
-        }
-    }
+    ]
 }
