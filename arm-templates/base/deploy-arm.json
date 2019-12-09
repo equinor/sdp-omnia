@@ -26,12 +26,6 @@
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-aks.parameters.json')]"
             },
             {
-                "name": "psqlTemplate",
-                "rgName": "[concat(variables('rootRgName'),'-gitlab-storage')]",
-                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-psql.json')]",
-                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-psql.parameters.json')]"
-            },
-            {
                 "name": "dnsTemplate",
                 "rgName": "[concat(variables('rootRgName'),'-dns')]",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-dns.json')]",
@@ -42,6 +36,18 @@
                 "rgName": "k8s-infrastructure",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-nsrecord.json')]",
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
+            },
+            {
+                "name": "minioTemplate",
+                "rgName": "[concat(variables('rootRgName'),'-gitlab-storage')]",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-minio.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-minio.parameters.json')]"
+            },
+            {
+                "name": "psqlTemplate",
+                "rgName": "[concat(variables('rootRgName'),'-gitlab-storage')]",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-psql.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-psql.parameters.json')]"
             },
             {
                 "name": "storageTemplate",

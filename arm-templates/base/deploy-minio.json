@@ -3,20 +3,8 @@
   "contentVersion": "1.0.0.0",
   "parameters": 
     {
-    "webAppName": {
-      "type": "string",
-      "metadata": {
-        "description": "Base name of the resource such as web app name and app service plan"
-      }
-    },
     "storageAccountName": {
       "type": "string"
-    },
-    "minioAccessKey": {
-      "type": "SecureString"
-    },
-    "minioSecretKey": {
-      "type": "SecureString"
     },
     "buckets": {
       "type": "array",
@@ -30,11 +18,16 @@
         "tmp",
         "uploads"
       ]
+    },
+    "principalId": {
+    "metadata": {
+        "description": "Object id of service principal."
+    },
+    "type": "string"
     }
   },
   "variables": {
-    "webAppPortalName": "[concat(parameters('webAppName'), '-webapp')]",
-    "appServicePlanName": "[concat('AppServicePlan-', parameters('webAppName'))]"
+     "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]" 
   },
   "resources": [
     {
@@ -44,7 +37,7 @@
       "comments": "Storage account for minio to save data to",
       "apiVersion": "2019-04-01",
       "sku": {
-        "name": "Standard_GRS"
+        "name": "Standard_ZRS"
       },
       "kind": "StorageV2",
       "properties": {
@@ -65,74 +58,22 @@
       }
     },
     {
-      "type": "Microsoft.Web/serverfarms",
-      "apiVersion": "2018-02-01",
-      "name": "[variables('appServicePlanName')]",
-      "location": "[resourceGroup().location]",
-      "comments": "App service plan required for the web app to run",
-      "sku": {
-        "name": "S1"
-      },
-      "kind": "linux",
-      "properties": {
-        "reserved": true
-      }
-    },
-    {
-      "type": "Microsoft.Web/sites",
-      "apiVersion": "2018-11-01",
-      "name": "[variables('webAppPortalName')]",
-      "location": "[resourceGroup().location]",
-      "comments": "Instance of minio",
-      "kind": "app",
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2018-09-01-preview",
+      "name": "[guid(resourceGroup().id)]",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]"
+          "[parameters('storageAccountName')]"
       ],
       "properties": {
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('appServicePlanName'))]",
-        "httpsOnly": true,
-        "siteConfig": {
-          "appSettings": [
-            {
-              "name": "DOCKER_REGISTRY_SERVER_URL",
-              "value": "https://index.docker.io"
-            },
-            {
-              "name": "MINIO_ACCESS_KEY",
-              "value": "[parameters('minioAccessKey')]"
-            },
-            {
-              "name": "MINIO_SECRET_KEY",
-              "value": "[parameters('minioSecretKey')]"
-            },
-            {
-              "name": "PORT",
-              "value": "9000"
-            },
-            {
-              "name": "WEBSITE_HTTPLOGGING_RETENTION_DAYS",
-              "value": "30"
-            }
-          ],
-          "linuxFxVersion": "DOCKER|minio/minio",
-          "appCommandLine": "gateway azure --compat",
-          "alwaysOn": true
+          "roleDefinitionId": "[variables('contributor')]",
+          "principalId": "[parameters('principalId')]"
         }
-      }
     }
   ],
   "outputs": {
     "storageAccountName": {
       "type": "string",
       "value": "[parameters('storageAccountName')]"
-    },
-    "webAppName": {
-      "type": "string",
-      "value": "[variables('webAppPortalName')]"
-    },
-    "appPlanName": {
-      "type": "string",
-      "value": "[variables('appServicePlanName')]"
     }
   }
 }
