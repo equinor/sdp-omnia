@@ -6,6 +6,19 @@
     "storageAccountName": {
       "type": "string"
     },
+    "administratorLogin": {
+      "type": "String"
+    },
+    "administratorLoginPassword": {
+      "type": "SecureString"
+    },
+    "dbName": {
+      "type": "String"
+    },
+    "tags": {
+      "defaultValue": {},
+      "type": "Object"
+    },
     "buckets": {
       "type": "array",
       "defaultValue": [
@@ -30,6 +43,33 @@
      "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]" 
   },
   "resources": [
+    {
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "apiVersion": "2017-12-01-preview",
+      "name": "[parameters('dbName')]",
+      "location": "[resourceGroup().location]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "GP_Gen5_2",
+        "tier": "GeneralPurpose",
+        "capacity": 2,
+        "size": 36864,
+        "family": "Gen5"
+      },
+      "kind": "",
+      "properties": {
+        "version": "9.6",
+        "administratorLogin": "[parameters('administratorLogin')]",
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "storageProfile": {
+          "storageMB": 36864,
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled",
+          "storageAutoGrow": "Disabled"
+        },
+        "previewFeature": ""
+      }
+    },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[parameters('storageAccountName')]",
@@ -74,6 +114,10 @@
     "storageAccountName": {
       "type": "string",
       "value": "[parameters('storageAccountName')]"
+    },
+    "postgresDbName":{
+      "type": "string",
+      "value": "[parameters('dbName')]"
     }
   }
 }

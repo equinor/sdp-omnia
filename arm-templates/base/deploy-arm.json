@@ -38,16 +38,10 @@
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
             },
             {
-                "name": "minioTemplate",
+                "name": "gitlabStorageTemplate",
                 "rgName": "[concat(variables('rootRgName'),'-gitlab-storage')]",
-                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-minio.json')]",
-                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-minio.parameters.json')]"
-            },
-            {
-                "name": "psqlTemplate",
-                "rgName": "[concat(variables('rootRgName'),'-gitlab-storage')]",
-                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-psql.json')]",
-                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-psql.parameters.json')]"
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-gitlab-storage.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-gitlab-storage.parameters.json')]"
             },
             {
                 "name": "storageTemplate",
@@ -62,7 +56,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[variables('location')]",
-            "name": "[variables('linkedTemplates')[copyIndex()].rgName]",
+            "name": "[union(variables('linkedTemplates')[copyIndex()].rgName, variables('linkedTemplates')[copyIndex()].rgName)]",
             "copy": {
                 "name": "rgCopy",
                 "count": "[length(variables('linkedTemplates'))]"
@@ -92,5 +86,11 @@
                 }
             }
         }
-    ]
+    ],
+    "outputs":{
+            "union": {
+            "type": "array",
+            "value": "[union(variables('linkedTemplates')[copyIndex()].rgName, variables('linkedTemplates')[copyIndex()].rgName)]"
+        }
+    }
 }
