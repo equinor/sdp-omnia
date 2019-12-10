@@ -29,6 +29,8 @@ AZ_BACKUP_SP_NAME="sdpaks-common-velero-sp"
 AZ_BACKUP_SP_PASSWORD=$(az keyvault secret show --name "${AZ_BACKUP_SP_NAME}-password" --vault-name SDPVault --query value -o tsv)
 AZ_BACKUP_SP_ID=$(az keyvault secret show --name "${AZ_BACKUP_SP_NAME}-app-id" --vault-name SDPVault --query value -o tsv)
 AZ_CLUSTER_GROUP=$(az aks show --resource-group $AZ_GROUP --name "${AZ_GROUP}-k8s" --query nodeResourceGroup -o tsv)
+POSTGRES_USERNAME=$(az keyvault secret show --name "${AZ_GROUP}-psql-username" --vault-name SDPVault --query value -o tsv)
+POSTGRES_PASSWORD=$(az keyvault secret show --name "${AZ_GROUP}-psql-password" --vault-name SDPVault --query value -o tsv)
 
 #
 # Create external dns secret
@@ -106,7 +108,7 @@ helm upgrade --install flux \
     --set git.secretName="flux-ssh" \
     fluxcd/flux > /dev/null
 
-# Create cluster secret for velero
+# Create cluster secret for velero - two format types needed due to bug with azure provider
 
 echo
 echo " Generating velero credentials..."
@@ -129,11 +131,18 @@ kubectl create secret generic velero-credentials \
     --from-literal AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} > /dev/null
 
 kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run -o yaml | kubectl apply -f - > /dev/null || true
-rm -f azure.json  & rm -f cloud
 
-# Create secret for minio to connect to storage account
+# Create secret for gitlab to connect to postgresSQL
 echo
-echo " Generating secret for gitlab-minio..."
+echo " Generating secret for gitlab - external postgres.."
+kubectl create secret generic gitlab-postgres-secret \
+    --namespace gitlab \
+    --from-literal accesskey=${POSTGRES_USERNAME} \
+    --from-literal secretkey=${POSTGRES_PASSWORD} > /dev/null
+
+# Create secrets for minio to connect to storage account (multiple needed)
+echo
+echo " Generating secrets for gitlab-minio..."
 
 MINIO_STORAGE_NAME="sdpaks${ENVIRONMENT}minio"
 MINIO_SECRET_KEY=$(az storage account keys list --resource-group sdpaks-"${ENVIRONMENT}"-gitlab-storage --account-name "$MINIO_STORAGE_NAME"  --query [0].value -o tsv)
@@ -142,5 +151,44 @@ kubectl create secret generic gitlab-minio-secret \
     --namespace gitlab \
     --from-literal accesskey=${MINIO_STORAGE_NAME} \
     --from-literal secretkey=${MINIO_SECRET_KEY} > /dev/null
+
+cat << EOF > connection
+provider: AWS
+region: us-east-1
+aws_access_key_id: "$MINIO_STORAGE_NAME"
+aws_secret_access_key: "$MINIO_SECRET_KEY"
+aws_signature_version: 4
+host: gitlab-minio
+endpoint: gitlab-minio
+path_style: true
+EOF
+
+kubectl create secret generic gitlab-rails-storage --from-file=connection -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+
+cat << EOF > config
+azure:
+  accountname: "$MINIO_STORAGE_NAME"
+  accountkey: "$MINIO_SECRET_KEY"
+  container: gitlab-registry-storage
+EOF
+
+kubectl create secret generic registry-storage --from-file=config -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+
+cat << EOF > config
+[default]
+host_base = gitlab-minio
+host_bucket = gitlab-minio
+# Leave as default
+bucket_location = us-east-1
+use_https = True
+access_key =  "$MINIO_STORAGE_NAME"
+secret_key = "$MINIO_SECRET_KEY"
+
+signature_v2 = False
+EOF
+
+kubectl create secret generic backup-storage-config --from-file=config -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+
+rm -f connection & rm -f azure.json  & rm -f cloud & rm -f config
 
 echo " Script completed."
