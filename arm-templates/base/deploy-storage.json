@@ -12,30 +12,30 @@
     "variables": {
         "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
         "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
-        "aksManagedClusterId": "[resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName'))]"
+        "aksManagedClusterId": "[resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName'))]",
+        "storageAccountName": "sdpaks-common-backup",
+        "buckets": {
+            "defaultValue": [
+                "velero-prod",
+                "velero-dev"
+            ]
+        }
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
-            "name": "sdpaksbackup",
-            "location": "norwayeast",
-            "comments": "Common storage account for sdpaks",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "Common backup storage account for sdpaks",
             "sku": {
-                "name": "Standard_GRS",
+                "name": "Standard_LRS",
                 "tier": "Standard"
                 },
             "kind": "StorageV2",
             "properties": {
                 "networkAcls": {
                     "bypass": "None",
-                    "virtualNetworkRules": [
-                        {
-                            "id": "[reference(variables('aksManagedClusterId')).properties.agentPoolProfiles[0].vnetSubnetID]",
-                            "action": "Allow",
-                            "state": "Succeeded"
-                            }
-                        ],
                     "defaultAction": "Deny"
                 },
                 "supportsHttpsTrafficOnly": true,
@@ -55,6 +55,19 @@
             "tags": {
                 "cost": "backup",
                 "cluster": "common"
+            }
+        },
+        {
+            "name": "[concat(variables('storageAccountName'), '/default/', variables('buckets')[copyIndex()])]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "comments": "Buckets under the selected storage account",
+            "apiVersion": "2018-07-01",
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ],
+            "copy": {
+                "name": "storagecopy",
+                "count": "[length(variables('buckets'))]"
             }
         }
     ]
