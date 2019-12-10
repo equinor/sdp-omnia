@@ -131,4 +131,16 @@ kubectl create secret generic velero-credentials \
 kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 rm -f azure.json  & rm -f cloud
 
+# Create secret for minio to connect to storage account
+echo
+echo " Generating secret for gitlab-minio..."
+
+MINIO_STORAGE_NAME="sdpaks${ENVIRONMENT}minio"
+MINIO_SECRET_KEY=$(az storage account keys list --resource-group sdpaks-"${ENVIRONMENT}"-gitlab-storage --account-name "$MINIO_STORAGE_NAME"  --query [0].value -o tsv)
+
+kubectl create secret generic gitlab-minio-secret \
+    --namespace gitlab \
+    --from-literal accesskey=${MINIO_STORAGE_NAME} \
+    --from-literal secretkey=${MINIO_SECRET_KEY} > /dev/null
+
 echo " Script completed."
