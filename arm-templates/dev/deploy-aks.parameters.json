@@ -17,6 +17,23 @@
               },
               "secretName": "sdpaks-dev-aks-sp-password"
             }
-        }
+        },
+        "servicePrincipalObjectId": {
+          "reference": {
+            "keyVault": {
+              "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
+            },
+            "secretName": "sdpaks-dev-aks-sp-object-id"
+          }
+        },
+        "vnetName": {
+          "value": "sdpaks-dev-vnet"
+       },
+      "subnetRange":{
+        "value": "11.240.0.0/16"
+      },
+      "vnetRange":{
+        "value": "11.0.0.0/8"
+      }
     }
 }
