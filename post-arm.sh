@@ -137,8 +137,8 @@ echo
 echo " Generating secret for gitlab - external postgres.."
 kubectl create secret generic gitlab-postgres-secret \
     --namespace gitlab \
-    --from-literal accesskey=${POSTGRES_USERNAME} \
-    --from-literal secretkey=${POSTGRES_PASSWORD} > /dev/null
+    --from-literal username=${POSTGRES_USERNAME} \
+    --from-literal password=${POSTGRES_PASSWORD} > /dev/null
 
 # Create secrets for minio to connect to storage account (multiple needed)
 echo
