@@ -96,7 +96,7 @@ helm repo add fluxcd https://fluxcd.github.io/flux > /dev/null
 # Install flux with helmoperator
 echo
 echo " Installing or upgrading Flux with Helm operator in the flux namespace"
-helm upgrade --install flux \
+helm upgrade --install flux --version v0.16.0 \
     --namespace flux \
     --set rbac.create=true \
     --set helmOperator.create=true \
@@ -104,8 +104,8 @@ helm upgrade --install flux \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch=$FLUX_GITOPS_BRANCH \
     --set git.path=$FLUX_GITOPS_PATH \
-    --set additionalArgs={--manifest-generation=true} \
     --set git.secretName="flux-ssh" \
+    --set manifestGeneration=true \
     fluxcd/flux > /dev/null
 
 # Create cluster secret for velero - two format types needed due to bug with azure provider
