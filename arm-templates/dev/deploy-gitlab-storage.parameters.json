@@ -32,6 +32,9 @@
   "dbName": {
     "value": "sdpaks-dev-gitlab-psql"
   },
+  "environment": {
+    "value": "dev"
+  },
   "tags": {
       "value": {
           "app": "gitlab",

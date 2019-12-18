@@ -32,6 +32,9 @@
         "uploads"
       ]
     },
+    "environment":{
+      "type":"string"
+    },
     "principalId": {
     "metadata": {
         "description": "Object id of service principal."
@@ -40,7 +43,9 @@
     }
   },
   "variables": {
-     "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]" 
+     "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+      "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
+      "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]"
   },
   "resources": [
     {
@@ -77,11 +82,22 @@
       "comments": "Storage account for minio to save data to",
       "apiVersion": "2019-04-01",
       "sku": {
-        "name": "Standard_LRS"
+        "name": "Standard_LRS",
+        "tier": "Standard"
       },
       "kind": "StorageV2",
       "properties": {
-        "accessTier": "Hot"
+        "accessTier": "Hot",
+        "networkAcls": {
+          "bypass": "None",
+          "defaultAction": "Deny"
+          },
+          "virtualNetworkRules": [
+           {
+              "id": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]",
+              "action": "Allow"
+           }
+        ]
       }
     },
     {

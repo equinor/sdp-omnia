@@ -7,19 +7,20 @@
             "metadata": {
                 "description": "The name of the environment. E.g. 'dev' "
             }
-        }
+        },
+    "buckets": {
+      "type": "array",
+      "defaultValue": [
+        "prod",
+        "dev"
+      ]
+    }
     },
     "variables": {
         "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
         "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
         "aksManagedClusterId": "[resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName'))]",
-        "storageAccountName": "sdpaks-common-backup",
-        "buckets": {
-            "defaultValue": [
-                "velero-prod",
-                "velero-dev"
-            ]
-        }
+        "storageAccountName": "sdpakscommonbackup"
     },
     "resources": [
         {
@@ -38,6 +39,12 @@
                     "bypass": "None",
                     "defaultAction": "Deny"
                 },
+                "virtualNetworkRules": [
+                    {
+                        "id": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]",
+                        "action": "Allow"
+                        }
+                ],
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "services": {
@@ -58,7 +65,7 @@
             }
         },
         {
-            "name": "[concat(variables('storageAccountName'), '/default/', variables('buckets')[copyIndex()])]",
+            "name": "[concat(variables('storageAccountName'), '/default/', 'velero-', parameters('buckets')[copyIndex()], '-storage')]",
             "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
             "comments": "Buckets under the selected storage account",
             "apiVersion": "2018-07-01",
@@ -67,7 +74,7 @@
             ],
             "copy": {
                 "name": "storagecopy",
-                "count": "[length(variables('buckets'))]"
+                "count": "[length(parameters('buckets'))]"
             }
         }
     ]
