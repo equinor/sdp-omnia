@@ -116,7 +116,7 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2018-09-01-preview",
-      "name": "[guid(resourceGroup().id)]",
+      "name": "[concat(guid(resourceGroup().id, parameters('principalId')))]",
       "dependsOn": [
           "[parameters('storageAccountName')]"
       ],

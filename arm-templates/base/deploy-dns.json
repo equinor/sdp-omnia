@@ -43,7 +43,8 @@
             "apiVersion": "2018-09-01-preview",
             "name": "[guid(resourceGroup().id)]",
             "dependsOn": [
-                "[parameters('dnsZoneName')]"
+                "[parameters('dnsZoneName')]",
+                "[concat(guid(resourceGroup().id, parameters('principalId')))]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('reader')]",
