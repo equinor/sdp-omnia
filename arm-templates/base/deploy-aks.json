@@ -94,7 +94,8 @@
                         "osType": "Linux",
                         "storageProfile": "ManagedDisks",
                         "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]",
-                        "type": "VirtualMachineScaleSets"
+                        "type": "VirtualMachineScaleSets",
+                        "maxPods": 250
                     }
                 ],
                 "servicePrincipalProfile": {
@@ -102,8 +103,10 @@
                     "Secret": "[parameters('servicePrincipalClientSecret')]"
                 },
                 "networkProfile": {
-                    "loadBalancerSku": "standard",
-                    "networkPlugin": "kubenet"
+                    "networkPlugin": "azure",
+                    "serviceCidr": "10.101.0.0/16",
+                    "dnsServiceIP": "10.101.0.10",
+                    "dockerBridgeCidr": "172.17.0.1/16"
                 },
                 "addonProfiles": {
                     "httpApplicationRouting": {

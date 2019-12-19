@@ -30,10 +30,10 @@
           "value": "sdpaks-dev-vnet"
        },
       "subnetRange":{
-        "value": "11.240.0.0/16"
+        "value": "10.100.0.0/16"
       },
       "vnetRange":{
-        "value": "11.0.0.0/8"
+        "value": "10.100.0.0/16"
       }
     }
 }
