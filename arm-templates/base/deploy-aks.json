@@ -154,7 +154,7 @@
         },
         "vnetSubnetId2": {
             "type": "string",
-            "value": "[reference(resourceId('sdpaks-dev','Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
+            "value": "[reference(resourceId(resourceGroup().name,'Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
         }
     }
 }

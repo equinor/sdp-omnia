@@ -77,5 +77,11 @@
                 "count": "[length(parameters('buckets'))]"
             }
         }
-    ]
+    ],
+"outputs": {
+    "vnetSubnetId": {
+      "type": "string",
+      "value": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
+    }
+  }
 }

@@ -29,7 +29,7 @@
         {
             "type": "Microsoft.Network/dnsZones/providers/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[concat(parameters('dnsZoneName'), '/Microsoft.Authorization/', guid(parameters('dnsZoneName'), parameters('principalId')))]",
+            "name": "[concat(parameters('dnsZoneName'), '/Microsoft.Authorization/', guid(parameters('dnsZoneName'), parameters('principalId'),variables('dnsZoneContributor')))]",
             "dependsOn": [
                 "[parameters('dnsZoneName')]"
             ],
@@ -41,10 +41,9 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[guid(resourceGroup().id)]",
+            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('dnsZoneContributor'))]",
             "dependsOn": [
-                "[parameters('dnsZoneName')]",
-                "[concat(guid(resourceGroup().id, parameters('principalId')))]"
+                "[parameters('dnsZoneName')]"
             ],
             "properties": {
                 "roleDefinitionId": "[variables('reader')]",

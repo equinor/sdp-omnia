@@ -116,7 +116,7 @@
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2018-09-01-preview",
-      "name": "[concat(guid(resourceGroup().id, parameters('principalId')))]",
+      "name": "[guid(resourceGroup().id, parameters('principalId'), variables('contributor'))]",
       "dependsOn": [
           "[parameters('storageAccountName')]"
       ],
@@ -134,6 +134,10 @@
     "postgresDbName":{
       "type": "string",
       "value": "[parameters('dbName')]"
+    },
+    "vnetSubnetId": {
+      "type": "string",
+      "value": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
     }
   }
 }
