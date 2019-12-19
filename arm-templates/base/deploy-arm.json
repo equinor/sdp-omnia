@@ -18,24 +18,20 @@
         "commonTemplateUrl": "[concat(variables('templateBaseUrl'), 'deploy-arm.json')]",
         "commonParametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-arm.parameters.json')]",
 
-        "linkedTemplates": [
+        "templateLoop1": [
             {
                 "name": "aksTemplate",
                 "rgName": "[variables('rootRgName')]",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-aks.json')]",
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-aks.parameters.json')]"
-            },
+            }
+        ],
+        "templateLoop2": [
             {
                 "name": "dnsTemplate",
                 "rgName": "[concat(variables('rootRgName'),'-dns')]",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-dns.json')]",
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-dns.parameters.json')]"
-            },
-            {
-                "name": "nsrecordTemplate",
-                "rgName": "k8s-infrastructure",
-                "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-nsrecord.json')]",
-                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
             },
             {
                 "name": "gitlabStorageTemplate",
@@ -49,6 +45,14 @@
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-storage.json')]",
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-storage.parameters.json')]"
             }
+        ],
+        "templateLoop3": [
+                {
+                "name": "nsrecordTemplate",
+                "rgName": "k8s-infrastructure",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-nsrecord.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
+            }
         ]
     },
     "resources": [
@@ -56,32 +60,100 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[variables('location')]",
-            "name": "[variables('linkedTemplates')[copyIndex()].rgName]",
+            "name": "[variables('templateLoop1')[copyIndex()].rgName]",
             "copy": {
-                "name": "rgCopy",
-                "count": "[length(variables('linkedTemplates'))]"
+                "name": "rgCopy1",
+                "count": "[length(variables('templateLoop1'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[variables('location')]",
+            "name": "[variables('templateLoop2')[copyIndex()].rgName]",
+            "copy": {
+                "name": "rgCopy2",
+                "count": "[length(variables('templateLoop2'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[variables('location')]",
+            "name": "[variables('templateLoop3')[copyIndex()].rgName]",
+            "copy": {
+                "name": "rgCopy3",
+                "count": "[length(variables('templateLoop3'))]"
             }
         },
         {
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2018-05-01",
-            "resourceGroup": "[variables('linkedTemplates')[copyIndex()].rgName]",
-            "name": "[concat('nestedTemplate-', variables('linkedTemplates')[copyIndex()].name)]",
+            "resourceGroup": "[variables('templateLoop1')[copyIndex()].rgName]",
+            "name": "[concat('nestedTemplate-', variables('templateLoop1')[copyIndex()].name)]",
             "copy": {
                 "name": "templateCopy",
-                "count": "[length(variables('linkedTemplates'))]"
+                "count": "[length(variables('templateLoop1'))]"
             },
             "dependsOn": [
-                "rgCopy"
+                "rgCopy1"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('linkedTemplates')[copyIndex()].templateUrl]",
+                    "uri": "[variables('templateLoop1')[copyIndex()].templateUrl]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parametersLink": {
-                    "uri": "[variables('linkedTemplates')[copyIndex()].parametersUrl]",
+                    "uri": "[variables('templateLoop1')[copyIndex()].parametersUrl]",
+                    "contentVersion":"1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[variables('templateLoop2')[copyIndex()].rgName]",
+            "name": "[concat('nestedTemplate-', variables('templateLoop2')[copyIndex()].name)]",
+            "copy": {
+                "name": "templateCopy",
+                "count": "[length(variables('templateLoop2'))]"
+            },
+            "dependsOn": [
+                "rgCopy2"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('templateLoop2')[copyIndex()].templateUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('templateLoop2')[copyIndex()].parametersUrl]",
+                    "contentVersion":"1.0.0.0"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "resourceGroup": "[variables('templateLoop3')[copyIndex()].rgName]",
+            "name": "[concat('nestedTemplate-', variables('templateLoop3')[copyIndex()].name)]",
+            "copy": {
+                "name": "templateCopy",
+                "count": "[length(variables('templateLoop3'))]"
+            },
+            "dependsOn": [
+                "rgCopy1"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('templateLoop3')[copyIndex()].templateUrl]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parametersLink": {
+                    "uri": "[variables('templateLoop3')[copyIndex()].parametersUrl]",
                     "contentVersion":"1.0.0.0"
                 }
             }
