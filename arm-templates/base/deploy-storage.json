@@ -14,14 +14,21 @@
         "prod",
         "dev"
       ]
-    }
+    },
+    "principalId": {
+        "metadata": {
+            "description": "Object id of service principal."
+        },
+        "type": "string"
+        }
     },
     "variables": {
         "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
         "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
         "aksManagedClusterId": "[resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName'))]",
         "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]",
-        "storageAccountName": "sdpakscommonbackup"
+        "storageAccountName": "sdpakscommonbackup",
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
     },
     "resources": [
         {
@@ -65,6 +72,18 @@
             "copy": {
                 "name": "storagecopy",
                 "count": "[length(parameters('buckets'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('contributor'))]",
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('contributor')]",
+                "principalId": "[parameters('principalId')]"
             }
         }
     ],

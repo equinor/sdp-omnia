@@ -52,6 +52,12 @@
                 "rgName": "k8s-infrastructure",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-nsrecord.json')]",
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
+            },
+                {
+                "name": "aksRoleassignntTemplate",
+                "rgName": "[concat('MC_', variables('rootRgName'), '_', variables('rootRgName'), '-k8s_norwayeast')]",
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-aksroleassignment.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-aksroleassignment.parameters.json')]"
             }
         ]
     },
