@@ -20,6 +20,7 @@
         "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
         "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
         "aksManagedClusterId": "[resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName'))]",
+        "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]",
         "storageAccountName": "sdpakscommonbackup"
     },
     "resources": [
@@ -37,26 +38,15 @@
             "properties": {
                 "networkAcls": {
                     "bypass": "None",
-                    "defaultAction": "Deny"
-                },
+                    "defaultAction": "Deny",
                 "virtualNetworkRules": [
                     {
-                        "id": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]",
+                        "id": "[variables('vnetSubnetId')]",
                         "action": "Allow"
                         }
-                ],
+                    ]
+                },
                 "supportsHttpsTrafficOnly": true,
-                "encryption": {
-                    "services": {
-                        "file": {
-                            "enabled": true
-                            },
-                        "blob": {
-                            "enabled": true
-                            }
-                        },
-                    "keySource": "Microsoft.Storage"
-                    },
                 "accessTier": "Cool"
             },
             "tags": {
