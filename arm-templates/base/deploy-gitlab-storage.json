@@ -45,7 +45,8 @@
   "variables": {
      "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
       "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
-      "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]"
+      "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
+      "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]"
   },
   "resources": [
     {
@@ -76,28 +77,39 @@
       }
     },
     {
+      "type": "Microsoft.DBforPostgreSQL/servers/virtualNetworkRules",
+      "apiVersion": "2017-12-01",
+      "name": "[concat(parameters('dbName'), '/allow-', parameters('environment'), '-cluster')]",
+      "dependsOn": [
+          "[parameters('dbName')]"
+      ],
+      "properties": {
+          "virtualNetworkSubnetId": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-10-01').agentPoolProfiles[0].vnetSubnetID]",
+          "ignoreMissingVnetServiceEndpoint": false
+      }
+    },
+    {
       "type": "Microsoft.Storage/storageAccounts",
-      "name": "[parameters('storageAccountName')]",
-      "location": "[resourceGroup().location]",
-      "comments": "Storage account for minio to save data to",
       "apiVersion": "2019-04-01",
+      "name": "[parameters('storageAccountName')]",
+      "location": "norwayeast",
       "sku": {
-        "name": "Standard_LRS",
-        "tier": "Standard"
+          "name": "Standard_LRS",
+          "tier": "Standard"
       },
       "kind": "StorageV2",
       "properties": {
-        "accessTier": "Hot",
         "networkAcls": {
-          "bypass": "None",
-          "defaultAction": "Deny"
-          },
-          "virtualNetworkRules": [
-           {
-              "id": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]",
-              "action": "Allow"
-           }
-        ]
+            "bypass": "None",
+            "defaultAction": "Deny",
+            "virtualNetworkRules": [
+              {
+                  "id": "[variables('vnetSubnetId')]",
+                  "action": "Allow"
+              }
+            ]
+        },
+        "accessTier": "Hot"
       }
     },
     {
