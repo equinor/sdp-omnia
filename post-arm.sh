@@ -155,11 +155,11 @@ kubectl create secret generic gitlab-minio-secret \
 cat << EOF > connection
 provider: AWS
 region: us-east-1
-aws_access_key_id: "$MINIO_STORAGE_NAME"
-aws_secret_access_key: "$MINIO_SECRET_KEY"
+aws_access_key_id: ${MINIO_STORAGE_NAME}
+aws_secret_access_key: ${MINIO_SECRET_KEY}
 aws_signature_version: 4
-host: gitlab-minio
-endpoint: gitlab-minio
+host: http://gitlab-minio.gitlab.svc.cluster.local:9000
+endpoint: http://gitlab-minio.gitlab.svc.cluster.local:9000
 path_style: true
 EOF
 
@@ -167,8 +167,8 @@ kubectl create secret generic gitlab-rails-storage --from-file=connection -n git
 
 cat << EOF > config
 azure:
-  accountname: "$MINIO_STORAGE_NAME"
-  accountkey: "$MINIO_SECRET_KEY"
+  accountname: ${MINIO_STORAGE_NAME}
+  accountkey: ${MINIO_SECRET_KEY}
   container: gitlab-registry-storage
 EOF
 
@@ -181,8 +181,8 @@ host_bucket = gitlab-minio
 # Leave as default
 bucket_location = us-east-1
 use_https = True
-access_key =  "$MINIO_STORAGE_NAME"
-secret_key = "$MINIO_SECRET_KEY"
+access_key =  ${MINIO_STORAGE_NAME}
+secret_key = ${MINIO_SECRET_KEY}
 
 signature_v2 = False
 EOF
