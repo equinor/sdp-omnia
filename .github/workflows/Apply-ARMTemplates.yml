@@ -4,7 +4,7 @@
 on:
   push:
     branches:
-      - master
+      - prod
       - dev
     paths:
     - 'arm-templates/*'
