@@ -50,8 +50,8 @@
                 {
                 "name": "nsrecordTemplate",
                 "rgName": "k8s-infrastructure",
-                "templateUrl": "[concat(variables('templateBaseUrl'), 'assign-nsrecord.json')]",
-                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'assign-nsrecord.parameters.json')]"
+                "templateUrl": "[concat(variables('templateBaseUrl'), 'update-rootdns.json')]",
+                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'update-rootdns.parameters.json')]"
             }
         ]
     },

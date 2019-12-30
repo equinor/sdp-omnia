@@ -10,12 +10,38 @@
         },
         "environment":{
             "type": "string"
+        },
+        "principalId": {
+            "metadata": {
+                "description": "Object id of service principal."
+            },
+            "type": "string"
         }
     },
     "variables": {
-        "rootdnsZoneName": "sdpaks.equinor.com"
+        "rootdnsZoneName": "sdpaks.equinor.com",
+        "dnsZoneContributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'befefa01-2a29-4197-83a8-272ff33ce314')]",
+        "reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]" 
     },
     "resources": [
+        {
+            "type": "Microsoft.Network/dnsZones/providers/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[concat(variables('rootdnsZoneName'), '/Microsoft.Authorization/', guid(parameters('dnsZoneName'), parameters('principalId'),variables('dnsZoneContributor')))]",
+            "properties": {
+                "roleDefinitionId": "[variables('dnsZoneContributor')]",
+                "principalId": "[parameters('principalId')]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('dnsZoneContributor'))]",
+            "properties": {
+                "roleDefinitionId": "[variables('reader')]",
+                "principalId": "[parameters('principalId')]"
+            }
+        },
         {
         "type": "Microsoft.Network/dnszones/NS",
         "apiVersion": "2018-05-01",
