@@ -28,7 +28,7 @@
             "properties": {
                 "roleDefinitionId": "[variables('contributor')]",
                 "principalId": "[parameters('principalId')]",
-                "scope": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/MC_sdpaks-dev_sdpaks-dev-k8s_norwayeast"
+                "scope": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/MC_sdpaks-', parameters('environment'), '_sdpaks-', parameters('environment'), '-k8s_norwayeast')]"
             }
         }
     ]
