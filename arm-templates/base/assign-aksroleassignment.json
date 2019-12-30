@@ -1,0 +1,35 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the environment. E.g. 'dev' "
+            }
+        },
+    "principalId": {
+        "metadata": {
+            "description": "Object id of service principal."
+        },
+        "type": "string"
+        }
+    },
+    "variables": {
+        "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
+        "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid('MC_', variables('rootRgName'), '_', variables('managedClusterName'), '_norwayeast', parameters('principalId'),variables('contributor'))]",
+            "properties": {
+                "roleDefinitionId": "[variables('contributor')]",
+                "principalId": "[parameters('principalId')]",
+                "scope": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/MC_sdpaks-dev_sdpaks-dev-k8s_norwayeast"
+            }
+        }
+    ]
+}

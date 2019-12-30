@@ -1,0 +1,96 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "environment": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the environment. E.g. 'dev' "
+            }
+        },
+    "buckets": {
+      "type": "array",
+      "defaultValue": [
+        "prod",
+        "dev"
+      ]
+    },
+    "principalId": {
+        "metadata": {
+            "description": "Object id of service principal."
+        },
+        "type": "string"
+        }
+    },
+    "variables": {
+        "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
+        "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
+        "aksManagedClusterId": "[resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName'))]",
+        "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]",
+        "storageAccountName": "sdpakscommonbackup",
+        "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-04-01",
+            "name": "[variables('storageAccountName')]",
+            "location": "[resourceGroup().location]",
+            "comments": "Common backup storage account for sdpaks",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+                },
+            "kind": "StorageV2",
+            "properties": {
+                "networkAcls": {
+                    "bypass": "None",
+                    "defaultAction": "Deny",
+                "virtualNetworkRules": [
+                    {
+                        "id": "[variables('vnetSubnetId')]",
+                        "action": "Allow"
+                        }
+                    ]
+                },
+                "supportsHttpsTrafficOnly": true,
+                "accessTier": "Cool"
+            },
+            "tags": {
+                "cost": "backup",
+                "cluster": "common"
+            }
+        },
+        {
+            "name": "[concat(variables('storageAccountName'), '/default/', 'velero-', parameters('buckets')[copyIndex()], '-storage')]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "comments": "Buckets under the selected storage account",
+            "apiVersion": "2018-07-01",
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ],
+            "copy": {
+                "name": "storagecopy",
+                "count": "[length(parameters('buckets'))]"
+            }
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2018-09-01-preview",
+            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('contributor'))]",
+            "dependsOn": [
+                "[variables('storageAccountName')]"
+            ],
+            "properties": {
+                "roleDefinitionId": "[variables('contributor')]",
+                "principalId": "[parameters('principalId')]"
+            }
+        }
+    ],
+"outputs": {
+    "vnetSubnetId": {
+      "type": "string",
+      "value": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
+    }
+  }
+}

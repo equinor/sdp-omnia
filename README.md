@@ -44,20 +44,9 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
 
 ### Cluster Setup
 
-1. Create and populate `.env` from `env.template`
-2. Create kubernetes cluster and install Helm  
-  `./bootstrap.azcli`
-3. Setup DNS Zone and create necessary secrets in k8s cluster.   
-  `./external-dns/bootstrap.azcli`
-4. Deploy Flux.  
-  `./flux/bootstrap.azcli`
-5. Create a Azure Container Registry.  
-  `./acr/bootstrap.azcli`
-6. Setup Vmware Velero backup infrastructure  
-  `./velero/bootstrap.azcli`
-7. You now have three files with secrets, namely `azure.json`, `acr.properties` and `velero-credentials`, secure these and share with the rest of the group
-8. Inject private key from sealedSecret into the new sealedSecret deployment.
-9. Add flux's public-key to Github as a Deploy key
+1. Make sure the Azure Key Vault is created
+2. Create and populate `.env` from `env.template`
+3. Bootstrap AKS with additional dependencies `./bootstrap.azcli`
   
 ## How-to's
 * [Use of Azure Container Registry](https://github.com/Statoil/sdp-flux/blob/basic_acr_usage/docs/ACR.md)

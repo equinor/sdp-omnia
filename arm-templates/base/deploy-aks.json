@@ -1,0 +1,160 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "servicePrincipalClientId": {
+            "metadata": {
+                "description": "Client ID (used by cloudprovider)."
+            },
+            "type": "securestring"
+        },
+        "servicePrincipalClientSecret": {
+            "metadata": {
+                "description": "The Service Principal Client Secret."
+            },
+            "type": "securestring"
+        },
+        "servicePrincipalObjectId": {
+            "metadata": {
+                "description": "The object id of service principal."
+            },
+            "type": "securestring"
+        },
+        "vnetName":{
+            "type":"string"
+        },
+        "subnetRange":{
+            "type":"string",
+            "defaultValue": "10.0.0.0/8"
+        },
+        "vnetRange":{
+            "type":"string",
+            "defaultValue": "10.240.0.0/16"
+        },
+        "kubernetesVersion": {
+            "type": "string",
+            "defaultValue": "1.14.8",
+            "metadata": {
+                "description": "The version of Kubernetes."
+            }
+        }
+    },
+    "variables": {
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
+    },
+    "resources": [
+
+            {
+            "apiVersion": "2019-04-01",
+            "name": "[parameters('vnetName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('vnetRange')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "aks-subnet",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetRange')]",
+                            "addressPrefixes": [],
+                            "serviceEndpoints": [
+                                {
+                                    "service": "Microsoft.Sql"
+                                },
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2019-08-01",
+            "dependsOn": [
+                "[parameters('vnetName')]"
+                ],
+            "type": "Microsoft.ContainerService/managedClusters",
+            "location": "[resourceGroup().location]",
+            "name": "[variables('clusterName')]",
+            "properties": {
+                "kubernetesVersion": "[parameters('kubernetesVersion')]",
+                "enableRBAC": true,
+                "dnsPrefix": "[concat(variables('clusterName'),'-dns')]",
+                "agentPoolProfiles": [
+                    {
+                        "name": "agentpool",
+                        "count": 2,
+                        "vmSize": "Standard_DS12_v2",
+                        "osType": "Linux",
+                        "storageProfile": "ManagedDisks",
+                        "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]",
+                        "type": "VirtualMachineScaleSets",
+                        "maxPods": 250
+                    }
+                ],
+                "servicePrincipalProfile": {
+                    "ClientId": "[parameters('servicePrincipalClientId')]",
+                    "Secret": "[parameters('servicePrincipalClientSecret')]"
+                },
+                "networkProfile": {
+                    "networkPlugin": "azure",
+                    "serviceCidr": "10.101.0.0/16",
+                    "dnsServiceIP": "10.101.0.10",
+                    "dockerBridgeCidr": "172.17.0.1/16"
+                },
+                "addonProfiles": {
+                    "httpApplicationRouting": {
+                        "enabled": false
+                    }
+                }
+            },
+            "tags": {}
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "ClusterSubnetRoleAssignmentDeployment",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "[parameters('vnetName')]",
+                "[variables('clusterName')]"
+                ],
+            "subscriptionId": "[subscription().subscriptionId]",
+            "resourceGroup": "[resourceGroup().name]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
+                            "apiVersion": "2017-05-01",
+                            "name": "[concat(parameters('vnetName'), '/', 'aks-subnet', '/Microsoft.Authorization/', guid(resourceGroup().id, parameters('servicePrincipalObjectId'),'4d97b98b-1d4f-4787-a291-c67834d212e7'))]",
+                            "properties": {
+                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
+                                "principalId": "[parameters('servicePrincipalObjectId')]",
+                                "scope": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "controlPlaneFQDN": {
+            "type": "string",
+            "value": "[reference(concat('Microsoft.ContainerService/managedClusters/', variables('clusterName'))).fqdn]"
+        },
+        "vnetSubnetId2": {
+            "type": "string",
+            "value": "[reference(resourceId(resourceGroup().name,'Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
+        }
+    }
+}
