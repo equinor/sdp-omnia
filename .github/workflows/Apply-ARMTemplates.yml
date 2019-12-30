@@ -18,7 +18,7 @@ env:
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy
+    name: Apply root ARM template
     runs-on: ubuntu-latest
     steps:
     - uses: azure/login@v1
