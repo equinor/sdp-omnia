@@ -92,7 +92,7 @@
             "resourceGroup": "[variables('templateLoop1')[copyIndex()].rgName]",
             "name": "[concat('nestedTemplate-', variables('templateLoop1')[copyIndex()].name)]",
             "copy": {
-                "name": "templateCopy",
+                "name": "templateCopy1",
                 "count": "[length(variables('templateLoop1'))]"
             },
             "dependsOn": [
@@ -116,11 +116,12 @@
             "resourceGroup": "[variables('templateLoop2')[copyIndex()].rgName]",
             "name": "[concat('nestedTemplate-', variables('templateLoop2')[copyIndex()].name)]",
             "copy": {
-                "name": "templateCopy",
+                "name": "templateCopy2",
                 "count": "[length(variables('templateLoop2'))]"
             },
             "dependsOn": [
-                "rgCopy2"
+                "rgCopy2",
+                "templateCopy1"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -140,11 +141,12 @@
             "resourceGroup": "[variables('templateLoop3')[copyIndex()].rgName]",
             "name": "[concat('nestedTemplate-', variables('templateLoop3')[copyIndex()].name)]",
             "copy": {
-                "name": "templateCopy",
+                "name": "templateCopy3",
                 "count": "[length(variables('templateLoop3'))]"
             },
             "dependsOn": [
-                "rgCopy1"
+                "rgCopy3",
+                "templateCopy2"
             ],
             "properties": {
                 "mode": "Incremental",
