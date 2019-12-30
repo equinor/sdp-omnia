@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "environment": {
-            "value": "prod"
+            "value": "dev"
         },
         "principalId": {
             "reference": {
