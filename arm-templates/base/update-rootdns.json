@@ -25,9 +25,9 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Network/dnsZones/providers/roleAssignments",
+            "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[concat(variables('rootdnsZoneName'), '/Microsoft.Authorization/', guid(parameters('dnsZoneName'), parameters('principalId'),variables('dnsZoneContributor')))]",
+            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('dnsZoneContributor'))]",
             "properties": {
                 "roleDefinitionId": "[variables('dnsZoneContributor')]",
                 "principalId": "[parameters('principalId')]"
@@ -36,7 +36,7 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2018-09-01-preview",
-            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('dnsZoneContributor'))]",
+            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('reader'))]",
             "properties": {
                 "roleDefinitionId": "[variables('reader')]",
                 "principalId": "[parameters('principalId')]"
