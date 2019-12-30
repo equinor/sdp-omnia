@@ -3,14 +3,14 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "storageAccountName": {
-      "value": "sdpaksdevminio"
+      "value": "sdpaksprodminio"
     },
     "principalId": {
       "reference": {
         "keyVault": {
           "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
         },
-        "secretName": "sdpaks-dev-aks-sp-object-id"
+        "secretName": "sdpaks-prod-aks-sp-object-id"
       }
   },
   "administratorLogin": {
@@ -18,7 +18,7 @@
       "keyVault": {
         "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
       },
-      "secretName": "sdpaks-dev-psql-username"
+      "secretName": "sdpaks-prod-psql-username"
     }
   },
   "administratorLoginPassword": {
@@ -26,19 +26,19 @@
       "keyVault": {
         "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
       },
-      "secretName": "sdpaks-dev-psql-password"
+      "secretName": "sdpaks-prod-psql-password"
     }
   },
   "dbName": {
-    "value": "sdpaks-dev-gitlab-psql"
+    "value": "sdpaks-prod-gitlab-psql"
   },
   "environment": {
-    "value": "dev"
+    "value": "prod"
   },
   "tags": {
       "value": {
           "app": "gitlab",
-          "cluster": "dev"
+          "cluster": "prod"
       }
     } 
   }

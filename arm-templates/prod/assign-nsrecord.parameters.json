@@ -3,13 +3,13 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "dnsZoneName": {
-            "value": "dev.sdpaks.equinor.com"
+            "value": "prod.sdpaks.equinor.com"
         },
         "dnsZoneRg": {
-            "value": "sdpaks-dev-dns"
+            "value": "sdpaks-prod-dns"
         },
         "environment": {
-            "value": "dev"
+            "value": "prod"
         }
     }
 }

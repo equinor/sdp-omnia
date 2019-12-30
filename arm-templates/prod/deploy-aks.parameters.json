@@ -7,7 +7,7 @@
               "keyVault": {
                 "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
               },
-              "secretName": "sdpaks-dev-aks-sp-app-id"
+              "secretName": "sdpaks-prod-aks-sp-app-id"
             }
         },
         "servicePrincipalClientSecret": {
@@ -15,7 +15,7 @@
               "keyVault": {
                 "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
               },
-              "secretName": "sdpaks-dev-aks-sp-password"
+              "secretName": "sdpaks-prod-aks-sp-password"
             }
         },
         "servicePrincipalObjectId": {
@@ -23,11 +23,11 @@
             "keyVault": {
               "id": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.KeyVault/vaults/SDPVault"
             },
-            "secretName": "sdpaks-dev-aks-sp-object-id"
+            "secretName": "sdpaks-prod-aks-sp-object-id"
           }
         },
         "vnetName": {
-          "value": "sdpaks-dev-vnet"
+          "value": "sdpaks-prod-vnet"
        },
       "subnetRange":{
         "value": "10.100.0.0/16"
