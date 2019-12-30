@@ -30,10 +30,16 @@
           "value": "sdpaks-prod-vnet"
        },
       "subnetRange":{
-        "value": "10.100.0.0/16"
+        "value": "10.0.0.0/16"
       },
       "vnetRange":{
-        "value": "10.100.0.0/16"
+        "value": "10.0.0.0/16"
+      },
+      "serviceCidr":{
+        "value": "10.1.0.0/16"
+      },
+      "dnsServiceIp":{
+        "value": "10.1.0.10"
       }
     }
 }

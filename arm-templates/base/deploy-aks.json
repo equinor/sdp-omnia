@@ -31,6 +31,12 @@
             "type":"string",
             "defaultValue": "10.240.0.0/16"
         },
+        "serviceCidr":{
+            "type": "string"
+        },
+        "dnsServiceIp":{
+            "type": "string"
+        },
         "kubernetesVersion": {
             "type": "string",
             "defaultValue": "1.14.8",
@@ -104,8 +110,8 @@
                 },
                 "networkProfile": {
                     "networkPlugin": "azure",
-                    "serviceCidr": "10.101.0.0/16",
-                    "dnsServiceIP": "10.101.0.10",
+                    "serviceCidr": "[parameters('serviceCidr')]",
+                    "dnsServiceIP": "[parameters('dnsServiceIp')]",
                     "dockerBridgeCidr": "172.17.0.1/16"
                 },
                 "addonProfiles": {
