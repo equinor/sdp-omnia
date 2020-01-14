@@ -191,4 +191,8 @@ kubectl create secret generic backup-storage-config --from-file=config -n gitlab
 
 rm -f connection & rm -f azure.json  & rm -f cloud & rm -f config
 
+echo " Restarting pods in external dns to update dns records to custom IP address"
+echo " Try rerunning this step if dns records are not updated..."
+kubectl delete pods -n external-dns --all
+
 echo " Script completed."
