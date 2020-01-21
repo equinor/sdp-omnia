@@ -37,6 +37,14 @@
         "dnsServiceIp":{
             "type": "string"
         },
+        "minNodes":{
+            "type": "int",
+            "defaultValue": "2"
+        },
+        "maxNodes":{
+            "type": "int",
+            "defaultValue": 3
+        },
         "kubernetesVersion": {
             "type": "string",
             "defaultValue": "1.14.8",
@@ -98,6 +106,9 @@
                         "count": 2,
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
+                        "enableAutoScaling": true,
+                        "minCount": "[parameters('minNodes')]",
+                        "maxCount": "[parameters('maxNodes')]",
                         "storageProfile": "ManagedDisks",
                         "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]",
                         "type": "VirtualMachineScaleSets",
