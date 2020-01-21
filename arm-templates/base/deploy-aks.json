@@ -110,6 +110,9 @@
                         "minCount": "[parameters('minNodes')]",
                         "maxCount": "[parameters('maxNodes')]",
                         "storageProfile": "ManagedDisks",
+                        "enableAutoScaling": true,
+                        "minCount": "[parameters('minNodes')]",
+                        "maxCount": "[parameters('maxNodes')]",
                         "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]",
                         "type": "VirtualMachineScaleSets",
                         "maxPods": 250

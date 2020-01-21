@@ -40,6 +40,12 @@
       },
       "dnsServiceIp":{
         "value": "10.101.0.10"
+      },
+      "minNodes":{
+        "value": 1
+      },
+      "maxNodes":{
+        "value": 3
       }
     }
 }
