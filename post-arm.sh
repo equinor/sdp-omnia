@@ -176,11 +176,11 @@ kubectl create secret generic registry-storage --from-file=config -n gitlab --dr
 
 cat << EOF > config
 [default]
-host_base = gitlab-minio
-host_bucket = gitlab-minio
+host_base = http://gitlab-minio.gitlab.svc.cluster.local:9000
+host_bucket = http://gitlab-minio.gitlab.svc.cluster.local:9000
 # Leave as default
 bucket_location = us-east-1
-use_https = True
+use_https = false
 access_key =  ${MINIO_STORAGE_NAME}
 secret_key = ${MINIO_SECRET_KEY}
 
@@ -190,9 +190,5 @@ EOF
 kubectl create secret generic backup-storage-config --from-file=config -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 
 rm -f connection & rm -f azure.json  & rm -f cloud & rm -f config
-
-echo " Restarting pods in external dns to update dns records to custom IP address"
-echo " Try rerunning this step if dns records are not updated..."
-kubectl delete pods -n external-dns --all
 
 echo " Script completed."
