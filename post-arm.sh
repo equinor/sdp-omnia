@@ -19,6 +19,9 @@ echo
 echo " Creating namespaces"
 kubectl create -f manifests/namespaces.yaml > /dev/null || true
 
+echo " Creating Custom storageclasses"
+kubectl create -f manifests/storageclasses.yaml > /dev/null || true
+
 # Fetch Azure ID's from Keyvault (Created in pre-arm.sh)
 AZ_SUBSCRIPTION_ID=$(az account show --query "id"  -o tsv)
 AZ_TENANT_ID=$(az account show --query "tenantId"  -o tsv)
