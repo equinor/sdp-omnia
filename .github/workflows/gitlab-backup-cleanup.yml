@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  schedule:
+   - cron:  '5 4 * * 6'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run a one-line script
+      run: echo Hello, world!
+    - name: Run a multi-line script
+      run: |
+        shell: pwsh
+        $userId = "xxxx"
+        $password = secret
+        $cred = New-Object -TypeName System.Management.Automation.PSCredential($userId ,$password)
+        Connect-AzAccount -Credential $cred -Tenant equinor.com
+        $con = New-AzStorageContext -StorageAccountName sdpaksprodminio
+        $d = Get-Date
+        Get-AzStorageBlob -Context $con -Container gitlab-backup-storage | Where-Object -Property LastModified -GT $d.AddDays(-7) | ForEach-Object { echo $_ }
+        
