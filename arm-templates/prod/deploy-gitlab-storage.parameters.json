@@ -13,6 +13,9 @@
         "secretName": "sdpaks-prod-aks-sp-object-id"
       }
   },
+  "replication": {
+    "value": "Standard_GRS"
+  },
   "administratorLogin": {
     "reference": {
       "keyVault": {

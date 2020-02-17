@@ -35,6 +35,10 @@
     "environment":{
       "type":"string"
     },
+    "replication":{
+      "type":"string",
+      "defaultValue":"Standard_LRS"
+    },
     "principalId": {
     "metadata": {
         "description": "Object id of service principal."
@@ -94,7 +98,7 @@
       "name": "[parameters('storageAccountName')]",
       "location": "norwayeast",
       "sku": {
-          "name": "Standard_LRS",
+          "name": "[parameters('replication')]",
           "tier": "Standard"
       },
       "kind": "StorageV2",
