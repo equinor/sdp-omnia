@@ -68,7 +68,7 @@
       },
       "kind": "",
       "properties": {
-        "version": "9.6",
+        "version": "10",
         "administratorLogin": "[parameters('administratorLogin')]",
         "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
         "storageProfile": {
