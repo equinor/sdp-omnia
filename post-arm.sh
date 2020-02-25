@@ -39,6 +39,15 @@ POSTGRES_PASSWORD=$(az keyvault secret show --name "${AZ_GROUP}-psql-password" -
 # Create external dns secret
 #
 
+# Determine resource group for dns (constant for prod-environment)
+
+ if [ $AZ_GROUP == "sdpaks-prod" ]
+ then 
+  AZ_DNS_GROUP="k8s-infrastructure"
+  else 
+  AZ_DNS_GROUP="${AZ_GROUP}-dns"
+fi
+
 # Use custom configuration file
 echo
 echo " Creating azure.json file with DNS service principal information"
