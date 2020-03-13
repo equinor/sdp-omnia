@@ -46,6 +46,9 @@
       },
       "maxNodes":{
         "value": 3
+      },
+      "kubernetesVersion":{
+        "value": "1.16.4"
       }
     }
 }
