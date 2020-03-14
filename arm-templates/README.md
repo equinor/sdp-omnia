@@ -34,16 +34,6 @@ Azure CLI:
 
 `az group deployment create --resource-group <resource-group-name> --template-file "./deploy-arm.json" --parameters "./deploy-arm.parameters.json"`
 
-
-Graphical view:
-
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https://raw.githubusercontent.com/equinor/sdp-aks/dev/arm-templates/base/deploy-arm.json" target="_blank">
-  <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.png"/>
-</a>
-<a href="http://armviz.io/#/?load=https://raw.githubusercontent.com/equinor/sdp-aks/dev/arm-templates/base/deploy-arm.json" target="_blank">
-  <img src="https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.png"/>
-</a>
-
 ## Developing ARM templates
 
 Recommended software to develop ARM templates: VScode + ARM extension + ARM Template Viewer extension
