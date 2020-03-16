@@ -3,6 +3,50 @@
 [Velero](https://github.com/heptio/velero) is the backup solution we use to backup our cluster.
 Velero backups should be tested as one cannot blindly trust untested backups.
 
+
+## Gitlab disaster recovery
+
+When using Gitlab DR, data is stored three places
+
+Azure blob storage
+In cluster Gitaly disk (PV)
+Managed postgres (db)
+
+Blob storage has built-in soft deletion and geo-redundancy.
+
+Azure postgreSQL has built-in regular Point-in-time backups.
+
+For The PV, the easiest way to recover is simply to delete the old namespace and restore from a backup
+Using another namespace will not work "just like that", because secrets connecting services typically point to a namespace. e.g. "gitlab.gitlab.svc.local"
+
+Note that there are some issues with restoring PV's which have the "retain" mode set. THis means that even if you delete the NS, the PV is still there.
+The solution to this is simply to delete all related PV's
+`k delete pv xxx yyy`
+
+`velero restore create --from-backup gitlab-ns-xxx `
+
+This method has been tested successfully. RTO (after old NS is deleted) is about 12-15 mins. Deleting the NS takes about 5-10 mins:
+Total RTO: 17-25 minutes.
+RPO: 0,5-24,5 hours. We run nightly full backups. I estimate that these take max 30 minutes.
+
+To recover the postgres database, go to the Azure portal, find your database server and click "restore"
+This copies your point in time restore point to a new server.
+Note that the newly generated DB does not copy over existing VNET rules, you should set these to increase security.
+
+Remember to update the helm chart:
+
+```
+      psql:
+        database: postgres
+        host: sdpaks-prod-gitlab-psql.postgres.database.azure.com
+        password:
+          key: password
+          secret: gitlab-postgres-secret
+        username: gitlab@sdpaks-prod-gitlab-psql
+```
+You should not have to change the content of the secret, but "username" and "host" must be updated.
+
+
 ## Disaster recovery
 
 Most sdp-aks resources including secrets can be restored or recreated easily with Flux. The exception to this are persistent volumes (PVs)
