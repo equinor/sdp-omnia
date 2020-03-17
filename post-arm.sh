@@ -182,6 +182,8 @@ azure:
   accountname: ${MINIO_STORAGE_NAME}
   accountkey: ${MINIO_SECRET_KEY}
   container: gitlab-registry-storage
+redirect:
+  disable: true
 EOF
 
 kubectl create secret generic registry-storage --from-file=config -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
