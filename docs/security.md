@@ -1,6 +1,8 @@
 # Security considerations
+
 This document describes some of the security considerations that have gone into SDP's AKS deployment.  
-We have identified four main levels of concern that are, to a degree, unique to the AKS/Kubernetes technologies: 
+We have identified four main levels of concern that are, to a degree, unique to the AKS/Kubernetes technologies:  
+
 - The Azure Portal
 - The AKS Nodes
 - Kubernetes and Cluster Supporting Services
@@ -9,73 +11,93 @@ We have identified four main levels of concern that are, to a degree, unique to 
 For each of these levels we will describe the main threats, and the most important security measures to remedy these threats.  
 The CIS(Center for Internet Security) Benchmarks have been used as a guideline for this work. Primarily the "CIS Benchmark for Ubuntu Linux 16.04 LTS", the "CIS Benchmark for Containers", and the "CIS Benchmark for Kubernetes".
 
+## Traffic flow
+
+![SDP-AKS traffic flow](sdp-aks-traffic.png)
+
+Flow chart highlighting traffic flow and all access points to the the cluster.  
+
 ## Azure Portal
+
 ### Threats
-* Accidental deletion/misconfiguration of resources or entire cluster
-* Unauthorized access to Azure resources
+
+- Accidental deletion/misconfiguration of resources or entire cluster
+- Unauthorized access to Azure resources
+
 ### Measures
-* Own Azure subscription for SDP admins.
-  * TODO: Limit user in the "SDP Tools" subscriptions, or get own subscriptions. 
-* Equinor security standard for Azure Portal/az CLI login (Equinor organization + Two-factor authentication(2FA))
+
+- Own Azure subscription for SDP admins.
+  - TODO: Limit user in the "SDP Tools" subscriptions, or get own subscriptions. 
+- Equinor security standard for Azure Portal/az CLI login (Equinor organization + Two-factor authentication(2FA))
 
 ## AKS Nodes
+
 ### Threats
-* Not hardened from Azure by default
-  * Not restarted by default to get latest security patches
-  * Missing minimum security settings/features
-* If somebody get access to the VNET the default security is not sufficient
-  * Big attack surface
+
+- Not hardened from Azure by default
+  - Not restarted by default to get latest security patches
+  - Missing minimum security settings/features
+- If somebody get access to the VNET the default security is not sufficient
+  - Big attack surface
 
 
 ### Measures
-* Disabled/uninstalled all unnecessary services
-* !Confirm: Removed unnecessary users
-* The K8s cluster runs in a virtual network protected by a Azure Network Security Group firewall. This firewall only allows ports 80 and 443 inbound.
-* Automatic security patches from Azure.
-  * !TODO: Update manually packages that are not upated by Azure.
-  * Automatically reboots if nessecary to apply security updates.
-* !TODO: local Firewall
-* !TODO: Filter and monitor audit logs. Log events that modify date&time, user&groups, AppArmor, login&logout, access rights, unsuccessful authorization, docker files
-* !TODO: Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
-* !Confirm: Restrict traffic between containers (Docker daemon)
-* !Investigate: Enforce AppArmor
-* !Confirm Ensure kubelet configuration files permissions
+
+- Disabled/uninstalled all unnecessary services
+- !Confirm: Removed unnecessary users
+- The K8s cluster runs in a virtual network protected by a Azure Network Security Group firewall. This firewall only allows ports 80 and 443 inbound.
+- Automatic security patches from Azure.
+  - !TODO: Update manually packages that are not upated by Azure.
+  - Automatically reboots if nessecary to apply security updates.
+- !TODO: local Firewall
+- !TODO: Filter and monitor audit logs. Log events that modify date&time, user&groups, AppArmor, login&logout, access rights, unsuccessful authorization, docker files
+- !TODO: Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
+- !Confirm: Restrict traffic between containers (Docker daemon)
+- !Investigate: Enforce AppArmor
+- !Confirm Ensure kubelet configuration files permissions
 
 ## Kubernetes and Cluster Supporting Services
 
 Services: Helm, flux, puppet, github, ark, kured, sealed secrets, azure dns, azure container registry, azure AD
 
 ### Threats
-* Access to GitHub repo - flux and puppet
-* Access to Azure container registry
-* Compromised cluster access keys
-* Compromised private key for sealed secrets
-* Vulnerabilities in cluster and services
+
+- Access to GitHub repo - flux and puppet
+- Access to Azure container registry
+- Compromised cluster access keys(certs)
+- Compromised private key for sealed secrets
+- Vulnerabilities in cluster and services
 
 ### Measures
-* Master nodes and it's services in AKS is fully managed by Azure.  
-* TODO: RBAC - Look into service account improvements
-* Keep cluster and services up-to-date
-  * TODO: Get notification when new releases
-* !Investigate (later): NetworkPolicies
-* TODO (later): Don't allow dangerous runtime options. This include mounting the docker socket, using priviliged flag, --pid=host, --network=host, --device. This can be done with PodSecurityPolicy
-* Limit number of users that has access to GitHub repositories.
+
+- Master nodes and it's services in AKS is fully managed by Azure.  
+- TODO: Rotate Cluster certs on a regular schedule
+- TODO: RBAC - Look into service account improvements
+- Keep cluster and services up-to-date
+  - TODO: Get notification when new releases
+- !Investigate (later): NetworkPolicies
+- TODO (later): Don't allow dangerous runtime options. This include mounting the docker socket, using priviliged flag, --pid=host, --network=host, --device. This can be done with PodSecurityPolicy
+- Limit number of users that has access to GitHub repositories.
 
 ## Pods and Applications
+
 ### Threats
-* Malicious docker images
-* Resource hogging
-* Vulnerable applications
+
+- Malicious docker images
+- Resource hogging
+- Vulnerable applications
 
 ### Measures
-* TODO: Don't use latest tags. Pin versions on docker images and helm charts.
-  * TODO: Turn off automated docker images/helm chart annotations. This should be done manually. 
-* Consider (later): Pod Security (Is this the same as docker run's --security-opt where you can specify an AppArmor profile?)
-* TODO: Set resource limits for all pods
-* TODO (later): Vulnerability scanned images
-* Audit HelmCharts and docker images.
+
+- TODO: Don't use latest tags. Pin versions on docker images and helm charts.
+  - TODO: Turn off automated docker images/helm chart annotations. This should be done manually. 
+- Consider (later): Pod Security (Is this the same as docker run's --security-opt where you can specify an AppArmor profile?)
+- TODO: Set resource limits for all pods
+- TODO (later): Vulnerability scanned images
+- Audit HelmCharts and docker images.
 
 # BOYH CIS Ubuntu
+
 Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77-40a4-4e08-a6c0-93b39b92abd8.pdf
 
 ## Burde gjøres
@@ -83,6 +105,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 ### Høy
 
 ### Medium
+
 - 2.2.15 Ensure mail transfer agent is configured for local-only mode (Scored)
 
 - 3.6 Firewall Configuration
@@ -90,6 +113,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 4.2.4 Ensure permissions on all logfiles are configured (Scored)
 
 ### Lav
+
 - 1.1.1 Disable unused filesystems (Scored)
 - 1.1.2 Ensure separate partition exist for /tmp (Scored)
 - 1.1.21 Disable Automounting (Scored)
@@ -133,6 +157,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 6.2.15 Ensure all groups in /etc/passwd exist in /etc/group (Scored)
 
 ## Kan gjøres / Bør vurderes
+
 - 1.1.3 Ensure nodev option set on /tmp partition (Scored)
 - 1.1.4 Ensure nosuid option set on /tmp partition (Scored)
 - 1.1.10 Ensure separate partition exists for /var/log (Scored)
@@ -210,6 +235,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 6.2.20 Ensure shadow group is empty (Scored)
 
 ## Irrelevant / Vanskelig å gjennomføre
+
 - 1.1.5 Ensure separate partition exists for /var (Scored)
 - 1.1.6 Ensure separate partition exists for /var/tmp (Scored)
 - 1.1.7 Ensure nodev option set on /var/tmp partition (Scored)
@@ -230,6 +256,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 3.1.1 Ensure IP forwarding is disabled (Scored)
 
 ## Gjort
+
 - 1.8 Ensure updates, patches, and additional security software are installed (Not Scored)
 - 2.1.1 Ensure chargen services are not enabled (Scored)
 - 2.1.2 Ensure daytime services are not enabled (Scored)
