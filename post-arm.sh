@@ -5,22 +5,12 @@ source .env
 az account set --subscription "${AZ_SUBSCRIPTION}"
 az aks get-credentials -g "${AZ_GROUP}"  -n "${AZ_GROUP}-k8s" --overwrite-existing
 
-# Create the helm service account
-echo
-echo " Creating Helm Tiller service account"
-kubectl create -f manifests/tiller-service-account.yml > /dev/null || true
-
-# Deploys the helm service on the cluster
-echo
-echo " Initialising Helm"
-helm init --service-account tiller
-
 echo
 echo " Creating namespaces"
-kubectl create -f manifests/namespaces.yaml > /dev/null || true
+kubectl apply -f manifests/namespaces.yaml > /dev/null || true
 
 echo " Creating Custom storageclasses"
-kubectl create -f manifests/storageclasses.yaml > /dev/null || true
+kubectl apply -f manifests/storageclasses.yaml > /dev/null || true
 
 # Fetch Azure ID's from Keyvault (Created in pre-arm.sh)
 AZ_SUBSCRIPTION_ID=$(az account show --query "id"  -o tsv)
@@ -42,9 +32,9 @@ POSTGRES_PASSWORD=$(az keyvault secret show --name "${AZ_GROUP}-psql-password" -
 # Determine resource group for dns (constant for prod-environment)
 
  if [ $AZ_GROUP == "sdpaks-prod" ]
- then 
+ then
   AZ_DNS_GROUP="k8s-infrastructure"
-  else 
+  else
   AZ_DNS_GROUP="${AZ_GROUP}-dns"
 fi
 
@@ -75,6 +65,9 @@ az keyvault secret show --name "sealed-secrets-key" --vault-name SDPVault --quer
 az keyvault secret show --name "sealed-secrets-cert" --vault-name SDPVault --query value -o tsv > tmp.crt
 kubectl create secret tls -n sealed-secrets sealed-secret-custom-key --cert=tmp.crt --key=tmp.key --dry-run -o yaml | kubectl apply -f - > /dev/null || true
 rm -f tmp.key tmp.crt
+echo
+echo " Remember to restart sealed-secret pod if it already exists to pick up custom keys"
+
 
 function key_exists {
   az keyvault secret show --name $1 --vault-name SDPVault > /dev/null
@@ -103,22 +96,29 @@ kubectl -n flux create secret generic flux-ssh --from-literal=identity="$FLUX_KE
 # Add flux repo to helm
 echo
 echo " Adding fluxcd/flux repository to Helm"
-helm repo add fluxcd https://fluxcd.github.io/flux > /dev/null
+helm repo add fluxcd https://charts.fluxcd.io > /dev/null
 
-# Install flux with helmoperator
+# Install Flux
 echo
 echo " Installing or upgrading Flux with Helm operator in the flux namespace"
-helm upgrade --install flux --version v0.16.0 \
+helm upgrade --install flux --version v1.2.0 \
     --namespace flux \
-    --set rbac.create=true \
-    --set helmOperator.create=true \
-    --set helmOperator.createCRD=true \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch=$FLUX_GITOPS_BRANCH \
     --set git.path=$FLUX_GITOPS_PATH \
     --set git.secretName="flux-ssh" \
     --set manifestGeneration=true \
     fluxcd/flux > /dev/null
+
+# Install Flux Helm Operator with Helm v3 support
+# HelmRelease CRD first
+kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
+
+helm upgrade -i helm-operator fluxcd/helm-operator --wait \
+    --namespace flux \
+    --set git.ssh.secretName="flux-ssh" \
+    --set helm.versions=v3
+
 
 # Create cluster secret for velero - two format types needed due to bug with azure provider
 
