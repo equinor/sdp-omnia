@@ -1,4 +1,6 @@
-#!/bin/bash
+#! /bin/bash
+# This script needs to be run after the ARM-templates have been deployed.
+# It's job is to create the basic kubernetes services that are needed for our GitOps to work (mainly Helm and Flux)
 source .env
 
 # Ensure correct cluster context
@@ -58,7 +60,7 @@ kubectl create secret generic azure-dns-config-file --from-file=azure.json -n ex
 rm -f azure.json
 
 #
-# Create sealed secrets secret
+# Create sealed-secrets secret
 #
 
 az keyvault secret show --name "sealed-secrets-key" --vault-name SDPVault --query value -o tsv > tmp.key
