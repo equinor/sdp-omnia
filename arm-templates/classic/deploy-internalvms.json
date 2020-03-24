@@ -60,11 +60,11 @@
         "vmSizes": {
           "type": "array",
           "defaultValue": [
-            "Standard B2s",
-            "Standard B2s",
-            "Standard B2s",
-            "Standard B2s",
-            "Standard B2ms"
+            "Standard_B2s",
+            "Standard_B2s",
+            "Standard_B2s",
+            "Standard_B2s",
+            "Standard_B2ms"
           ]
       }
     },
@@ -137,8 +137,6 @@
                 "TechnicalContact": "gm_sds_rdi@equinor.com"
             },
             "identity": {
-                "principalId": "901aeb35-6b6e-4e5e-b86d-3c7593fae161",
-                "tenantId": "3aa4a235-b6e2-48d5-9195-7fcf05b459b0",
                 "type": "SystemAssigned"
             },
             "location": "[parameters('location')]",
@@ -148,7 +146,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[variables('vmSizes')[copyIndex('vmSizes')]]"
+                    "vmSize": "Standard_B2s"
                 },
                 "osProfile": {
                     "computerName": "[concat(parameters('vmNamePrefix'), copyIndex())]",
