@@ -103,7 +103,7 @@
             "apiVersion": "2019-07-01",
             "name": "[concat(parameters('vmNamePrefix'), copyindex(), '/AzureNetworkWatcherExtension')]",
             "copy": {
-                "name": "virtualMachineLoop",
+                "name": "vmExtensionLoop",
                 "count": "[variables('numberOfInstances')]"
             },
             "location": "norwayeast",
