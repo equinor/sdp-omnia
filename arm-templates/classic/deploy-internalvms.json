@@ -50,15 +50,23 @@
     },
     "variables": {
         "subnetRef": "[resourceId(parameters('netRgName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
-        "numberOfInstances": 4,
         "nicNamePrefix": "[concat(parameters('vmNamePrefix'),'-nic-')]",
         "imageDefinition": {
             "imagePublisher": "OpenLogic",
             "imageOffer": "CentOS",
             "imageSKU": "8_1-gen2"
         },
-        "vmSize": "Standard B2s",
-        "nsgName": "[concat(parameters('vmNamePrefix'), '-nsg')]"
+        "nsgName": "[concat(parameters('vmNamePrefix'), '-nsg')]",
+        "vmSizes": {
+          "type": "array",
+          "defaultValue": [
+            "Standard B2s",
+            "Standard B2s",
+            "Standard B2s",
+            "Standard B2s",
+            "Standard B2ms"
+          ]
+      }
     },
     "resources": [
         {
@@ -75,7 +83,7 @@
             "location": "[parameters('location')]",
             "copy": {
                 "name": "nicLoop",
-                "count": "[variables('numberOfInstances')]"
+                "count": "[length(variables('vmSizes'))]"
             },
             "dependsOn": [
                 "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
@@ -104,7 +112,7 @@
             "name": "[concat(parameters('vmNamePrefix'), copyindex(), '/AzureNetworkWatcherExtension')]",
             "copy": {
                 "name": "vmExtensionLoop",
-                "count": "[variables('numberOfInstances')]"
+                "count": "[length(variables('vmSizes'))]"
             },
             "location": "norwayeast",
             "dependsOn": [
@@ -123,7 +131,7 @@
             "name": "[concat(parameters('vmNamePrefix'), copyindex())]",
             "copy": {
                 "name": "virtualMachineLoop",
-                "count": "[variables('numberOfInstances')]"
+                "count": "[length(variables('vmSizes'))]"
             },
             "tags": {
                 "TechnicalContact": "gm_sds_rdi@equinor.com"
@@ -140,7 +148,7 @@
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[variables('vmSize')]"
+                    "vmSize": "[variables('vmSizes')[copyIndex('vmSizes')]]"
                 },
                 "osProfile": {
                     "computerName": "[concat(parameters('vmNamePrefix'), copyIndex())]",
