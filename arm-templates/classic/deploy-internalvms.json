@@ -116,6 +116,26 @@
                 "typeHandlerVersion": "1.4"
             }
         },
+    {
+        "type": "Microsoft.Compute/disks",
+        "apiVersion": "2017-03-30",
+        "comments": "4 Disks for vm05 only",
+        "name": "[concat(parameters('vmNamePrefix'), 0, '5-', 'datadisk0', copyIndex(1))]",
+        "location": "[parameters('location')]",
+            "sku": {
+                "name":"Standard_LRS"
+            },
+            "properties": {
+                "creationData": {
+                "createOption": "Empty"
+                },
+            "diskSizeGB": 1024
+            },
+                "copy": {
+                "name": "diskCopy",
+                "count": 4
+            }
+        },
         {
             "apiVersion": "2019-07-01",
             "type": "Microsoft.Compute/virtualMachines",
