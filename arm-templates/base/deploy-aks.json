@@ -99,7 +99,6 @@
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesVersion')]",
                 "enableRBAC": true,
-                "enablePodSecurityPolicy": true,
                 "dnsPrefix": "[concat(variables('clusterName'),'-dns')]",
                 "agentPoolProfiles": [
                     {
@@ -117,7 +116,7 @@
                     }
                 ],
                 "servicePrincipalProfile": {
-                    "ClientId": "[parameters('servicePrincipalClientId')]",
+                    "clientId": "[parameters('servicePrincipalClientId')]",
                     "Secret": "[parameters('servicePrincipalClientSecret')]"
                 },
                 "networkProfile": {
