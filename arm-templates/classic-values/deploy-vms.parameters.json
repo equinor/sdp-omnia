@@ -8,9 +8,6 @@
         "adminUsername": {
             "value": "sdpteam"
         },
-        "sshPublicKey": {
-            "value": "GEN-SSH-PUB-KEY"
-        },
         "vmNamePrefix": {
             "value": "vm"
         },
@@ -22,6 +19,14 @@
         },
         "netRgName": {
             "value": "S066-NOE-network"
+        },
+        "sshPublicKeys": {
+            "reference": {
+              "keyVault": {
+                "id": "/subscriptions/47dd9472-aaea-401b-add5-55fccfe63434/resourceGroups/sdp-infrastructure/providers/Microsoft.KeyVault/vaults/sdp-vault"
+              },
+              "secretName": "sdp-team-pub-sshkeys"
+            }
         }
     }
 }

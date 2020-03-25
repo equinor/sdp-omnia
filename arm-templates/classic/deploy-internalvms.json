@@ -23,10 +23,10 @@
                 "description": "Admin username"
             }
         },
-        "sshPublicKey": {
-            "type": "string",
+        "sshPublicKeys": {
+            "type": "securestring",
             "metadata": {
-                "description": "Configure the linux machines with the SSH public key string.  Your key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm'"
+                "description": "Configure the linux machines with the SSH public keys string.  Your key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm'"
             }
         },
         "vnetName": {
@@ -83,7 +83,8 @@
                     {
                         "name": "ipconfig1",
                         "properties": {
-                            "privateIPAllocationMethod": "Dynamic",
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[concat('10.73.68.10', copyindex(1))]",
                             "subnet": {
                                 "id": "[variables('subnetRef')]"
                             }
@@ -91,11 +92,11 @@
                     }
                 ],
                 "networkSecurityGroup": {
-                    "id": "[reference(resourceId(parameters('netRgName'),'Microsoft.Network/networkSecurityGroups/', variables('nsgName')), '2019-11-01')]"
+                    "id": "[resourceId(parameters('netRgName'),'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+                
                 }
             }
         },
-
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2019-07-01",
@@ -124,19 +125,20 @@
                 "count": "[variables('totalVmCount')]"
             },
             "tags": {
-                "TechnicalContact": "gm_sds_rdi@equinor.com"
+                "TechnicalContact": "gm_sds_rdi@equinor.com",
+                "serviceType": "internal"
             },
             "identity": {
                 "type": "SystemAssigned"
             },
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', variables('nicNamePrefix'), 0, copyindex(1))]",
-                "[concat('Microsoft.Network/networkSecurityGroups/', variables('nsgName'))]"
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicNamePrefix'), 0, copyindex(1))]"
             ],
             "properties": {
                 "hardwareProfile": {
-                    "vmSize": "[variables('vmSizes').values[0]]"
+                    "vmSize": "[if(equals(copyIndex(1),variables('totalVmCount')), variables('vmSizes').Values[1], variables('vmSizes').values[0])]"
+                    
                     },
                 "osProfile": {
                     "computerName": "[concat(parameters('vmNamePrefix'), 0, copyIndex(1))]",
@@ -147,7 +149,7 @@
                             "publicKeys": [
                                 {
                                     "path": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
-                                    "keyData": "[parameters('sshPublicKey')]"
+                                    "keyData": "[parameters('sshPublicKeys')]"
                                 }
                             ]
                         },
