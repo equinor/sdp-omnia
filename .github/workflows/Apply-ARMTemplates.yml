@@ -7,9 +7,10 @@ on:
       - prod
       - dev
     paths:
-    - 'arm-templates/*'
-    - 'arm-templates/*/*'
-    - '.github/workflows/*'
+    - 'arm-templates/base/*'
+    - 'arm-templates/dev/*'
+    - 'arm-templates/prod/*'
+    - '.github/workflows/Apply-ARMTemplates.yml'
 
 env:
   LOCATION: 'norwayeast' 
