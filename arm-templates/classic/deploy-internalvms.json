@@ -70,7 +70,7 @@
     },
     "resources": [
         {
-            "apiVersion": "2017-06-01",
+            "apiVersion": "2019-11-01",
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(variables('nicNamePrefix'), 0, copyindex(1))]",
             "location": "[parameters('location')]",
@@ -118,7 +118,7 @@
         },
     {
         "type": "Microsoft.Compute/disks",
-        "apiVersion": "2017-03-30",
+        "apiVersion": "2019-07-01",
         "comments": "4 Disks for vm05 only",
         "name": "[concat(parameters('vmNamePrefix'), 0, '5-', 'datadisk0', copyIndex(1))]",
         "location": "[parameters('location')]",
