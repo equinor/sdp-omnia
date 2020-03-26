@@ -136,6 +136,26 @@
                 "count": 4
             }
         },
+            {
+        "type": "Microsoft.Compute/disks",
+        "apiVersion": "2019-07-01",
+        "comments": "1 Disk for vm01 only",
+        "name": "[concat(parameters('vmNamePrefix'), 0, '1-', 'datadisk0', copyIndex(1))]",
+        "location": "[parameters('location')]",
+            "sku": {
+                "name":"Standard_LRS"
+            },
+            "properties": {
+                "creationData": {
+                "createOption": "Empty"
+                },
+            "diskSizeGB": 63
+            },
+                "copy": {
+                "name": "diskCopy",
+                "count": 1
+            }
+        },
         {
             "apiVersion": "2019-07-01",
             "type": "Microsoft.Compute/virtualMachines",
