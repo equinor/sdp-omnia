@@ -1,0 +1,215 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]",
+            "metadata": {
+                "description": "Azure region for your VM(s) deployment. This must much with your Virtual Network location."
+            }
+        },
+        "vmNamePrefix": {
+            "type": "string",
+            "maxLength": 4,
+            "metadata": {
+                "description": "Prefix for your virtual machines, will be concatenated with a number, e.g. testvm1"
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "sdpteam",
+            "metadata": {
+                "description": "Admin username"
+            }
+        },
+        "sshPublicKeys": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Configure the linux machines with the SSH public keys string.  Your key should include three parts, for example 'ssh-rsa AAAAB...snip...UcyupgH azureuser@linuxvm'"
+            }
+        },
+        "vnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of your existing Virtual Network in your subscription."
+            }
+        },
+        "subnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of a subnet, where you want your VMs deployed."
+            }
+        },
+        "netRgName": {
+            "type": "string",
+            "metadata": {
+                "description": "Network Resource Group."
+            }
+        }
+    },
+    "variables": {
+        "subnetRef": "[resourceId(parameters('netRgName'), 'Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]",
+        "nicNamePrefix": "[concat(parameters('vmNamePrefix'),'-nic')]",
+        "imageDefinition": {
+            "imagePublisher": "OpenLogic",
+            "imageOffer": "CentOS",
+            "imageSKU": "8_1-gen2"
+        },
+        "nsgName": "S066-NOE-subnet-nsg",
+      "type1VmCount": 1,
+      "type2VmCount": 1,
+      "totalVmCount": "[add(variables('type1VmCount'), variables('type2VmCount'))]",
+        "vmSizes": {
+          "type": "array",
+          "values": [
+            "Standard_E2s_v3",
+            "Standard_B2ms"
+          ]
+      }
+    },
+    "resources": [
+        {
+            "apiVersion": "2019-11-01",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('nicNamePrefix'), 2, copyindex(1))]",
+            "location": "[parameters('location')]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[variables('totalVmCount')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[concat('10.73.68.12', copyindex(1))]",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ],
+                "networkSecurityGroup": {
+                    "id": "[resourceId(parameters('netRgName'),'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
+                
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "apiVersion": "2019-07-01",
+            "name": "[concat(parameters('vmNamePrefix'), 2, copyindex(1), '/AzureNetworkWatcherExtension')]",
+            "copy": {
+                "name": "vmExtensionLoop",
+                "count": "[variables('totalVmCount')]"
+            },
+            "location": "norwayeast",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmNamePrefix'), 2, copyindex(1)))]"
+            ],
+            "properties": {
+                "autoUpgradeMinorVersion": true,
+                "publisher": "Microsoft.Azure.NetworkWatcher",
+                "type": "NetworkWatcherAgentLinux",
+                "typeHandlerVersion": "1.4"
+            }
+        },
+        {
+        "type": "Microsoft.Compute/disks",
+        "apiVersion": "2019-07-01",
+        "comments": "1 Disk for vm21 only",
+        "name": "[concat(parameters('vmNamePrefix'), 2, '1-', 'datadisk0', copyIndex(1))]",
+        "location": "[parameters('location')]",
+            "sku": {
+                "name":"Standard_LRS"
+            },
+            "properties": {
+                "creationData": {
+                "createOption": "Empty"
+                },
+            "diskSizeGB": 255
+            },
+                "copy": {
+                "name": "diskCopy",
+                "count": 1
+            }
+        },
+        {
+            "apiVersion": "2019-07-01",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('vmNamePrefix'), 2, copyindex(1))]",
+            "copy": {
+                "name": "virtualMachineLoop",
+                "count": "[variables('totalVmCount')]"
+            },
+            "tags": {
+                "TechnicalContact": "gm_sds_rdi@equinor.com",
+                "serviceType": "external"
+            },
+            "identity": {
+                "type": "SystemAssigned"
+            },
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicNamePrefix'), 2, copyindex(1))]"
+            ],
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "[if(equals(copyIndex(1),variables('totalVmCount')), variables('vmSizes').Values[1], variables('vmSizes').values[0])]"
+                    
+                    },
+                "osProfile": {
+                    "computerName": "[concat(parameters('vmNamePrefix'), 2, copyIndex(1))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
+                                    "keyData": "[parameters('sshPublicKeys')]"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true
+                    }
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imageDefinition').imagePublisher]",
+                        "offer": "[variables('imageDefinition').imageOffer]",
+                        "sku": "[variables('imageDefinition').imageSKU]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "name": "[concat(parameters('vmNamePrefix'), 2, copyIndex(1), '-osdisk')]",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicNamePrefix'), 2, copyindex(1)))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "https://sdpbootdiagnostics.blob.core.windows.net/"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+    },
+    "functions": [
+    ]
+}
