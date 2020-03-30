@@ -72,7 +72,7 @@
         {
             "apiVersion": "2019-11-01",
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(variables('nicNamePrefix'), 2, copyindex(1))]",
+            "name": "[concat(variables('nicNamePrefix'), 3, copyindex(1))]",
             "location": "[parameters('location')]",
             "copy": {
                 "name": "nicLoop",
@@ -84,7 +84,7 @@
                         "name": "ipconfig1",
                         "properties": {
                             "privateIPAllocationMethod": "Static",
-                            "privateIPAddress": "[concat('10.73.68.12', copyindex(1))]",
+                            "privateIPAddress": "[concat('10.73.68.13', copyindex(1))]",
                             "subnet": {
                                 "id": "[variables('subnetRef')]"
                             }
@@ -100,14 +100,14 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "apiVersion": "2019-07-01",
-            "name": "[concat(parameters('vmNamePrefix'), 2, copyindex(1), '/AzureNetworkWatcherExtension')]",
+            "name": "[concat(parameters('vmNamePrefix'), 3, copyindex(1), '/AzureNetworkWatcherExtension')]",
             "copy": {
                 "name": "vmExtensionLoop",
                 "count": "[variables('totalVmCount')]"
             },
             "location": "norwayeast",
             "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmNamePrefix'), 2, copyindex(1)))]"
+                "[resourceId('Microsoft.Compute/virtualMachines', concat(parameters('vmNamePrefix'), 3, copyindex(1)))]"
             ],
             "properties": {
                 "autoUpgradeMinorVersion": true,
@@ -120,7 +120,7 @@
         "type": "Microsoft.Compute/disks",
         "apiVersion": "2019-07-01",
         "comments": "1 Disk for vm21 only",
-        "name": "[concat(parameters('vmNamePrefix'), 2, '1-', 'datadisk0', copyIndex(1))]",
+        "name": "[concat(parameters('vmNamePrefix'), 3, '1-', 'datadisk0', copyIndex(1))]",
         "location": "[parameters('location')]",
             "sku": {
                 "name":"Standard_LRS"
@@ -139,7 +139,7 @@
         {
             "apiVersion": "2019-07-01",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('vmNamePrefix'), 2, copyindex(1))]",
+            "name": "[concat(parameters('vmNamePrefix'), 3, copyindex(1))]",
             "copy": {
                 "name": "virtualMachineLoop",
                 "count": "[variables('totalVmCount')]"
@@ -153,7 +153,7 @@
             },
             "location": "[parameters('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Network/networkInterfaces/', variables('nicNamePrefix'), 2, copyindex(1))]"
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nicNamePrefix'), 3, copyindex(1))]"
             ],
             "properties": {
                 "hardwareProfile": {
@@ -161,7 +161,7 @@
                     
                     },
                 "osProfile": {
-                    "computerName": "[concat(parameters('vmNamePrefix'), 2, copyIndex(1))]",
+                    "computerName": "[concat(parameters('vmNamePrefix'), 3, copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": true,
@@ -186,7 +186,7 @@
                     "osDisk": {
                         "createOption": "FromImage",
                         "caching": "ReadWrite",
-                        "name": "[concat(parameters('vmNamePrefix'), 2, copyIndex(1), '-osdisk')]",
+                        "name": "[concat(parameters('vmNamePrefix'), 3, copyIndex(1), '-osdisk')]",
                         "managedDisk": {
                             "storageAccountType": "Standard_LRS"
                         }
@@ -195,7 +195,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicNamePrefix'), 2, copyindex(1)))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nicNamePrefix'), 3, copyindex(1)))]"
                         }
                     ]
                 },
