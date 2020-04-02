@@ -64,7 +64,7 @@
           "type": "array",
           "values": [
             "Standard_E2s_v3",
-            "Standard_B2ms"
+            "Standard_B8ms"
           ]
       }
     },
