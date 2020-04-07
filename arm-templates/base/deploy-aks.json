@@ -121,7 +121,6 @@
                 },
                 "networkProfile": {
                     "networkPlugin": "azure",
-                    "networkPolicy": "azure",
                     "serviceCidr": "[parameters('serviceCidr')]",
                     "dnsServiceIP": "[parameters('dnsServiceIp')]",
                     "dockerBridgeCidr": "172.17.0.1/16"
