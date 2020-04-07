@@ -7,17 +7,6 @@ source .env
 az account set --subscription "${AZ_SUBSCRIPTION}"
 az aks get-credentials -g "${AZ_GROUP}"  -n "${AZ_GROUP}-k8s" --overwrite-existing
 
-# Create the helm service account
-echo
-echo " Creating Helm Tiller service account"
-kubectl create -f manifests/tiller-service-account.yml > /dev/null || true
-
-# Deploys the helm service on the cluster
-echo
-echo " Initialising Helm"
-helm init --service-account tiller
-
-
 echo
 echo " Creating namespaces"
 kubectl apply -f manifests/namespaces.yaml > /dev/null || true
@@ -105,17 +94,23 @@ helm repo add fluxcd https://charts.fluxcd.io > /dev/null
 # Install Flux
 echo
 echo " Installing or upgrading Flux with Helm operator in the flux namespace"
-helm upgrade --install flux --version v0.16.0 \
+helm upgrade --install flux --version v1.3.0 \
     --namespace flux \
-    --set rbac.create=true \
-    --set helmOperator.create=true \
-    --set helmOperator.createCRD=true \
     --set git.url="$FLUX_GITOPS_REPO" \
-    --set git.branch=$FLUX_GITOPS_BRANCH \
+    --set git.branch=helm3 \
     --set git.path=$FLUX_GITOPS_PATH \
     --set manifestGeneration=true \
     fluxcd/flux > /dev/null
 
+
+# Install Flux Helm Operator with Helm v3 support
+# HelmRelease CRD first
+kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
+
+helm upgrade -i helm-operator fluxcd/helm-operator --wait \
+    --namespace flux \
+    --set git.ssh.secretName="flux-ssh" \
+    --set helm.versions=v3
 
 # Create cluster secret for velero - two format types needed due to bug with azure provider
 
