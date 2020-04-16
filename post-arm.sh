@@ -113,7 +113,6 @@ helm upgrade --install flux --version v0.16.0 \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch=$FLUX_GITOPS_BRANCH \
     --set git.path=$FLUX_GITOPS_PATH \
-    --set git.secretName="flux-ssh" \
     --set manifestGeneration=true \
     fluxcd/flux > /dev/null
 
