@@ -3,7 +3,6 @@
 [Velero](https://github.com/heptio/velero) is the backup solution we use to backup our cluster.
 Velero backups should be tested as one cannot blindly trust untested backups.
 
-
 ## Gitlab disaster recovery
 
 When using Gitlab DR, data is stored three places

@@ -23,12 +23,16 @@ echo
 echo " Setting subscription (${AZ_SUBSCRIPTION})"
 az account set --subscription "$AZ_SUBSCRIPTION" > /dev/null
 
+
+# Run Pre-ARM to create needed service accounts
 source ./pre-arm.sh
 
+# Deploy Azure resources defined in arm-templates
 echo
 echo " Deploying arm templates with parameter file ./arm-templates/${ENVIRONMENT}/deploy-arm.parameters.json"
+echo " Applying templates found at https://raw.githubusercontent.com/equinor/sdp-aks/ in ${ENVIRONMENT} branch"
 
-az deployment create --name "$AZ_GROUP" --location "$AZ_LOCATION" --template-file ./arm-templates/base/deploy-arm.json --parameters @./arm-templates/${ENVIRONMENT}/deploy-arm.parameters.json > /dev/null
+az deployment create --debug --name "$AZ_GROUP" --location "$AZ_LOCATION" --template-file ./arm-templates/base/deploy-arm.json --parameters @./arm-templates/${ENVIRONMENT}/deploy-arm.parameters.json > /dev/null
 
 echo
 echo " Set default resource group (${AZ_GROUP})"
@@ -39,4 +43,5 @@ echo
 echo " Getting Kubernetes cluster details"
 az aks get-credentials --name "${AZ_GROUP}-k8s"
 
+# Setup basic K8s services
 source ./post-arm.sh

@@ -38,3 +38,12 @@ Azure CLI:
 
 Recommended software to develop ARM templates: VScode + ARM extension + ARM Template Viewer extension
 Alternatively - Visual Studio --> create new ARM project (requires Azure extension)
+
+### Testing
+
+To test your templates, run the `az deployment`-command with `validate` on the specific template  
+
+```bash
+az deployment group validate -g sdpaks-dev --template-file arm-templates/base/deploy-aks.json --parameters arm-templates/dev/deploy-aks.parameters.json --debug
+
+```

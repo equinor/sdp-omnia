@@ -1,6 +1,6 @@
-#!/bin/bash
-# This script bootstraps a kubernetes cluster on Azure (AKS) with helm,
-# It also configures the client to run kubectl commands on the cluster (.kube/config)
+#! /bin/bash
+# This script creates needs to run before deploying the ARM-templates.
+# It will create any outside dependecies the the templates needs (mainly Service Accounts)
 # All variables should be defined in a file called ".env"
 set -e
 source .env

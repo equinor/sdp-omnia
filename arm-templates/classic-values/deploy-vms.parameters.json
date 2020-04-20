@@ -1,0 +1,32 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "Norway East"
+        },
+        "adminUsername": {
+            "value": "sdpteam"
+        },
+        "vmNamePrefix": {
+            "value": "vm"
+        },
+        "vnetName": {
+            "value": "S066-NOE-vnet"
+        },
+        "subnetName": {
+            "value": "S066-NOE-subnet"
+        },
+        "netRgName": {
+            "value": "S066-NOE-network"
+        },
+        "sshPublicKeys": {
+            "reference": {
+              "keyVault": {
+                "id": "/subscriptions/47dd9472-aaea-401b-add5-55fccfe63434/resourceGroups/sdp-infrastructure/providers/Microsoft.KeyVault/vaults/sdp-vault"
+              },
+              "secretName": "sdp-team-pub-sshkeys"
+            }
+        }
+    }
+}

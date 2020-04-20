@@ -26,7 +26,8 @@
         "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
         "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
         "aksManagedClusterId": "[resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName'))]",
-        "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]",
+        "vnetSubnetIdProd": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', 'sdpaks-prod', '/providers/Microsoft.Network/virtualNetworks/', 'sdpaks-prod', '-vnet', '/subnets/aks-subnet')]",
+        "vnetSubnetIdDev": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', 'sdpaks-dev', '/providers/Microsoft.Network/virtualNetworks/', 'sdpaks-dev', '-vnet', '/subnets/aks-subnet')]",
         "storageAccountName": "sdpakscommonbackup",
         "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]"
     },
@@ -47,9 +48,13 @@
                     "bypass": "None",
                     "defaultAction": "Deny",
                 "virtualNetworkRules": [
-                    {
-                        "id": "[variables('vnetSubnetId')]",
-                        "action": "Allow"
+                        {
+                            "id": "[variables('vnetSubnetIdProd')]",
+                            "action": "Allow"
+                        },
+                        {
+                            "id": "[variables('vnetSubnetIdDev')]",
+                            "action": "Allow"
                         }
                     ]
                 },
@@ -88,9 +93,5 @@
         }
     ],
 "outputs": {
-    "vnetSubnetId": {
-      "type": "string",
-      "value": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
-    }
   }
 }

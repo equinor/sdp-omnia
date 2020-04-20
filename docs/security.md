@@ -27,8 +27,9 @@ Flow chart highlighting traffic flow and all access points to the the cluster.
 ### Measures
 
 - Own Azure subscription for SDP admins.
-  - TODO: Limit user in the "SDP Tools" subscriptions, or get own subscriptions. 
+  - Limit user in the "SDP Tools" subscriptions, or get own subscriptions.  
 - Equinor security standard for Azure Portal/az CLI login (Equinor organization + Two-factor authentication(2FA))
+- TODO: JustInTime Access to AzureDNS
 
 ## AKS Nodes
 
@@ -40,7 +41,6 @@ Flow chart highlighting traffic flow and all access points to the the cluster.
 - If somebody get access to the VNET the default security is not sufficient
   - Big attack surface
 
-
 ### Measures
 
 - Disabled/uninstalled all unnecessary services
@@ -51,8 +51,8 @@ Flow chart highlighting traffic flow and all access points to the the cluster.
   - Automatically reboots if nessecary to apply security updates.
 - !TODO: local Firewall
 - !TODO: Filter and monitor audit logs. Log events that modify date&time, user&groups, AppArmor, login&logout, access rights, unsuccessful authorization, docker files
-- !TODO: Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
-- !Confirm: Restrict traffic between containers (Docker daemon)
+- Ensure file permissions. Eg. /etc/passwd, /etc/shadow, /etc/crontab
+- Restrict traffic between containers (Docker daemon)
 - !Investigate: Enforce AppArmor
 - !Confirm Ensure kubelet configuration files permissions
 
@@ -72,11 +72,10 @@ Services: Helm, flux, puppet, github, ark, kured, sealed secrets, azure dns, azu
 
 - Master nodes and it's services in AKS is fully managed by Azure.  
 - TODO: Rotate Cluster certs on a regular schedule
-- TODO: RBAC - Look into service account improvements
 - Keep cluster and services up-to-date
   - TODO: Get notification when new releases
-- !Investigate (later): NetworkPolicies
-- TODO (later): Don't allow dangerous runtime options. This include mounting the docker socket, using priviliged flag, --pid=host, --network=host, --device. This can be done with PodSecurityPolicy
+- TODO: NetworkPolicies
+- TODO: Don't allow dangerous runtime options. This include mounting the docker socket, using priviliged flag, --pid=host, --network=host, --device. This can be done with PodSecurityPolicy
 - Limit number of users that has access to GitHub repositories.
 
 ## Pods and Applications
