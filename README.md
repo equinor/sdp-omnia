@@ -35,6 +35,9 @@ To operate a K8s cluster that has a _Single Source of Truth_, deploy K8s resourc
 
 To backup both Persistent Volumes and K8s manifests, we deploy Vmware Velero. Velero is configured with a seperate Azure Resource group and Storage account. Velero runs on a schedule to take snapshots of the Azure Disks and the deployed K8s manifests.
 
+## Grafana & Prometheus
+To collect metrics we use Prometheus. We display these graphically in Grafana. For collecting logs we use Grafana Loki, and collect both logs from our VM's and in-cluster resources. We also display our log output centrally through Grafana, so that we can use a "single pane of glass" for logs and metrics for as many of our services as possible.
+
 ### Sealed Secrets
 
 To be able to maintain our GitOps workflow, we need to commit secrets(SSL Keys, Oauth keys, Container Registry Keys etc.) to Git. These secrets are encrypted with asymmetric cryptography, where the private key only resides within the Sealed-Secrets controller in the K8s cluster. We deploy SealedSecret, which picks up encrypted secrets and "translates" them into regular K8s secrets.
@@ -59,6 +62,10 @@ This is a homemade solution that gives us the capacity to controll the AKS nodes
 
 Kured is a simple solution to the problem on rebooting nodes to enable security patches. If an update requires the node to restart, it creates a file that Kured looks for. If the file is there, Kured drains, restart, and then uncordons the given node.
 
+### VMs
+
+In the /arm-templates/classic folder you will find ARM templates for our VM's which not run in a separate subscription. These run apps which require on-prem connectivity to function. This separate subscription has stricter policies, so currently we cannot use a CI job to automatically update our templates. This will be valid until when service principals can use JiT access, and can do this via the CLI.
+
 ## Usage
 
 ### Prerequisite
@@ -73,7 +80,8 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
 
 1. Make sure the Azure Key Vault is created
 2. Create and populate `.env` from `env.template`
-3. Bootstrap AKS with additional dependencies `./bootstrap.azcli`
+3. Bootstrap AKS with additional dependencies `./bootstrap.sh`
+4. Further updates should be done to the ARM templates. The CI will automatically apply updates when comitting so make sure you commit to dev before merging into prod.
   
 ## How-to's
 
