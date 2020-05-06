@@ -66,26 +66,6 @@ function key_exists {
   az keyvault secret show --name $1 --vault-name SDPVault > /dev/null
 }
 
-# Create ssh-key
-FLUX_PRIVATE_KEY="${AZ_GROUP}-flux-private-key"
-if ! key_exists $FLUX_PRIVATE_KEY; then
-    echo
-    echo " Creating flux ssh key"
-    ssh-keygen -q -N "" -C "flux@${PREFIX}sdpaks.equinor.com" -f ./identity
-    az keyvault secret set --vault-name SDPVault -n $FLUX_PRIVATE_KEY -f './identity' > /dev/null
-    echo
-    echo "Add this flux public key to flux git repo:"
-    echo
-    cat identity.pub
-    az keyvault secret set --vault-name SDPVault -n "${AZ_GROUP}-flux-public-key" -f './identity.pub' > /dev/null
-    rm -f identity identity.pub
-fi
-
-echo " Creating flux secret"
-FLUX_KEY="$(az keyvault secret show --name "$FLUX_PRIVATE_KEY" --vault-name SDPVault --query value -o tsv)"
-
-kubectl -n flux create secret generic flux-ssh --from-literal=identity="$FLUX_KEY" --dry-run -o yaml | kubectl apply -f - > /dev/null || true
-
 # Add flux repo to helm
 echo
 echo " Adding fluxcd/flux repository to Helm"
@@ -97,7 +77,7 @@ echo " Installing or upgrading Flux with Helm operator in the flux namespace"
 helm upgrade --install flux --version v1.3.0 \
     --namespace flux \
     --set git.url="$FLUX_GITOPS_REPO" \
-    --set git.branch=helm3 \
+    --set git.branch="$FLUX_GITOPS_BRANCH" \
     --set git.path=$FLUX_GITOPS_PATH \
     --set manifestGeneration=true \
     fluxcd/flux > /dev/null
@@ -109,7 +89,7 @@ kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/d
 
 helm upgrade -i helm-operator fluxcd/helm-operator --wait \
     --namespace flux \
-    --set git.ssh.secretName="flux-ssh" \
+    --set git.ssh.secretName="flux-git-deploy" \
     --set helm.versions=v3
 
 # Create cluster secret for velero - two format types needed due to bug with azure provider
