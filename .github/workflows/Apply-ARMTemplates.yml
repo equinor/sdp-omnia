@@ -1,8 +1,18 @@
 # ARM template validate and apply. Should be synced and triggered on changes to the arm-template folder 
 # For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
+name: 'Apply ARM template'
 on:
   push:
+    branches:
+      - prod
+      - dev
+    paths:
+    - 'arm-templates/base/*'
+    - 'arm-templates/dev/*'
+    - 'arm-templates/prod/*'
+    - '.github/workflows/Apply-ARMTemplates.yml'
+  pull_request:
     branches:
       - prod
       - dev
@@ -16,16 +26,34 @@ env:
   LOCATION: 'norwayeast' 
   FILE1: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json'
   PARAM1: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
-
+  AZCLIVERSION: '2.5.1'
 jobs:
   build-and-deploy:
     name: Apply root ARM template
     runs-on: ubuntu-latest
     steps:
-    - uses: azure/login@v1
-      with:
-        # Paste output of `az ad sp create-for-rbac --name Apply-ARMTemplate --role "Contributor" --sdk-auth` as value of secret variable: AZURE_CREDENTIALS, add to Repo settings --> secrets
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-    - run: |
-          az deployment create --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }} 
-          echo Succcessfully updated - ${GITHUB_REF##*/} cluster
+      - name: 'az login'
+        uses: azure/login@v1
+        with:
+          # Paste output of `az ad sp create-for-rbac --name Apply-ARMTemplate --role "Contributor" --sdk-auth` as value of secret variable: AZURE_CREDENTIALS, add to Repo settings --> secrets
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'az deployment what-if'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: ${{ env.AZCLIVERSION }}
+          inlineScript: |
+            az deployment sub what-if --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }} > /dev/null
+      - name: 'az deployment create'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: ${{ env.AZCLIVERSION }}
+          inlineScript: |
+            az deployment create --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }} 
+            echo Succcessfully updated - ${GITHUB_REF##*/} cluster
+      - name: 'az logout'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: ${{ env.AZCLIVERSION }}
+          inlineScript: |
+            az logout
