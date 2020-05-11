@@ -43,7 +43,7 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az deployment sub what-if --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }}
+            az deployment sub what-if --location ${{ env.LOCATION }} --template-uri ${{ env.FILE1 }}  --parameters ${{ env.PARAM1 }} > /dev/null
       - name: 'az deployment create'
         uses: azure/CLI@v1
         with:
