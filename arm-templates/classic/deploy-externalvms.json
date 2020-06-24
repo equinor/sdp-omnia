@@ -57,7 +57,7 @@
             "imageSKU": "8_1-gen2"
         },
         "nsgName": "S066-NOE-subnet-nsg",
-      "type1VmCount": 1,
+      "type1VmCount": 2,
       "type2VmCount": 1,
       "totalVmCount": "[add(variables('type1VmCount'), variables('type2VmCount'))]",
         "vmSizes": {
@@ -93,7 +93,7 @@
                 ],
                 "networkSecurityGroup": {
                     "id": "[resourceId(parameters('netRgName'),'Microsoft.Network/networkSecurityGroups', variables('nsgName'))]"
-                
+
                 }
             }
         },
@@ -158,7 +158,7 @@
             "properties": {
                 "hardwareProfile": {
                     "vmSize": "[if(equals(copyIndex(1),variables('totalVmCount')), variables('vmSizes').Values[1], variables('vmSizes').values[0])]"
-                    
+
                     },
                 "osProfile": {
                     "computerName": "[concat(parameters('vmNamePrefix'), 3, copyIndex(1))]",
