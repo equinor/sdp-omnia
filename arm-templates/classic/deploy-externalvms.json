@@ -57,16 +57,16 @@
             "imageSKU": "8_1-gen2"
         },
         "nsgName": "S066-NOE-subnet-nsg",
-      "type1VmCount": 2,
-      "type2VmCount": 1,
-      "totalVmCount": "[add(variables('type1VmCount'), variables('type2VmCount'))]",
+        "type1VmCount": 3,
+        "type2VmCount": 3,
+        "totalVmCount": "[add(variables('type1VmCount'), variables('type2VmCount'))]",
         "vmSizes": {
-          "type": "array",
-          "values": [
-            "Standard_E2s_v3",
-            "Standard_B8ms"
-          ]
-      }
+            "type": "array",
+            "values": [
+                "Standard_E2s_v3",
+                "Standard_B8ms"
+            ]
+        }
     },
     "resources": [
         {
@@ -117,21 +117,21 @@
             }
         },
         {
-        "type": "Microsoft.Compute/disks",
-        "apiVersion": "2019-07-01",
-        "comments": "1 Disk for vm21 only",
-        "name": "[concat(parameters('vmNamePrefix'), 3, '1-', 'datadisk0', copyIndex(1))]",
-        "location": "[parameters('location')]",
+            "type": "Microsoft.Compute/disks",
+            "apiVersion": "2019-07-01",
+            "comments": "1 Disk for vm21 only",
+            "name": "[concat(parameters('vmNamePrefix'), 3, '1-', 'datadisk0', copyIndex(1))]",
+            "location": "[parameters('location')]",
             "sku": {
-                "name":"Standard_LRS"
+                "name": "Standard_LRS"
             },
             "properties": {
                 "creationData": {
-                "createOption": "Empty"
+                    "createOption": "Empty"
                 },
-            "diskSizeGB": 255
+                "diskSizeGB": 255
             },
-                "copy": {
+            "copy": {
                 "name": "diskCopy",
                 "count": 1
             }
@@ -159,7 +159,7 @@
                 "hardwareProfile": {
                     "vmSize": "[if(equals(copyIndex(1),variables('totalVmCount')), variables('vmSizes').Values[1], variables('vmSizes').values[0])]"
 
-                    },
+                },
                 "osProfile": {
                     "computerName": "[concat(parameters('vmNamePrefix'), 3, copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
