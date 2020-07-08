@@ -1,0 +1,8 @@
+#cloud-config
+puppet:
+  conf:
+    agent:
+      server: "puppet.sdp.statoil.no"
+      certname: "%i.sdp.equinor.com"
+runcmd:
+ - [ /opt/puppetlabs/puppet/bin/puppet, agent, --test ]
