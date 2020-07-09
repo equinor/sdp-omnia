@@ -1,11 +1,9 @@
-# Add puppet yum repo
 yum_repos:
   puppet:
     baseurl: http://yum.puppetlabs.com/puppet-release-el-8.noarch.rpm
     enabled: true
     name: Puppet - $basearch
 
-# Configure and run puppet on first boot
 puppet:
   install: true
   package_name: 'puppet'
@@ -14,17 +12,13 @@ puppet:
       server: "puppet.sdp.statoil.no"
       certname: "%i.sdp.equinor.com"
 
-# Check for updates & upgrades on first boot
 package_update: true
 package_upgrade: true
 package_reboot_if_required: true
 
-# Send certificate to be signed by puppet master
 runcmd:
  - [ /opt/puppetlabs/puppet/bin/puppet, agent, --test ]
 
-# Log all cloud-init process output (info & errors) to a logfile
 output: {all: ">> /var/log/cloud-init-output.log"}
 
-# final_message written to log when cloud-init processes are finished
 final_message: "System boot (via cloud-init) is COMPLETE, after $UPTIME seconds. Finished at $TIMESTAMP"
