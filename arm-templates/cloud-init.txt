@@ -5,12 +5,10 @@ yum_repos:
     enabled: true
     name: Puppet - $basearch
 
-# Install additional packages on first boot
-packages:
- - puppet
-
 # Configure and run puppet on first boot
 puppet:
+  install: true
+  package_name: 'puppet'
   conf:
     agent:
       server: "puppet.sdp.statoil.no"
