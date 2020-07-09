@@ -1,3 +1,4 @@
+#cloud-config
 yum_repos:
   puppet:
     baseurl: http://yum.puppetlabs.com/puppet-release-el-8.noarch.rpm
