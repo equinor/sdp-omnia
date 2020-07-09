@@ -15,6 +15,9 @@
     "dbName": {
       "type": "String"
     },
+    "newdbName": {
+      "type": "String"
+    },
     "tags": {
       "defaultValue": {},
       "type": "Object"
@@ -86,6 +89,45 @@
       "name": "[concat(parameters('dbName'), '/allow-', parameters('environment'), '-cluster')]",
       "dependsOn": [
           "[parameters('dbName')]"
+      ],
+      "properties": {
+          "virtualNetworkSubnetId": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-10-01').agentPoolProfiles[0].vnetSubnetID]",
+          "ignoreMissingVnetServiceEndpoint": false
+      }
+    },
+        {
+      "type": "Microsoft.DBforPostgreSQL/servers",
+      "apiVersion": "2017-12-01-preview",
+      "name": "[parameters('newdbName')]",
+      "location": "[resourceGroup().location]",
+      "tags": "[parameters('tags')]",
+      "sku": {
+        "name": "GP_Gen5_2",
+        "tier": "GeneralPurpose",
+        "capacity": 2,
+        "size": 36864,
+        "family": "Gen5"
+      },
+      "kind": "",
+      "properties": {
+        "version": "11",
+        "administratorLogin": "[parameters('administratorLogin')]",
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "storageProfile": {
+          "storageMB": 36864,
+          "backupRetentionDays": 7,
+          "geoRedundantBackup": "Disabled",
+          "storageAutoGrow": "Disabled"
+        },
+        "previewFeature": ""
+      }
+    },
+    {
+      "type": "Microsoft.DBforPostgreSQL/servers/virtualNetworkRules",
+      "apiVersion": "2017-12-01",
+      "name": "[concat(parameters('newdbName'), '/allow-', parameters('environment'), '-cluster')]",
+      "dependsOn": [
+          "[parameters('newdbName')]"
       ],
       "properties": {
           "virtualNetworkSubnetId": "[reference(resourceId(variables('rootRgName'),'Microsoft.ContainerService/managedClusters/', variables('managedClusterName')), '2019-10-01').agentPoolProfiles[0].vnetSubnetID]",
