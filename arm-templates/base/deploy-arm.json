@@ -28,12 +28,6 @@
         ],
         "templateLoop2": [
             {
-                "name": "dnsTemplate",
-                "rgName": "[concat(variables('rootRgName'),'-dns')]",
-                "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-dns.json')]",
-                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-dns.parameters.json')]"
-            },
-            {
                 "name": "gitlabStorageTemplate",
                 "rgName": "[concat(variables('rootRgName'),'-gitlab-storage')]",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-gitlab-storage.json')]",
@@ -44,14 +38,6 @@
                 "rgName": "sdpaks-common-backup",
                 "templateUrl": "[concat(variables('templateBaseUrl'), 'deploy-storage.json')]",
                 "parametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-storage.parameters.json')]"
-            }
-        ],
-        "templateLoop3": [
-                {
-                "name": "nsrecordTemplate",
-                "rgName": "k8s-infrastructure",
-                "templateUrl": "[concat(variables('templateBaseUrl'), 'update-rootdns.json')]",
-                "parametersUrl": "[concat(variables('parametersBaseUrl'), 'update-rootdns.parameters.json')]"
             }
         ]
     },
@@ -74,16 +60,6 @@
             "copy": {
                 "name": "rgCopy2",
                 "count": "[length(variables('templateLoop2'))]"
-            }
-        },
-        {
-            "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2018-05-01",
-            "location": "[variables('location')]",
-            "name": "[variables('templateLoop3')[copyIndex()].rgName]",
-            "copy": {
-                "name": "rgCopy3",
-                "count": "[length(variables('templateLoop3'))]"
             }
         },
         {
@@ -131,31 +107,6 @@
                 },
                 "parametersLink": {
                     "uri": "[variables('templateLoop2')[copyIndex()].parametersUrl]",
-                    "contentVersion":"1.0.0.0"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
-            "resourceGroup": "[variables('templateLoop3')[copyIndex()].rgName]",
-            "name": "[concat('nestedTemplate-', variables('templateLoop3')[copyIndex()].name)]",
-            "copy": {
-                "name": "templateCopy3",
-                "count": "[length(variables('templateLoop3'))]"
-            },
-            "dependsOn": [
-                "rgCopy3",
-                "templateCopy2"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('templateLoop3')[copyIndex()].templateUrl]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parametersLink": {
-                    "uri": "[variables('templateLoop3')[copyIndex()].parametersUrl]",
                     "contentVersion":"1.0.0.0"
                 }
             }
