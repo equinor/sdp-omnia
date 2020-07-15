@@ -12,20 +12,11 @@ on:
     - 'arm-templates/base/*'
     - 'arm-templates/dev/*'	
     - 'arm-templates/prod/*'
-  pull_request:
-    branches:
-      - prod
-      - dev
-    paths:
-    - 'arm-templates/base/*'
-    - 'arm-templates/dev/*'	
-    - 'arm-templates/prod/*'
-
 env:
   LOCATION: 'norwayeast'
   AKS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json'
   AKS_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
-  AZCLIVERSION: '2.5.1'
+  AZCLIVERSION: '2.9.0'
 jobs:
   # AKS deployments are made on a subscription scope
   deploy-aks-arm:
@@ -43,7 +34,7 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az deployment sub what-if --location ${{ env.LOCATION }} --template-uri ${{ env.AKS }}  --parameters ${{ env.AKS_PARAMS }}
+            az deployment sub what-if --location ${{ env.LOCATION }} --template-uri ${{ env.AKS }}  --parameters ${{ env.AKS_PARAMS }} > /dev/null
       - if: github.event_name == 'push'
         name: 'az  AKS deployment create'
         uses: azure/CLI@v1

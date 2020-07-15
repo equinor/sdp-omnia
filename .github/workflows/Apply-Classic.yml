@@ -11,13 +11,6 @@ on:
     paths:
     - 'arm-templates/classic/*'
     - 'arm-templates/classic-values/*'
-  pull_request:
-    branches:
-      - prod
-      - dev
-    paths:
-    - 'arm-templates/classic/*'
-    - 'arm-templates/classic-values/*'
 
 env:
   LOCATION: 'norwayeast'
@@ -27,7 +20,7 @@ env:
   INTERNAL_GROUP: 'sdp-internal-vms'
   CLASSIC_INTERNAL: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json'
   CLASSIC_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json'
-  AZCLIVERSION: '2.5.1'
+  AZCLIVERSION: '2.9.0'
 jobs:
   # Classic deployments are made on a group scope
   deploy-classic-external-arm:
@@ -46,8 +39,7 @@ jobs:
           inlineScript: |
             az deployment group what-if --subscription ${{ env.CLASSIC_SUB }} --resource-group ${{ env.EXTERNAL_GROUP }} --template-uri ${{ env.CLASSIC_EXTERNAL }}  --parameters ${{ env.CLASSIC_PARAMS }} > /dev/null
      
-      - if: github.event_name == 'push'
-        name: 'az CLASSIC_EXTERNAL deployment create'
+      - name: 'az CLASSIC_EXTERNAL deployment create'
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
@@ -70,8 +62,7 @@ jobs:
           inlineScript: |
             az deployment group what-if --subscription ${{ env.CLASSIC_SUB }} --resource-group ${{ env.INTERNAL_GROUP }} --template-uri ${{ env.CLASSIC_INTERNAL }}  --parameters ${{ env.CLASSIC_PARAMS }} > /dev/null
       
-      - if: github.event_name == 'push'
-        name: 'az CLASSIC_INTERNAL deployment create'
+      - name: 'az CLASSIC_INTERNAL deployment create'
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
