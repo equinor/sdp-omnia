@@ -42,13 +42,13 @@
         "value": "10.101.0.10"
       },
       "minNodes":{
-        "value": 1
+        "value": 2
       },
       "maxNodes":{
         "value": 3
       },
       "kubernetesVersion":{
-        "value": "1.17.3"
+        "value": "1.17.7"
       }
     }
 }

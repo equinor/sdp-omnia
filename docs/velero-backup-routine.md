@@ -97,7 +97,7 @@ In case the latest backup from schedule is corrupted, manually enter a backup na
 
 ### Pre-reqs:
 * Two AKS clusters with a velero deployment each. The deployments should have a connection to the same storage account in Azure.
- This can be set up from scratch (with some manual config) using the `/sdp-aks/velero/bootstrap.azcli` script.
+ This can be set up from scratch (with some manual config) using the `/sdp-omnia/velero/bootstrap.azcli` script.
 * Empty namespace in dev cluster named `backup-sandbox`
 * Backup created in prod cluster containing one or more PVs.
 

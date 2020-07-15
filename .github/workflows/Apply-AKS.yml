@@ -1,0 +1,45 @@
+# ARM template validate and apply. Should be synced and triggered on changes to the arm-template folder
+# For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
+# For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
+name: 'Apply AKS ARM template'
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - prod
+      - dev
+    paths:
+    - 'arm-templates/base/*'
+    - 'arm-templates/dev/*'	
+    - 'arm-templates/prod/*'
+env:
+  LOCATION: 'norwayeast'
+  AKS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json'
+  AKS_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
+  AZCLIVERSION: '2.9.0'
+jobs:
+  # AKS deployments are made on a subscription scope
+  deploy-aks-arm:
+    name: Apply AKS ARM template
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'az login'
+        uses: azure/login@v1
+        with:
+          # Paste output of `az ad sp create-for-rbac --name Apply-ARMTemplate --role "Contributor" --sdk-auth` as value of secret variable: AZURE_CREDENTIALS, add to Repo settings --> secrets
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: 'az AKS deployment what-if'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: ${{ env.AZCLIVERSION }}
+          inlineScript: |
+            az deployment sub what-if --location ${{ env.LOCATION }} --template-uri ${{ env.AKS }}  --parameters ${{ env.AKS_PARAMS }} > /dev/null
+      - if: github.event_name == 'push'
+        name: 'az  AKS deployment create'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: ${{ env.AZCLIVERSION }}
+          inlineScript: |
+            az deployment sub create --location ${{ env.LOCATION }} --template-uri ${{ env.AKS }}  --parameters ${{ env.AKS_PARAMS }}
+            echo Succcessfully updated - ${GITHUB_REF##*/} cluster
