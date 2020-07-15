@@ -7,14 +7,14 @@ on:
   push:
     branches:
       - prod
-      - dev2
+      - dev
     paths:
     - 'arm-templates/classic/*'
     - 'arm-templates/classic-values/*'
   pull_request:
     branches:
       - prod
-      - dev2
+      - dev
     paths:
     - 'arm-templates/classic/*'
     - 'arm-templates/classic-values/*'
