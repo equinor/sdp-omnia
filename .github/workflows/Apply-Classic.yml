@@ -22,11 +22,11 @@ on:
 env:
   LOCATION: 'norwayeast'
   CLASSIC_SUB: 'S066-SDP-Tools-Classic'
-  CLASSIC_EXTERNAL: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json'
+  CLASSIC_EXTERNAL: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json'
   EXTERNAL_GROUP: 'sdp-external-vms'
   INTERNAL_GROUP: 'sdp-internal-vms'
-  CLASSIC_INTERNAL: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json'
-  CLASSIC_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json'
+  CLASSIC_INTERNAL: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json'
+  CLASSIC_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json'
   AZCLIVERSION: '2.5.1'
 jobs:
   # Classic deployments are made on a group scope

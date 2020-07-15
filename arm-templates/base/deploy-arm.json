@@ -13,8 +13,8 @@
         "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
         "location": "norwayeast",
 
-        "templateBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/', parameters('environment'), '/arm-templates/base/')]",
-        "parametersBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-aks/', parameters('environment'), '/arm-templates/', parameters('environment'), '/')]",
+        "templateBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-omnia/', parameters('environment'), '/arm-templates/base/')]",
+        "parametersBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-omnia/', parameters('environment'), '/arm-templates/', parameters('environment'), '/')]",
         "commonTemplateUrl": "[concat(variables('templateBaseUrl'), 'deploy-arm.json')]",
         "commonParametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-arm.parameters.json')]",
 

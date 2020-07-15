@@ -23,8 +23,8 @@ on:
 
 env:
   LOCATION: 'norwayeast'
-  AKS: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json'
-  AKS_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-aks/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
+  AKS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json'
+  AKS_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
   AZCLIVERSION: '2.5.1'
 jobs:
   # AKS deployments are made on a subscription scope
