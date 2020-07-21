@@ -106,7 +106,7 @@
                         "count": 2,
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
-                        "enableAutoScaling": false,
+                        "enableAutoScaling": true,
                         "minCount": "[parameters('minNodes')]",
                         "maxCount": "[parameters('maxNodes')]",
                         "storageProfile": "ManagedDisks",
