@@ -35,7 +35,7 @@ jobs:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
             az deployment sub what-if --location ${{ env.LOCATION }} --template-uri ${{ env.AKS }}  --parameters ${{ env.AKS_PARAMS }} > /dev/null
-      - if: github.event_name == 'push'
+      - if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         name: 'az  AKS deployment create'
         uses: azure/CLI@v1
         with:
