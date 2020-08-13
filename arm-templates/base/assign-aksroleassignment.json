@@ -1,3 +1,5 @@
+ // This role assignment is for the Velero SP to be able to take snapshots and re-create disks to the AKS cluster
+ // Per Aug. 2020 - not included in Github Actions CI
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",

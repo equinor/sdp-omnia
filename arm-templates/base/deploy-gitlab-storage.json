@@ -47,7 +47,7 @@
     }
   },
   "variables": {
-     "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+      "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
       "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
       "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
       "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]"
@@ -81,6 +81,7 @@
         "previewFeature": ""
       }
     },
+    // Allow connection only from the environment's AKS cluster
     {
       "type": "Microsoft.DBforPostgreSQL/servers/virtualNetworkRules",
       "apiVersion": "2017-12-01",
@@ -109,7 +110,7 @@
             "defaultAction": "Deny",
             "virtualNetworkRules": [
               {
-                  "id": "[variables('vnetSubnetId')]",
+                  "id": "[variables('vnetSubnetId')]", // Allow connection only from the environment's AKS cluster
                   "action": "Allow"
               }
             ]
@@ -133,6 +134,7 @@
         "publicAccess": "None"
       }
     },
+    // Role assignment for the AKS SP to write to the storage account. After MSI is enabled, this can be removed.
     {
       "type": "Microsoft.Authorization/roleAssignments",
       "apiVersion": "2018-09-01-preview",
