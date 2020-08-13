@@ -1,7 +1,13 @@
-# Software Development Platform's Azure Kubernetes Services
+# Software Development Platform's Cloud platform
 
-This is the main repository for SDP's AKS solution.  
-It contains some basic overview information on these topics;
+This is the main repository for SDP's cloud platform.
+
+It has two parts:
+- AKS solution
+- VM's with on-prem connectivity.
+
+This repo mostly focuses on AKS, as the VM's are here mostly for legacy support. New apps and services should always be placed in the AKS solution if possible.
+We conver some basic overview information on these topics;
 
 - How AKS works
 - How we have configured it
@@ -13,6 +19,8 @@ It contains some basic overview information on these topics;
 Flux GitOps Manifests - <https://github.com/equinor/sdp-flux>  
 AKS Puppet - <https://github.com/equinor/sdp-aks-puppet>  
 AKS Node Puppet Setup - <https://github.com/equinor/sdp-aks-node-puppet>
+
+The Flux repo should be considered as the "source of truth" of what is actually deployed in the cluster.
 
 ## Technologies
 
@@ -35,7 +43,7 @@ To operate a K8s cluster that has a _Single Source of Truth_, deploy K8s resourc
 
 To backup both Persistent Volumes and K8s manifests, we deploy Vmware Velero. Velero is configured with a seperate Azure Resource group and Storage account. Velero runs on a schedule to take snapshots of the Azure Disks and the deployed K8s manifests.
 
-## Grafana & Prometheus
+### Grafana & Prometheus
 To collect metrics we use Prometheus. We display these graphically in Grafana. For collecting logs we use Grafana Loki, and collect both logs from our VM's and in-cluster resources. We also display our log output centrally through Grafana, so that we can use a "single pane of glass" for logs and metrics for as many of our services as possible.
 
 ### Sealed Secrets
@@ -48,7 +56,7 @@ Is simply a service that read ingress manifest annotations, and talks to the Clo
 
 ### Ingress-Controller
 
-We use Nginx ingress-controller to expose services from within the cluster to the Internet. The ingress-controllers main job is to connect hostnames and K8s services, and terminate SSL traffic.
+We use Nginx ingress-controller to expose services from within the cluster to the Internet. The ingress-controllers main job is to connect hostnames and K8s services, and terminate SSL traffic. Port 22 is opened to support SSH cloning from our Gitlab instance.
 
 ### Cert-Manager
 
@@ -62,6 +70,17 @@ This is a homemade solution that gives us the capacity to controll the AKS nodes
 
 Kured is a simple solution to the problem on rebooting nodes to enable security patches. If an update requires the node to restart, it creates a file that Kured looks for. If the file is there, Kured drains, restart, and then uncordons the given node.
 
+### Loki
+
+Loki allows us to collect logs from both in-cluster pods and VM's outside the cluster. We forward the logs to Grafana where we can centrally search and correlate metrics and logs.
+
+### Sysdig technologies
+
+OSS Falco and Sysdig Inspect are used to gain security insight and packet captures in case of incidents. Falco exporter collects metrics and forwards them to Grafana for visualization and correlation with logs collected by Loki.
+
+### Oauth2-proxy
+For apps which do not have built-in AAD authentication support, we use an Oauth2-proxy to ensure only our team can reach the websites.
+
 ### VMs
 
 In the /arm-templates/classic folder you will find ARM templates for our VM's which not run in a separate subscription. These run apps which require on-prem connectivity to function. This separate subscription has stricter policies, so currently we cannot use a CI job to automatically update our templates. This will be valid until when service principals can use JiT access, and can do this via the CLI.
@@ -72,7 +91,7 @@ In the /arm-templates/classic folder you will find ARM templates for our VM's wh
 
 - Install Azure CLI (az)
 - Install kubectl; `az aks install-cli`
-- Install [helm client](https://docs.helm.sh/using_helm/#installing-helm)  
+- Install [helm client](https://helm.sh/docs/intro/install/)  
 
 Note: Installing and using kubectl commands does not work through the Equinor proxy. You should therefore be on the 'approved network' to avoid the proxy.
 
@@ -81,7 +100,7 @@ Note: Installing and using kubectl commands does not work through the Equinor pr
 1. Make sure the Azure Key Vault is created
 2. Create and populate `.env` from `env.template`
 3. Bootstrap AKS with additional dependencies `./bootstrap.sh`
-4. Further updates should be done to the ARM templates. The CI will automatically apply updates when comitting so make sure you commit to dev before merging into prod.
+4. Further updates should be done to the ARM templates. The CI will automatically apply updates when committing so make sure you commit to dev before merging into prod.
   
 ## How-to's
 
