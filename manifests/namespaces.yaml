@@ -1,3 +1,5 @@
+# Secrets and certain resources created by post-arm template such as Flux require that namespaces are created from this repo.
+
 ---
 apiVersion: v1
 kind: Namespace
