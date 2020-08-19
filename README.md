@@ -79,7 +79,7 @@ Loki allows us to collect logs from both in-cluster pods and VM's outside the cl
 OSS Falco and Sysdig Inspect are used to gain security insight and packet captures in case of incidents. Falco exporter collects metrics and forwards them to Grafana for visualization and correlation with logs collected by Loki.
 
 ### Oauth2-proxy
-For apps which do not have built-in AAD authentication support, we use an Oauth2-proxy to ensure only our team can reach the websites.
+For services which do not have sufficient built-in authentication, we use an Oauth2-proxy to ensure proper access restrictions.
 
 ### VMs
 
