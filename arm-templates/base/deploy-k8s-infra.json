@@ -1,0 +1,200 @@
+// This is not managed by Github actions per Aug. 2020, as human errors can be critical. Used for reference.
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vaults_SDPVault_name": {
+            "defaultValue": "SDPVault",
+            "type": "String"
+        },
+        "actionGroups_SDP_Alerts_name": {
+            "defaultValue": "SDP-Alerts",
+            "type": "String"
+        },
+        "dnszones_sdpaks_equinor_com_name": {
+            "defaultValue": "sdpaks.equinor.com",
+            "type": "String"
+        },
+        "registries_sdpaksCr_name": {
+            "defaultValue": "sdpaksCr",
+            "type": "String"
+        },
+        "dnszones_dev_sdpaks_equinor_com_name": {
+            "defaultValue": "dev.sdpaks.equinor.com",
+            "type": "String"
+        },
+        "publicIPAddresses_sdpaks_dev_ipaddr_name": {
+            "defaultValue": "sdpaks-dev-ipaddr",
+            "type": "String"
+        },
+        "publicIPAddresses_sdpaks_prod_ipaddr_name": {
+            "defaultValue": "sdpaks-prod-ipaddr",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ContainerRegistry/registries",
+            "apiVersion": "2019-12-01-preview",
+            "name": "[parameters('registries_sdpaksCr_name')]",
+            "location": "northeurope",
+            "sku": {
+                "name": "Basic",
+                "tier": "Basic"
+            },
+            "properties": {
+                "adminUserEnabled": true,
+                "policies": {
+                    "quarantinePolicy": {
+                        "status": "disabled"
+                    },
+                    "trustPolicy": {
+                        "type": "Notary",
+                        "status": "disabled"
+                    },
+                    "retentionPolicy": {
+                        "days": 7,
+                        "status": "disabled"
+                    }
+                },
+                "dataEndpointEnabled": false,
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "type": "microsoft.insights/actionGroups",
+            "apiVersion": "2019-03-01",
+            "name": "[parameters('actionGroups_SDP_Alerts_name')]",
+            "location": "Global",
+            "properties": {
+                "groupShortName": "sdpalerts",
+                "enabled": true,
+                "emailReceivers": [
+                    {
+                        "name": "Notify Audun_-EmailAction-",
+                        "emailAddress": "auls@equinor.com",
+                        "useCommonAlertSchema": false
+                    },
+                    {
+                        "name": "Notify Stig Oskar_-EmailAction-",
+                        "emailAddress": "stoo@equinor.com",
+                        "useCommonAlertSchema": false
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2019-09-01",
+            "name": "[parameters('vaults_SDPVault_name')]",
+            "location": "norwayeast",
+            "tags": {
+                "cluster": "common"
+            },
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "3aa4a235-b6e2-48d5-9195-7fcf05b459b0",
+                "accessPolicies": [ // SDP users listed below.
+                    {
+                        "tenantId": "3aa4a235-b6e2-48d5-9195-7fcf05b459b0",
+                        "objectId": "f9a2ce40-2a8c-4a67-9506-27c18dbf9777",
+                        "permissions": {
+                            "secrets": [
+                                "List",
+                                "Get",
+                                "Set"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "3aa4a235-b6e2-48d5-9195-7fcf05b459b0",
+                        "objectId": "0ef942a4-3e5b-4c58-99a6-41c72433e1db",
+                        "permissions": {
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "3aa4a235-b6e2-48d5-9195-7fcf05b459b0",
+                        "objectId": "d8e3b652-c3f1-4530-af67-4d203b5e6d86",
+                        "permissions": {
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ]
+                        }
+                    }
+                ],
+                "enabledForTemplateDeployment": true,
+                "enableSoftDelete": true
+            }
+        },
+        {
+            "type": "Microsoft.Network/dnszones",
+            "apiVersion": "2018-05-01",
+            "name": "[parameters('dnszones_dev_sdpaks_equinor_com_name')]",
+            "location": "global",
+            "properties": {
+                "zoneType": "Public"
+            }
+        },
+        {
+            "type": "Microsoft.Network/dnszones",
+            "apiVersion": "2018-05-01",
+            "name": "[parameters('dnszones_sdpaks_equinor_com_name')]",
+            "location": "global",
+            "properties": {
+                "zoneType": "Public"
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('publicIPAddresses_sdpaks_dev_ipaddr_name')]",
+            "location": "norwayeast",
+            "sku": {
+                "name": "Basic"
+            },
+            "properties": {
+                "ipAddress": "51.120.76.221",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2020-05-01",
+            "name": "[parameters('publicIPAddresses_sdpaks_prod_ipaddr_name')]",
+            "location": "norwayeast",
+            "sku": {
+                "name": "Basic"
+            },
+            "properties": {
+                "ipAddress": "51.120.76.229",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        }
+    ]
+}

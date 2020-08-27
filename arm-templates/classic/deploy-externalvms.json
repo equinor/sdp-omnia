@@ -116,7 +116,7 @@
                 "typeHandlerVersion": "1.4"
             }
         },
-        {
+        { // The below disks are per Aug. 2020 not auto-mounted. Follow this guide https://docs.microsoft.com/en-us/azure/virtual-machines/linux/add-disk
             "type": "Microsoft.Compute/disks",
             "apiVersion": "2019-07-01",
             "comments": "1 Disk for vm21 only",
@@ -156,8 +156,8 @@
                 "[concat('Microsoft.Network/networkInterfaces/', variables('nicNamePrefix'), 3, copyindex(1))]"
             ],
             "properties": {
-                "hardwareProfile": {
-                    "vmSize": "[if(equals(copyIndex(1),variables('totalVmCount')), variables('vmSizes').Values[1], variables('vmSizes').values[0])]"
+                "hardwareProfile": { // The below line does not scale well with changes. Should be reworked if major changes are required
+                    "vmSize": "[if(equals(copyIndex(1),variables('totalVmCount')), variables('vmSizes').Values[1], variables('vmSizes').values[0])]" 
 
                 },
                 "osProfile": {
@@ -169,7 +169,7 @@
                             "publicKeys": [
                                 {
                                     "path": "[concat('/home/',parameters('adminUsername'),'/.ssh/authorized_keys')]",
-                                    "keyData": "[parameters('sshPublicKeys')]"
+                                    "keyData": "[parameters('sshPublicKeys')]" // Per Aug. 2020 - struggling to get multi-key secrets to work.
                                 }
                             ]
                         },

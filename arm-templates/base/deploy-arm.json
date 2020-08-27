@@ -1,3 +1,9 @@
+// This template is used as a wrapper to deploy SDP-aks resources and dependencies.
+// It ensures required resource groups are in place, then runs a deployment towards a RGs.
+// Service principals and keyvault secrets referred in these templates are created by pre-arm script.
+
+// Template loops are used to ensure dependencies are created in the correct order.
+
 {
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
@@ -5,7 +11,7 @@
         "environment": {
             "type": "string",
             "metadata": {
-                "description": "The name of the environment. E.g. 'dev' "
+                "description": "The name of the environment. E.g. 'dev'"
             }
         }
     },
@@ -15,8 +21,6 @@
 
         "templateBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-omnia/', parameters('environment'), '/arm-templates/base/')]",
         "parametersBaseUrl": "[concat('https://raw.githubusercontent.com/equinor/sdp-omnia/', parameters('environment'), '/arm-templates/', parameters('environment'), '/')]",
-        "commonTemplateUrl": "[concat(variables('templateBaseUrl'), 'deploy-arm.json')]",
-        "commonParametersUrl": "[concat(variables('parametersBaseUrl'), 'deploy-arm.parameters.json')]",
 
         "templateLoop1": [
             {
