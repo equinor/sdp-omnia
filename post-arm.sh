@@ -47,7 +47,7 @@ EOF
 # Create a secret so that external-dns can connect to the DNS zone
 echo
 echo " Creating Kubernetes secret (external-dns/azure-dns-config-file) from azure.json file"
-kubectl create secret generic azure-dns-config-file --from-file=azure.json -n external-dns --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+kubectl create secret generic azure-dns-config-file --from-file=azure.json -n external-dns --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 rm -f azure.json
 
 #
@@ -56,7 +56,7 @@ rm -f azure.json
 
 az keyvault secret show --name "sealed-secrets-key" --vault-name SDPVault --query value -o tsv > tmp.key
 az keyvault secret show --name "sealed-secrets-cert" --vault-name SDPVault --query value -o tsv > tmp.crt
-kubectl create secret tls -n sealed-secrets sealed-secret-custom-key --cert=tmp.crt --key=tmp.key --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+kubectl create secret tls -n sealed-secrets sealed-secret-custom-key --cert=tmp.crt --key=tmp.key --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 rm -f tmp.key tmp.crt
 echo
 echo " Remember to restart sealed-secret pod if it already exists to pick up custom keys"
@@ -74,7 +74,7 @@ helm repo add fluxcd https://charts.fluxcd.io > /dev/null
 # Install Flux
 echo
 echo " Installing or upgrading Flux with Helm operator in the flux namespace"
-helm upgrade --install flux --version v1.3.0 \
+helm upgrade --install flux --version 1.5.0 \
     --namespace flux \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch="$FLUX_GITOPS_BRANCH" \
@@ -87,7 +87,7 @@ helm upgrade --install flux --version v1.3.0 \
 # HelmRelease CRD first
 kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
 
-helm upgrade -i helm-operator fluxcd/helm-operator --wait \
+helm upgrade -i helm-operator fluxcd/helm-operator --version 1.2.0  --wait \
     --namespace flux \
     --set git.ssh.secretName="flux-git-deploy" \
     --set helm.versions=v3
@@ -114,7 +114,7 @@ kubectl create secret generic velero-credentials \
     --from-literal AZURE_CLIENT_SECRET=${AZ_BACKUP_SP_PASSWORD} \
     --from-literal AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} > /dev/null
 
-kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
 # Create secret for gitlab to connect to postgresSQL
 echo
@@ -147,7 +147,7 @@ endpoint: http://gitlab-minio.gitlab.svc.cluster.local:9000
 path_style: true
 EOF
 
-kubectl create secret generic gitlab-rails-storage --from-file=connection -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+kubectl create secret generic gitlab-rails-storage --from-file=connection -n gitlab --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
 cat << EOF > config
 azure:
@@ -158,7 +158,7 @@ redirect:
   disable: true
 EOF
 
-kubectl create secret generic registry-storage --from-file=config -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+kubectl create secret generic registry-storage --from-file=config -n gitlab --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
 cat << EOF > config
 [default]
@@ -173,7 +173,7 @@ secret_key = ${MINIO_SECRET_KEY}
 signature_v2 = False
 EOF
 
-kubectl create secret generic backup-storage-config --from-file=config -n gitlab --dry-run -o yaml | kubectl apply -f - > /dev/null || true
+kubectl create secret generic backup-storage-config --from-file=config -n gitlab --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
 rm -f connection & rm -f azure.json  & rm -f cloud & rm -f config
 
