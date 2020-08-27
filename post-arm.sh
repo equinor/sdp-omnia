@@ -74,7 +74,7 @@ helm repo add fluxcd https://charts.fluxcd.io > /dev/null
 # Install Flux
 echo
 echo " Installing or upgrading Flux with Helm operator in the flux namespace"
-helm upgrade --install flux --version v1.3.0 \
+helm upgrade --install flux --version 1.5.0 \
     --namespace flux \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch="$FLUX_GITOPS_BRANCH" \
@@ -87,7 +87,7 @@ helm upgrade --install flux --version v1.3.0 \
 # HelmRelease CRD first
 kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
 
-helm upgrade -i helm-operator fluxcd/helm-operator --wait \
+helm upgrade -i helm-operator fluxcd/helm-operator --version 1.2.0  --wait \
     --namespace flux \
     --set git.ssh.secretName="flux-git-deploy" \
     --set helm.versions=v3
