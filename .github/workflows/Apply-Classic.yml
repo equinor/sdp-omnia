@@ -25,14 +25,13 @@ jobs:
       - name: 'Set env variables'
         run: |
           export LOCATION=norwayeast
-          echo $LOCATION
-          echo "S066-SDP-Tools-Classic" >> $CLASSIC_SUB
-          echo "sdp-external-vms" >> $EXTERNAL_GROUP 
-          echo "sdp-internal-vms" >> $INTERNAL_GROUP
-          echo "2.12.1" >> $AZCLIVERSION
-          echo "https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json" >> $CLASSIC_EXTERNAL
-          echo "https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json" >> $CLASSIC_INTERNAL
-          echo "https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json" >> $CLASSIC_PARAMS
+          export CLASSIC_SUB=S066-SDP-Tools-Classic
+          export EXTERNAL_GROUP=sdp-external-vms
+          export INTERNAL_GROUP=sdp-internal-vms
+          export AZCLIVERSION=2.12.1
+          export CLASSIC_EXTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json
+          export CLASSIC_INTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json
+          export CLASSIC_PARAMS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json
       - name: 'az login'
         uses: azure/login@v1
         with:
