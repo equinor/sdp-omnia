@@ -22,13 +22,13 @@ jobs:
     name: Apply Classic External ARM template
     runs-on: ubuntu-latest
     steps:
-      - name: Set env variables
+      - name: 'Set env variables'
         run: |
-          echo "norwayeast >> $LOCATION
+          echo "norwayeast" >> $LOCATION
           echo "S066-SDP-Tools-Classic" >> $CLASSIC_SUB
           echo "sdp-external-vms" >> $EXTERNAL_GROUP 
           echo "sdp-internal-vms" >> $INTERNAL_GROUP
-          echo '2.12.1' >> $AZCLIVERSION
+          echo "2.12.1" >> $AZCLIVERSION
           echo "https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json" >> $CLASSIC_EXTERNAL
           echo "https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json" >> $CLASSIC_INTERNAL
           echo "https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json" >> $CLASSIC_PARAMS
