@@ -25,6 +25,7 @@ jobs:
       - name: 'Set env variables'
         run: |
           export LOCATION=norwayeast
+          echo $LOCATION
           echo "S066-SDP-Tools-Classic" >> $CLASSIC_SUB
           echo "sdp-external-vms" >> $EXTERNAL_GROUP 
           echo "sdp-internal-vms" >> $INTERNAL_GROUP
