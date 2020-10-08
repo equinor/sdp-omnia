@@ -47,7 +47,7 @@
         },
         "kubernetesVersion": {
             "type": "string",
-            "defaultValue": "1.17.7",
+            "defaultValue": "1.17.11",
             "metadata": {
                 "description": "The version of Kubernetes. For testing in dev, set version in parameter file instead"
             }
