@@ -24,14 +24,14 @@ jobs:
     steps:
       - name: 'Set env variables'
         run: |
-          export LOCATION=norwayeast
-          export CLASSIC_SUB=S066-SDP-Tools-Classic
-          export EXTERNAL_GROUP=sdp-external-vms
-          export INTERNAL_GROUP=sdp-internal-vms
-          export AZCLIVERSION=2.12.1
-          export CLASSIC_EXTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json
-          export CLASSIC_INTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json
-          export CLASSIC_PARAMS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json
+          echo "LOCATION=norwayeast" >> $GITHUB_ENV
+          echo "CLASSIC_SUB=S066-SDP-Tools-Classic" >> $GITHUB_ENV
+          echo "EXTERNAL_GROUP =sdp-external-vms" >> $GITHUB_ENV
+          echo "INTERNAL_GROUP=sdp-internal-vms" >> $GITHUB_ENV
+          echo "AZCLIVERSION=2.12.1" >> >> $GITHUB_ENV
+          echo "CLASSIC_EXTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json" >> $GITHUB_ENV
+          echo "CLASSIC_INTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json" >> $GITHUB_ENV
+          echo "CLASSIC_PARAMS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json" >> $GITHUB_ENV
       - name: 'az login'
         uses: azure/login@v1
         with:
