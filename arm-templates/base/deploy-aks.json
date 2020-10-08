@@ -131,7 +131,7 @@
                     }
                 },
                 "aadProfile": {
-                    "managed": true,
+                    "managed": false,
                     "tenantId": "3aa4a235-b6e2-48d5-9195-7fcf05b459b0",
                     "adminGroupObjectIDs": [
                         "a4f395a4-3aaa-4a34-8b72-977b3e382fab" // Only AZAPPL SDP Tools - Contributor can use kubecontext
