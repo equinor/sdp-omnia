@@ -12,10 +12,6 @@ on:
     - 'arm-templates/classic/*'
     - 'arm-templates/classic-values/*'
 
-env:
-  CLASSIC_EXTERNAL: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json'
-  CLASSIC_INTERNAL: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json'
-  CLASSIC_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json'
 jobs:
   # Classic deployments are made on a group scope
   deploy-classic-external-arm:
