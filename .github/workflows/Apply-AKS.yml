@@ -12,17 +12,18 @@ on:
     - 'arm-templates/base/*'
     - 'arm-templates/dev/*'	
     - 'arm-templates/prod/*'
-env:
-  LOCATION: 'norwayeast'
-  AKS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json'
-  AKS_PARAMS: 'https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json'
-  AZCLIVERSION: '2.9.0'
 jobs:
   # AKS deployments are made on a subscription scope
   deploy-aks-arm:
     name: Apply AKS ARM template
     runs-on: ubuntu-latest
     steps:
+      - name: 'Set env variables'
+        run: |
+          echo "LOCATION=norwayeast" >> $GITHUB_ENV
+          echo "AZCLIVERSION=2.12.1" >> $GITHUB_ENV
+          echo "AKS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json" >> $GITHUB_ENV
+          echo "AKS_PARAMS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json" >> $GITHUB_ENV
       - name: 'az login'
         uses: azure/login@v1
         with:
