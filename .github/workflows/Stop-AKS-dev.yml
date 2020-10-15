@@ -23,4 +23,5 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
+            az extension add --upgrade -n aks-preview
             az aks stop --name sdpaks-dev-k8s --resource-group sdpaks-dev
