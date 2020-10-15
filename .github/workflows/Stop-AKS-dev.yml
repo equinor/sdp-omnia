@@ -11,6 +11,9 @@ jobs:
     name: Job
     runs-on: ubuntu-latest
     steps:
+      - name: 'Set env variables'
+        run: |
+          echo "AZCLIVERSION=2.12.1" >> $GITHUB_ENV
       - name: 'az login'
         uses: azure/login@v1
         with:
