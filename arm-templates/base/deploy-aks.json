@@ -23,6 +23,10 @@
         "vnetName":{
             "type":"string"
         },
+        "enableAutoscaler":{
+            "type": "bool",
+            "defaultValue": true
+        },
         "subnetRange":{
             "type":"string",
             "defaultValue": "10.0.0.0/8"
@@ -106,7 +110,7 @@
                         "count": 2,
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
-                        "enableAutoScaling": true,
+                        "enableAutoScaling": "[parameters('enableAutoscaler')]",
                         "minCount": "[parameters('minNodes')]",
                         "maxCount": "[parameters('maxNodes')]",
                         "storageProfile": "ManagedDisks",

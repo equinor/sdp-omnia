@@ -49,6 +49,9 @@
       },
       "kubernetesVersion":{
         "value": "1.19.0"
+      },
+      "enableAutoscaler":{
+        "value": false
       }
     }
 }
