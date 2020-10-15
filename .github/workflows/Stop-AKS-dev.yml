@@ -1,0 +1,23 @@
+name: Stop AKS dev cluster
+
+on:
+  workflow_dispatch:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 19 * * 1-5'
+
+jobs:
+  stop-dev-cluster:
+    name: Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'az login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: 'az AKS stop cluster'
+        uses: azure/CLI@v1
+        with:
+          azcliversion: ${{ env.AZCLIVERSION }}
+          inlineScript: |
+            az aks stop --name sdpaks-dev-k8s --resource-group sdpaks-dev
