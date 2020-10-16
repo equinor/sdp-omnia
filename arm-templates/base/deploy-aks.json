@@ -103,17 +103,18 @@
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesVersion')]",
                 "enableRBAC": true,
+                "nodeResourceGroup": "[if(contains(resourceGroup().name, 'dev'), concat(variables('clusterName'), '-dataplane'), '')]", //custom nodepool rg for dev only
                 "dnsPrefix": "[concat(variables('clusterName'),'-dns')]",
                 "agentPoolProfiles": [
                     {
-                        "name": "agentpool-ephermal",
+                        "name": "agentpool",
                         "count": 2,
                         "osDiskType": "Ephemeral",
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
                         "enableAutoScaling": "[parameters('enableAutoscaler')]",
-                        "minCount": "[parameters('minNodes')]",
-                        "maxCount": "[parameters('maxNodes')]",
+                        //"minCount": "[parameters('minNodes')]",
+                        //"maxCount": "[parameters('maxNodes')]",
                         "storageProfile": "ManagedDisks",
                         "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]",
                         "type": "VirtualMachineScaleSets",
