@@ -106,7 +106,7 @@
                 "dnsPrefix": "[concat(variables('clusterName'),'-dns')]",
                 "agentPoolProfiles": [
                     {
-                        "name": "agentpool",
+                        "name": "agentpool-ephermal",
                         "count": 2,
                         "osDiskType": "Ephemeral",
                         "vmSize": "Standard_DS12_v2",
