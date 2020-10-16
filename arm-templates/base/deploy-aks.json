@@ -108,6 +108,7 @@
                     {
                         "name": "agentpool",
                         "count": 2,
+                        "osDiskType": "Ephemeral",
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
                         "enableAutoScaling": "[parameters('enableAutoscaler')]",
