@@ -1,13 +1,16 @@
-name: Start AKS dev cluster
+# The point of this file is to run commands which should ideally be run outside work hours, without the need of being in place ourselves
+# Disable the cron once done.
+
+name: Run AKS command on prod
 
 on:
   workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '0 5 * * 1-5'
+    - cron:  '0 4 17 10 *' #Set specific yearly date in https://crontab.guru/
 
 jobs:
-  start-dev-cluster:
+  run-aks-command:
     name: Job
     runs-on: ubuntu-latest
     steps:
@@ -18,10 +21,9 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: 'az AKS start cluster'
+      - name: 'Run az aks commands'
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az extension add --upgrade -n aks-preview
-            az aks start --name sdpaks-dev-k8s --resource-group sdpaks-dev
+            az aks upgrade --resource-group sdpaks-prod --name sdpaks-prod-k8s --kubernetes-version "1.18.8"
