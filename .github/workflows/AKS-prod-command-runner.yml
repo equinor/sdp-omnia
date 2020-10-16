@@ -26,5 +26,4 @@ jobs:
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az extension add --upgrade -n aks-preview
-            az aks nodepool upgrade --resource-group sdpaks-prod --cluster-name sdpaks-prod-k8s --node-image-only
+            az aks upgrade --resource-group sdpaks-prod --name sdpaks-prod-k8s --kubernetes-version "1.18.8"
