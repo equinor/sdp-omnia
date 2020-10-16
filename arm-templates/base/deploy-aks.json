@@ -108,6 +108,7 @@
                 "agentPoolProfiles": [
                     {
                         "name": "agentpool",
+                        "mode": "System",
                         "count": 2,
                         "osDiskType": "Ephemeral",
                         "vmSize": "Standard_DS12_v2",
