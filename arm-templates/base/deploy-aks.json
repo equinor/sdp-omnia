@@ -110,7 +110,7 @@
                         "name": "agentpool",
                         "mode": "System",
                         "count": 2,
-                        "osDiskType": "Ephemeral",
+                        "osDiskType": "[if(contains(resourceGroup().name, 'dev'), 'Ephemeral', 'Managed')]", //Epheremal only for dev until preview is over, cluster recreation
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
                         "enableAutoScaling": "[parameters('enableAutoscaler')]",
@@ -128,7 +128,7 @@
                 },
                 "networkProfile": {
                     "networkPlugin": "azure",
-                    "loadBalancerSku": "Standard",
+                    "loadBalancerSku": "Standard", "[if(contains(resourceGroup().name, 'dev'), 'Standard', 'Basic')]", //Standard only for dev until cluster recreation
                     "serviceCidr": "[parameters('serviceCidr')]",
                     "dnsServiceIP": "[parameters('dnsServiceIp')]",
                     "dockerBridgeCidr": "172.17.0.1/16"
@@ -186,7 +186,7 @@
         },
         "vnetSubnetId2": {
             "type": "string",
-            "value": "[reference(resourceId(resourceGroup().name,'Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
+            "value": "[reference(resourceId(resourceGroup().name,'Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2020-09-01').agentPoolProfiles[0].vnetSubnetID]"
         }
     }
 }
