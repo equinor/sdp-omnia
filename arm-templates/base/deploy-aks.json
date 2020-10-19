@@ -51,7 +51,7 @@
         },
         "kubernetesVersion": {
             "type": "string",
-            "defaultValue": "1.17.7",
+            "defaultValue": "1.18.8",
             "metadata": {
                 "description": "The version of Kubernetes. For testing in dev, set version in parameter file instead"
             }
@@ -134,13 +134,13 @@
                         "outboundIPs": {},
                         "effectiveOutboundIPs": [
                             {
-                                "id": "[concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr')]"
+                                "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), concat(variables('pipBaseURI'), 'sdpaks-prod-ipaddr'))]"
                             }
                         ],
                         "outboundIPs": {
                             "publicIPs": [
                                 {
-                                    "id": "[concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr')]"
+                                    "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), concat(variables('pipBaseURI'), 'sdpaks-prod-ipaddr'))]"
                                 }
                             ]
                         }
