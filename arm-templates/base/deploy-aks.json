@@ -58,7 +58,8 @@
         }
     },
     "variables": {
-        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]",
+        "pipBaseURI": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.Network/publicIPAddresses/"
     },
     "resources": [
 
@@ -110,7 +111,7 @@
                         "name": "agentpool",
                         "mode": "System",
                         "count": 2,
-                        "osDiskType": "[if(contains(resourceGroup().name, 'dev'), 'Ephemeral', 'Managed')]", //Epheremal only for dev until preview is over, cluster recreation
+                        "osDiskType": "[if(contains(resourceGroup().name, 'dev'), 'Ephemeral', 'Managed')]", //Epheremal only for dev
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
                         "enableAutoScaling": "[parameters('enableAutoscaler')]",
@@ -128,7 +129,22 @@
                 },
                 "networkProfile": {
                     "networkPlugin": "azure",
-                    "loadBalancerSku": "Standard", "[if(contains(resourceGroup().name, 'dev'), 'Standard', 'Basic')]", //Standard only for dev until cluster recreation
+                    "loadBalancerSku": "[if(contains(resourceGroup().name, 'dev'), 'Standard', 'Basic')]", //Standard only for dev until cluster
+                    "loadBalancerProfile": {
+                        "outboundIPs": {},
+                        "effectiveOutboundIPs": [
+                            {
+                                "id": "[concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr')]"
+                            }
+                        ],
+                        "outboundIPs": {
+                            "publicIPs": [
+                                {
+                                    "id": "[concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr')]"
+                                }
+                            ]
+                        }
+                    },
                     "serviceCidr": "[parameters('serviceCidr')]",
                     "dnsServiceIP": "[parameters('dnsServiceIp')]",
                     "dockerBridgeCidr": "172.17.0.1/16"
@@ -186,7 +202,7 @@
         },
         "vnetSubnetId2": {
             "type": "string",
-            "value": "[reference(resourceId(resourceGroup().name,'Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2020-09-01').agentPoolProfiles[0].vnetSubnetID]"
+            "value": "[reference(resourceId(resourceGroup().name,'Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2019-08-01').agentPoolProfiles[0].vnetSubnetID]"
         }
     }
 }
