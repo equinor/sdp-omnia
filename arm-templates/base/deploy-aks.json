@@ -131,16 +131,15 @@
                     "networkPlugin": "azure",
                     "loadBalancerSku": "[if(contains(resourceGroup().name, 'dev'), 'Standard', 'Basic')]", //Standard only for dev until cluster
                     "loadBalancerProfile": {
-                        "outboundIPs": {},
                         "effectiveOutboundIPs": [
                             {
-                                "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), concat(variables('pipBaseURI'), 'sdpaks-prod-ipaddr'))]"
+                                "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), json('null'))]"
                             }
                         ],
                         "outboundIPs": {
                             "publicIPs": [
                                 {
-                                    "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), concat(variables('pipBaseURI'), 'sdpaks-prod-ipaddr'))]"
+                                    "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), json('null'))]"
                                 }
                             ]
                         }
