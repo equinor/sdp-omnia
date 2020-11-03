@@ -130,20 +130,6 @@
                 "networkProfile": {
                     "networkPlugin": "azure",
                     "loadBalancerSku": "[if(contains(resourceGroup().name, 'dev'), 'Standard', 'Basic')]", //Standard only for dev until cluster
-                    "loadBalancerProfile": {
-                        "effectiveOutboundIPs": [
-                            {
-                                "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), json('null'))]"
-                            }
-                        ],
-                        "outboundIPs": {
-                            "publicIPs": [
-                                {
-                                    "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), json('null'))]"
-                                }
-                            ]
-                        }
-                    },
                     "serviceCidr": "[parameters('serviceCidr')]",
                     "dnsServiceIP": "[parameters('dnsServiceIp')]",
                     "dockerBridgeCidr": "172.17.0.1/16"
