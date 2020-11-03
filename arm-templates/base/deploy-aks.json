@@ -58,7 +58,8 @@
         }
     },
     "variables": {
-        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]",
+        "pipBaseURI": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.Network/publicIPAddresses/"
     },
     "resources": [
 
@@ -93,7 +94,7 @@
             }
         },
         {
-            "apiVersion": "2020-06-01",
+            "apiVersion": "2020-09-01",
             "dependsOn": [
                 "[parameters('vnetName')]"
                 ],
@@ -103,16 +104,19 @@
             "properties": {
                 "kubernetesVersion": "[parameters('kubernetesVersion')]",
                 "enableRBAC": true,
+                "nodeResourceGroup": "[if(contains(resourceGroup().name, 'dev'), concat(variables('clusterName'), '-dataplane'), '')]", //custom nodepool rg for dev only
                 "dnsPrefix": "[concat(variables('clusterName'),'-dns')]",
                 "agentPoolProfiles": [
                     {
                         "name": "agentpool",
+                        "mode": "System",
                         "count": 2,
+                        "osDiskType": "[if(contains(resourceGroup().name, 'dev'), 'Ephemeral', 'Managed')]", //Epheremal only for dev
                         "vmSize": "Standard_DS12_v2",
                         "osType": "Linux",
                         "enableAutoScaling": "[parameters('enableAutoscaler')]",
-                        "minCount": "[parameters('minNodes')]",
-                        "maxCount": "[parameters('maxNodes')]",
+                        //"minCount": "[parameters('minNodes')]",
+                        //"maxCount": "[parameters('maxNodes')]",
                         "storageProfile": "ManagedDisks",
                         "vnetSubnetID": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]",
                         "type": "VirtualMachineScaleSets",
@@ -125,6 +129,21 @@
                 },
                 "networkProfile": {
                     "networkPlugin": "azure",
+                    "loadBalancerSku": "[if(contains(resourceGroup().name, 'dev'), 'Standard', 'Basic')]", //Standard only for dev until cluster
+                    "loadBalancerProfile": {
+                        "effectiveOutboundIPs": [
+                            {
+                                "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), json('null'))]"
+                            }
+                        ],
+                        "outboundIPs": {
+                            "publicIPs": [
+                                {
+                                    "id": "[if(contains(resourceGroup().name, 'dev'), concat(variables('pipBaseURI'), 'sdpaks-dev-standard-ipaddr'), json('null'))]"
+                                }
+                            ]
+                        }
+                    },
                     "serviceCidr": "[parameters('serviceCidr')]",
                     "dnsServiceIP": "[parameters('dnsServiceIp')]",
                     "dockerBridgeCidr": "172.17.0.1/16"

@@ -69,6 +69,7 @@
       "kind": "",
       "properties": {
         "version": "11",
+        "minimalTlsVersion": "TLS1_2",
         "administratorLogin": "[parameters('administratorLogin')]",
         "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
         "sslEnforcement": "Enabled",

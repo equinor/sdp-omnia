@@ -7,3 +7,4 @@ velero-credentials
 .idea
 knsk.sh
 cat
+.vscode/settings.json
