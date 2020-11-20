@@ -21,7 +21,7 @@ jobs:
       - name: 'Set env variables'
         run: |
           echo "LOCATION=norwayeast" >> $GITHUB_ENV
-          echo "AZCLIVERSION=2.12.1" >> $GITHUB_ENV
+          echo "AZCLIVERSION=2.14.0" >> $GITHUB_ENV
           echo "AKS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/base/deploy-arm.json" >> $GITHUB_ENV
           echo "AKS_PARAMS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/${GITHUB_REF##*/}/deploy-arm.parameters.json" >> $GITHUB_ENV
       - name: 'az login'
