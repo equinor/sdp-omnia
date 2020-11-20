@@ -5,7 +5,7 @@ source .env
 
 # Ensure correct cluster context
 az account set --subscription "${AZ_SUBSCRIPTION}"
-az aks get-credentials -g "${AZ_GROUP}"  -n "${AZ_GROUP}-k8s" --overwrite-existing
+#az aks get-credentials -g "${AZ_GROUP}"  -n "${AZ_GROUP}-k8s" --overwrite-existing
 
 echo
 echo " Creating namespaces"
@@ -112,7 +112,7 @@ kubectl create secret generic velero-credentials \
     --from-literal AZURE_TENANT_ID=${AZ_TENANT_ID} \
     --from-literal AZURE_CLIENT_ID=${AZ_BACKUP_SP_ID} \
     --from-literal AZURE_CLIENT_SECRET=${AZ_BACKUP_SP_PASSWORD} \
-    --from-literal AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} > /dev/null
+    --from-literal AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
 kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
@@ -122,7 +122,7 @@ echo " Generating secret for gitlab - external postgres.."
 kubectl create secret generic gitlab-postgres-secret \
     --namespace gitlab \
     --from-literal username=${POSTGRES_USERNAME} \
-    --from-literal password=${POSTGRES_PASSWORD} > /dev/null
+    --from-literal password=${POSTGRES_PASSWORD} --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
 # Create secrets for minio to connect to storage account (multiple needed)
 echo
@@ -134,7 +134,9 @@ MINIO_SECRET_KEY=$(az storage account keys list --resource-group sdpaks-"${ENVIR
 kubectl create secret generic gitlab-minio-secret \
     --namespace gitlab \
     --from-literal accesskey=${MINIO_STORAGE_NAME} \
-    --from-literal secretkey=${MINIO_SECRET_KEY} > /dev/null
+    --from-literal secretkey=${MINIO_SECRET_KEY} --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
+
+rm -f azure.json
 
 cat << EOF > connection
 provider: AWS
