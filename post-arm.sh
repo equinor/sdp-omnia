@@ -106,14 +106,6 @@ AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP}
 AZURE_CLOUD_NAME=AzurePublicCloud
 EOF
 
-kubectl create secret generic velero-credentials \
-    --namespace velero \
-    --from-literal AZURE_SUBSCRIPTION_ID=${AZ_SUBSCRIPTION_ID} \
-    --from-literal AZURE_TENANT_ID=${AZ_TENANT_ID} \
-    --from-literal AZURE_CLIENT_ID=${AZ_BACKUP_SP_ID} \
-    --from-literal AZURE_CLIENT_SECRET=${AZ_BACKUP_SP_PASSWORD} \
-    --from-literal AZURE_RESOURCE_GROUP=${AZ_CLUSTER_GROUP} --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
-
 kubectl create secret generic velero-credentials --from-file=cloud -n velero --dry-run=client -o yaml | kubectl apply -f - > /dev/null || true
 
 # Create secret for gitlab to connect to postgresSQL
