@@ -40,8 +40,7 @@
         }
     },
     "variables": {
-        "clusterName": "[concat(resourceGroup().name, '-k8s')]",
-        "pipBaseURI": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.Network/publicIPAddresses/"
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
     },
     "resources": [
 
@@ -131,36 +130,6 @@
             },
             "tags": {}
         },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "ClusterSubnetRoleAssignmentDeployment",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "[parameters('vnetName')]",
-                "[variables('clusterName')]"
-                ],
-            "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[resourceGroup().name]",
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
-                            "apiVersion": "2017-05-01",
-                            "name": "[concat(parameters('vnetName'), '/', 'aks-subnet', '/Microsoft.Authorization/', guid(resourceGroup().id, variables('clusterName'),'4d97b98b-1d4f-4787-a291-c67834d212e7'))]",
-                            "properties": {
-                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
-                                "userAssignedIdentities": "[reference(resourceId('Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2020-09-01', 'Full').identity.principalId]",
-                                "scope": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]"
-                            }
-                        }
-                    ]
-                }
-            }
-        }
     ],
     "outputs": {
         "controlPlaneFQDN": {

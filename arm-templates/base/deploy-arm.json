@@ -68,7 +68,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2020-06-01",
             "resourceGroup": "[variables('templateLoop1')[copyIndex()].rgName]",
             "name": "[concat('nestedTemplate-', variables('templateLoop1')[copyIndex()].name)]",
             "copy": {
@@ -92,7 +92,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2020-06-01",
             "resourceGroup": "[variables('templateLoop2')[copyIndex()].rgName]",
             "name": "[concat('nestedTemplate-', variables('templateLoop2')[copyIndex()].name)]",
             "copy": {
