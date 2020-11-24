@@ -153,7 +153,7 @@
                             "name": "[concat(parameters('vnetName'), '/', 'aks-subnet', '/Microsoft.Authorization/', guid(resourceGroup().id, variables('clusterName'),'4d97b98b-1d4f-4787-a291-c67834d212e7'))]",
                             "properties": {
                                 "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
-                                "principalId": "[reference(resourceId('Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2020-09-01', 'Full').identity.principalId]",
+                                "userAssignedIdentities": "[reference(resourceId('Microsoft.ContainerService/managedClusters/', variables('clusterName')), '2020-09-01', 'Full').identity.principalId]",
                                 "scope": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]"
                             }
                         }

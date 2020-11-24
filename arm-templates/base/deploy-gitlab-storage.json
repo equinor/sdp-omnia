@@ -133,15 +133,15 @@
     // Role assignment for the AKS MI to write to the storage account. Required for the Gitlab pod.
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
+      "apiVersion": "2020-04-01-preview",
       "name": "[guid(resourceGroup().id, variables('principalId'), variables('contributor'))]",
       "dependsOn": [
           "[parameters('storageAccountName')]"
       ],
       "properties": {
           "roleDefinitionId": "[variables('contributor')]",
-          "principalId":  "[variables('principalId')]",
-          "principalType": "MSI" 
+          "principalId":  "[variables('principalId')]"
+          //"principalType": "MSI" 
         }
     }
   ],
