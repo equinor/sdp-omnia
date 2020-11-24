@@ -2,24 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "servicePrincipalClientId": {
-            "metadata": {
-                "description": "Client ID (used by cloudprovider)."
-            },
-            "type": "securestring"
-        },
-        "servicePrincipalClientSecret": {
-            "metadata": {
-                "description": "The Service Principal Client Secret."
-            },
-            "type": "securestring"
-        },
-        "servicePrincipalObjectId": {
-            "metadata": {
-                "description": "The object id of service principal."
-            },
-            "type": "securestring"
-        },
         "vnetName":{
             "type":"string"
         },
@@ -58,8 +40,7 @@
         }
     },
     "variables": {
-        "clusterName": "[concat(resourceGroup().name, '-k8s')]",
-        "pipBaseURI": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.Network/publicIPAddresses/"
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
     },
     "resources": [
 
@@ -123,10 +104,6 @@
                         "maxPods": 250
                     }
                 ],
-                "servicePrincipalProfile": {
-                    "clientId": "[parameters('servicePrincipalClientId')]",
-                    "Secret": "[parameters('servicePrincipalClientSecret')]"
-                },
                 "networkProfile": {
                     "networkPlugin": "azure",
                     "loadBalancerSku": "[if(contains(resourceGroup().name, 'dev'), 'Standard', 'Basic')]", //Standard only for dev until cluster
@@ -145,40 +122,14 @@
                     "adminGroupObjectIDs": [
                         "a4f395a4-3aaa-4a34-8b72-977b3e382fab" // Only AZAPPL SDP Tools - Contributor can use kubecontext
                     ]
+                },
+                "identity": {
+                    "type": "UserAssigned",
+                    "userAssignedIdentites":  "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/k8s-infrastructure/providers/Microsoft.ManagedIdentity/userAssignedIdentities/', resourceGroup().name, '-aks-mi')]"
                 }
             },
             "tags": {}
         },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "ClusterSubnetRoleAssignmentDeployment",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "[parameters('vnetName')]",
-                "[variables('clusterName')]"
-                ],
-            "subscriptionId": "[subscription().subscriptionId]",
-            "resourceGroup": "[resourceGroup().name]",
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "type": "Microsoft.Network/virtualNetworks/subnets/providers/roleAssignments",
-                            "apiVersion": "2017-05-01",
-                            "name": "[concat(parameters('vnetName'), '/', 'aks-subnet', '/Microsoft.Authorization/', guid(resourceGroup().id, parameters('servicePrincipalObjectId'),'4d97b98b-1d4f-4787-a291-c67834d212e7'))]",
-                            "properties": {
-                                "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4d97b98b-1d4f-4787-a291-c67834d212e7')]",
-                                "principalId": "[parameters('servicePrincipalObjectId')]",
-                                "scope": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'),'aks-subnet')]"
-                            }
-                        }
-                    ]
-                }
-            }
-        }
     ],
     "outputs": {
         "controlPlaneFQDN": {

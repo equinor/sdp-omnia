@@ -38,19 +38,12 @@
     "replication":{
       "type":"string",
       "defaultValue":"Standard_LRS"
-    },
-    "principalId": {
-    "metadata": {
-        "description": "Object id of service principal."
-    },
-    "type": "string"
     }
   },
   "variables": {
-      "contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
       "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
       "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
-      "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]"
+      "vnetSubnetId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet', '/subnets/aks-subnet')]",
   },
   "resources": [
     {
@@ -134,20 +127,6 @@
       "properties": {
         "publicAccess": "None"
       }
-    },
-    // Role assignment for the AKS SP to write to the storage account. After MSI is enabled, this can be removed.
-    {
-      "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
-      "name": "[guid(resourceGroup().id, parameters('principalId'), variables('contributor'))]",
-      "dependsOn": [
-          "[parameters('storageAccountName')]"
-      ],
-      "properties": {
-          "roleDefinitionId": "[variables('contributor')]",
-          "principalId": "[parameters('principalId')]",
-          "principalType": "ServicePrincipal"
-        }
     }
   ],
   "outputs": {
