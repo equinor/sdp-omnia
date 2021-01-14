@@ -8,13 +8,7 @@
             "prod",
             "dev"
         ]
-    },
-    "principalId": {
-        "metadata": {
-            "description": "Object id of service principal."
-        },
-        "type": "string"
-        }
+    }
     },
     "variables": {
         "vnetSubnetIdProd": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', 'sdpaks-prod', '/providers/Microsoft.Network/virtualNetworks/', 'sdpaks-prod', '-vnet', '/subnets/aks-subnet')]",
@@ -68,18 +62,6 @@
             "copy": {
                 "name": "storagecopy",
                 "count": "[length(parameters('buckets'))]"
-            }
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2018-09-01-preview",
-            "name": "[guid(resourceGroup().id, parameters('principalId'),variables('contributor'))]",
-            "dependsOn": [
-                "[variables('storageAccountName')]"
-            ],
-            "properties": {
-                "roleDefinitionId": "[variables('contributor')]",
-                "principalId": "[parameters('principalId')]"
             }
         }
     ],
