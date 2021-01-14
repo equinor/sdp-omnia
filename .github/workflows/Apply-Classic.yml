@@ -24,7 +24,7 @@ jobs:
           echo "CLASSIC_SUB=S066-SDP-Tools-Classic" >> $GITHUB_ENV
           echo "EXTERNAL_GROUP=sdp-external-vms" >> $GITHUB_ENV
           echo "INTERNAL_GROUP=sdp-internal-vms" >> $GITHUB_ENV
-          echo "AZCLIVERSION=2.14.0" >> $GITHUB_ENV
+          echo "AZCLIVERSION=2.17.1" >> $GITHUB_ENV
           echo "CLASSIC_EXTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json" >> $GITHUB_ENV
           echo "CLASSIC_INTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json" >> $GITHUB_ENV
           echo "CLASSIC_PARAMS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json" >> $GITHUB_ENV
