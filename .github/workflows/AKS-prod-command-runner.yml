@@ -5,7 +5,7 @@ name: Run AKS command on prod
 
 on:
   workflow_dispatch:
-#  schedule:
+  schedule:
     # * is a special character in YAML so you have to quote this string
     - cron:  '0 6 06 03 *' #Set specific yearly date in https://crontab.guru/
 
