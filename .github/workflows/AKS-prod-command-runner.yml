@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '0 6 6 3 *' #Set specific yearly date in https://crontab.guru/
+    - cron:  '15 7 6 3 *' #Set specific yearly date in https://crontab.guru/
 
 jobs:
   run-aks-command:
