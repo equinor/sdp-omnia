@@ -32,6 +32,9 @@
           "app": "gitlab",
           "cluster": "dev"
       }
-    } 
+    },
+  "backupRetention": {
+      "value": 7
+    }
   }
 }

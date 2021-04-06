@@ -35,6 +35,9 @@
           "app": "gitlab",
           "cluster": "prod"
       }
-    } 
+    },
+  "backupRetention": {
+    "value": 35
+  }
   }
 }

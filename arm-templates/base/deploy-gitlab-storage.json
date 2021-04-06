@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": 
+  "parameters":
     {
     "storageAccountName": {
       "type": "string"
@@ -38,7 +38,12 @@
     "replication":{
       "type":"string",
       "defaultValue":"Standard_LRS"
+    },
+    "backupRetention":{
+      "type":"int",
+      "defaultValue": 35
     }
+
   },
   "variables": {
       "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
@@ -68,7 +73,7 @@
         "sslEnforcement": "Enabled",
         "storageProfile": {
           "storageMB": 36864,
-          "backupRetentionDays": 7,
+          "backupRetentionDays": "[parameters('backupRetention')]",
           "geoRedundantBackup": "Disabled",
           "storageAutoGrow": "Disabled"
         },
