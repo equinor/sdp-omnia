@@ -3,6 +3,8 @@
 # It's job is to create the basic kubernetes services that are needed for our GitOps to work (mainly Helm and Flux)
 source .env
 
+echo $ENVIRONMENT
+
 # Ensure correct cluster context
 az account set --subscription "${AZ_SUBSCRIPTION}"
 #az aks get-credentials -g "${AZ_GROUP}"  -n "${AZ_GROUP}-k8s" --overwrite-existing
