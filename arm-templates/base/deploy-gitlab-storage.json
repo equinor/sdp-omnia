@@ -108,7 +108,7 @@
         "administratorLogin": "[parameters('administratorLogin')]",
         "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
         "publicNetworkAccess": "Disabled",
-        "haEnabled": "false",
+        "haEnabled": "Disabled",
         "storageProfile": {
           "storageMB": 36864,
           "backupRetentionDays": "[parameters('backupRetention')]"
