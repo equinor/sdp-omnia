@@ -101,7 +101,7 @@
       "tags": "[parameters('tags')]",
       "sku": {
         "name": "Standard_D2ds_v3",
-        "tier": "v3"
+        "tier": "GeneralPurpose"
       },
       "properties": {
         "version": 13,
