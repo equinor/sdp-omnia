@@ -100,7 +100,7 @@
       "location": "[resourceGroup().location]",
       "tags": "[parameters('tags')]",
       "sku": {
-        "name": "Standard_D2ds_v3",
+        "name": "Standard_D2ds_v4",
         "tier": "GeneralPurpose"
       },
       "properties": {
