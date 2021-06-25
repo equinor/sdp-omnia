@@ -93,29 +93,6 @@
           "ignoreMissingVnetServiceEndpoint": false
       }
     },
-      {
-      "type": "Microsoft.DBforPostgreSQL/flexibleServers",
-      "apiVersion": "2020-02-14-privatepreview",
-      "name": "[parameters('dbName')]",
-      "location": "[resourceGroup().location]",
-      "tags": "[parameters('tags')]",
-      "sku": {
-        "name": "Standard_D2ds_v4",
-        "tier": "GeneralPurpose"
-      },
-      "properties": {
-        "version": 13,
-        "administratorLogin": "[parameters('administratorLogin')]",
-        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-        "publicNetworkAccess": "Disabled",
-        "haEnabled": "Disabled",
-        "storageProfile": {
-          "storageMB": 36864,
-          "backupRetentionDays": "[parameters('backupRetention')]"
-        },
-        "availabilityZone": 1
-      }
-    },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2019-04-01",
