@@ -13,6 +13,10 @@
             "type":"string",
             "defaultValue": "10.0.0.0/8"
         },
+        "subnetRangePsql":{
+            "type":"string",
+            "defaultValue": "10.0.0.0/8"
+        },
         "vnetRange":{
             "type":"string",
             "defaultValue": "10.240.0.0/16"
@@ -70,7 +74,30 @@
                                 }
                             ]
                         }
-                    }
+                    },
+                    {
+                        "name": "aks-subnet-psql",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetRangePsql')]",
+                            "addressPrefixes": [],
+                            "delegations": [
+                                {
+                                    "name": "dlg-Microsoft.DBforPostgreSQL-flexibleServers",
+                                    "properties": {
+                                        "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers"
+                                    }
+                                }
+                            ],
+                            "serviceEndpoints": [ // Open up endpoint to Gitlab PSQL, Gitlab SA, Velero SA  
+                                {
+                                    "service": "Microsoft.Sql"
+                                },
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ]
+                        }
+                    }                    
                 ]
             }
         },
@@ -129,7 +156,7 @@
                 }
             },
             "tags": {}
-        },
+        }
     ],
     "outputs": {
         "controlPlaneFQDN": {

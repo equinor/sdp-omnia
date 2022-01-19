@@ -5,8 +5,11 @@
         "vnetName": {
           "value": "sdpaks-dev-vnet"
        },
-      "subnetRange":{
-        "value": "10.100.0.0/16"
+       "subnetRange":{
+        "value": "10.100.0.0/20"
+      },
+      "subnetRangePsql":{
+        "value": "10.100.16.0/20"
       },
       "vnetRange":{
         "value": "10.100.0.0/16"
