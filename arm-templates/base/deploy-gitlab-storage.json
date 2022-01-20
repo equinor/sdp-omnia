@@ -65,26 +65,27 @@
         "name": "Standard_D2ds_v4",
         "tier": "GeneralPurpose"
       },
-      "kind": "",
       "properties": {
-        "version": "13",
         "administratorLogin": "[parameters('administratorLogin')]",
         "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-        "publicNetworkAccess": "Disabled",
-        "DelegatedSubnetArguments": {
-          "SubnetArmResourceId": "[variables('vnetSubnetPsqlId')]"
-          },
-        "PrivateDnsZoneArguments": {
-          "PrivateDnsZoneArmResourceId": "[variables('privateDnsZoneId')]"
-          },
-        "haEnabled": "Disabled",
-        "storageProfile": {
-          "storageMB": 131072,
+        "availabilityZone": "",
+        "backup": {
           "backupRetentionDays": "[parameters('backupRetention')]",
           "geoRedundantBackup": "Disabled"
         },
-        "availabilityZone": ""
-      }
+        "highAvailability": {
+          "mode": "Disabled"
+          },
+        "publicNetworkAccess": "Disabled",
+        "network": {
+          "delegatedSubnetResourceId": "[variables('vnetSubnetPsqlId')]",
+          "privateDnsZoneArmResourceId": "[variables('privateDnsZoneId')]"
+          },
+          "storage": {
+            "storageSizeGB": 128
+            },
+          "version": "13"
+        }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
