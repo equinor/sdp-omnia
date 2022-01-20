@@ -62,28 +62,28 @@
       "location": "[resourceGroup().location]",
       "tags": "[parameters('tags')]",
       "sku": {
-        "name": "Standard_D4s_v3",
+        "name": "Standard_D2ds_v4",
         "tier": "GeneralPurpose"
       },
       "kind": "",
       "properties": {
         "version": "13",
-        "minimalTlsVersion": "TLS1_2",
         "administratorLogin": "[parameters('administratorLogin')]",
         "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
-        "haEnabled": "Disabled",
         "publicNetworkAccess": "Disabled",
         "DelegatedSubnetArguments": {
-          "SubnetArmResourceId": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/sdpaks-dev/providers/Microsoft.Network/virtualNetworks/sdpaks-dev-vnet/subnets/aks-subnet-psql"
+          "SubnetArmResourceId": "[variables('vnetSubnetPsqlId')]"
           },
         "PrivateDnsZoneArguments": {
-          "PrivateDnsZoneArmResourceId": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/sdpaks-dev/providers/Microsoft.Network/privateDnsZones/sdpaks-dev-gitlab-psql13.private.postgres.database.azure.com"
+          "PrivateDnsZoneArmResourceId": "[variables('privateDnsZoneId')]"
           },
+        "haEnabled": "Disabled",
         "storageProfile": {
-          "storageMB": 32768,
+          "storageMB": 131072,
           "backupRetentionDays": "[parameters('backupRetention')]",
           "geoRedundantBackup": "Disabled"
-        }
+        },
+        "availabilityZone": ""
       }
     },
     {
