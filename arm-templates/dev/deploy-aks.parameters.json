@@ -6,16 +6,16 @@
           "value": "sdpaks-dev-vnet"
        },
        "subnetRange":{
-        "value": "10.100.0.0/20"
-      },
-      "subnetRangePsql":{
-        "value": "10.100.16.0/20"
-      },
-      "vnetRange":{
         "value": "10.100.0.0/16"
       },
+      "subnetRangePsql":{
+        "value": "10.101.16.0/20"
+      },
+      "vnetRange":{
+        "value": "10.100.0.0/15"
+      },
       "serviceCidr":{
-        "value": "10.101.0.0/16"
+        "value": "10.101.0.0/20"
       },
       "dnsServiceIp":{
         "value": "10.101.0.10"
