@@ -48,10 +48,11 @@
   "variables": {
       "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
       "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
-      "vnetPrefix": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet')]",
+      "rootRgId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'))]",
+      "privateDnsZoneId": "[concat(variables('rootRgId'), '/providers/Microsoft.Network/privateDnsZones/', parameters('dbName'), '.private.postgres.database.azure.com')]",
+      "vnetPrefix": "[concat(variables('rootRgId'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet')]",
       "vnetSubnetId": "[concat(variables('vnetPrefix'), '/subnets/', 'aks-subnet')]",
-      "vnetSubnetPsqlId": "[concat(variables('vnetPrefix'), '/subnets/', 'aks-subnet-psql')]",
-      "privateDnsZoneId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'), '/providers/Microsoft.Network/privateDnsZones/', parameters('dbName'), '.private.postgres.database.azure.com')]"
+      "vnetSubnetPsqlId": "[concat(variables('vnetPrefix'), '/subnets/', 'aks-subnet-psql')]"
   },
   "resources": [
     {
