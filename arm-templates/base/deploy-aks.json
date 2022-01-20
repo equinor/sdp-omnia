@@ -18,8 +18,8 @@
             "defaultValue": "10.0.0.0/8"
         },
         "vnetRange":{
-            "type":"string",
-            "defaultValue": "10.240.0.0/16"
+            "type": "array",
+            "defaultValue": ["10.240.0.0/16"]
         },
         "serviceCidr":{
             "type": "string"
@@ -55,9 +55,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('vnetRange')]"
-                    ]
+                    "addressPrefixes": "[parameters('vnetRange')]"                    
                 },
                 "subnets": [
                     {
