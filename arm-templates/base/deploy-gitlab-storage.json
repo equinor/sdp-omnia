@@ -76,7 +76,6 @@
         "highAvailability": {
           "mode": "Disabled"
           },
-        "publicNetworkAccess": "Disabled",
         "network": {
           "delegatedSubnetResourceId": "[variables('vnetSubnetPsqlId')]",
           "privateDnsZoneArmResourceId": "[variables('privateDnsZoneId')]"
