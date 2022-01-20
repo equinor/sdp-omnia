@@ -73,10 +73,12 @@
         "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
         "haEnabled": "Disabled",
         "publicNetworkAccess": "Disabled",
-        "network":{
-          "delegatedSubnetResourceId": "[variables('vnetSubnetPsqlId')]",
-          "privateDnsZoneArmResourceId": "[variables('privateDnsZoneId')]"
-        },
+        "DelegatedSubnetArguments": {
+          "SubnetArmResourceId": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/sdpaks-dev/providers/Microsoft.Network/virtualNetworks/sdpaks-dev-vnet/subnets/aks-subnet-psql"
+          },
+        "PrivateDnsZoneArguments": {
+          "PrivateDnsZoneArmResourceId": "/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/sdpaks-dev/providers/Microsoft.Network/privateDnsZones/sdpaks-dev-gitlab-psql13.private.postgres.database.azure.com"
+          },
         "storageProfile": {
           "storageMB": 32768,
           "backupRetentionDays": "[parameters('backupRetention')]",
