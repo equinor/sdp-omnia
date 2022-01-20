@@ -82,7 +82,8 @@
     {
       "type": "Microsoft.DBforPostgreSQL/flexibleServers",
       "dependsOn": [
-          "[variables('privateDnsZoneName')]"
+          "[variables('privateDnsZoneName')]",
+          "[resourceId('Microsoft.Network/privateDnsZones/virtualNetworkLinks/', variables('virtualNetworkLinkName'))]"
       ],
       "apiVersion": "2021-06-01",
       "name": "[parameters('dbName')]",
