@@ -13,9 +13,13 @@
             "type":"string",
             "defaultValue": "10.0.0.0/8"
         },
-        "vnetRange":{
+        "subnetRangePsql":{
             "type":"string",
-            "defaultValue": "10.240.0.0/16"
+            "defaultValue": "10.0.0.0/8"
+        },
+        "vnetRange":{
+            "type": "array",
+            "defaultValue": ["10.240.0.0/16"]
         },
         "serviceCidr":{
             "type": "string"
@@ -40,20 +44,19 @@
         }
     },
     "variables": {
-        "clusterName": "[concat(resourceGroup().name, '-k8s')]"
+        "clusterName": "[concat(resourceGroup().name, '-k8s')]",
+        "privateDnsZoneName": "[concat('sdpaks-dev-gitlab-psql13', '.private.postgres.database.azure.com')]",
+        "virtualNetworkLinkName": "[concat(variables('privateDnsZoneName'), '/', uniqueString(resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))))]"
     },
     "resources": [
-
-            {
+        {
             "apiVersion": "2019-04-01",
             "name": "[parameters('vnetName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('vnetRange')]"
-                    ]
+                    "addressPrefixes": "[parameters('vnetRange')]"                    
                 },
                 "subnets": [
                     {
@@ -70,10 +73,57 @@
                                 }
                             ]
                         }
-                    }
+                    },
+                    {
+                        "name": "aks-subnet-psql",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetRangePsql')]",
+                            "addressPrefixes": [],
+                            "delegations": [
+                                {
+                                    "name": "dlg-Microsoft.DBforPostgreSQL-flexibleServers",
+                                    "properties": {
+                                        "serviceName": "Microsoft.DBforPostgreSQL/flexibleServers"
+                                    }
+                                }
+                            ],
+                            "serviceEndpoints": [ // Open up endpoint to Gitlab PSQL, Gitlab SA, Velero SA  
+                                {
+                                    "service": "Microsoft.Sql"
+                                },
+                                {
+                                    "service": "Microsoft.Storage"
+                                }
+                            ]
+                        }
+                    }                    
                 ]
             }
         },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2018-09-01",
+            "name": "[variables('privateDnsZoneName')]",
+            "location": "global",
+            "tags": {},
+            "properties": {}
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "dependsOn": [
+                "[variables('privateDnsZoneName')]",
+                "[parameters('vnetName')]"
+            ],
+            "apiVersion": "2018-09-01",
+            "name": "[variables('virtualNetworkLinkName')]",
+            "location": "global",
+            "properties": {
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]"
+                },
+                "registrationEnabled": false
+            }
+        },        
         {
             "apiVersion": "2020-09-01",
             "dependsOn": [
@@ -129,7 +179,7 @@
                 }
             },
             "tags": {}
-        },
+        }
     ],
     "outputs": {
         "controlPlaneFQDN": {

@@ -22,7 +22,7 @@
     }
   },
   "dbName": {
-    "value": "sdpaks-dev-gitlab-psql11"
+    "value": "sdpaks-dev-gitlab-psql13"
   },
   "environment": {
     "value": "dev"

@@ -2,14 +2,17 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vnetName": {
-          "value": "sdpaks-dev-vnet"
-       },
+      "vnetName": {
+        "value": "sdpaks-dev-vnet"
+      },
       "subnetRange":{
         "value": "10.100.0.0/16"
       },
+      "subnetRangePsql":{
+        "value": "10.99.0.0/20"
+      },
       "vnetRange":{
-        "value": "10.100.0.0/16"
+        "value": ["10.99.0.0/16", "10.100.0.0/16"]
       },
       "serviceCidr":{
         "value": "10.101.0.0/16"
