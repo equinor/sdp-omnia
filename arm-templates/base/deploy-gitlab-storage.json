@@ -47,19 +47,49 @@
   },
   "variables": {
       "rootRgName": "[concat('sdpaks-', parameters('environment'))]",
+      "vnetName": "[concat(variables('rootRgName'), '-vnet')]",
+      "vNetResourceId":"[resourceId(variables('rootRgName'),'Microsoft.Network/virtualNetworks',variables('vnetName'))]",
       "managedClusterName": "[concat(variables('rootRgName'), '-k8s')]",
-      "rootRgId": "[concat('/subscriptions/b18da12e-efa1-4642-8fec-b6580b00212c/resourceGroups/', variables('rootRgName'))]",
-      "privateDnsZoneId": "[concat(variables('rootRgId'), '/providers/Microsoft.Network/privateDnsZones/', parameters('dbName'), '.private.postgres.database.azure.com')]",
-      "vnetPrefix": "[concat(variables('rootRgId'), '/providers/Microsoft.Network/virtualNetworks/', variables('rootRgName'), '-vnet')]",
-      "vnetSubnetId": "[concat(variables('vnetPrefix'), '/subnets/', 'aks-subnet')]",
-      "vnetSubnetPsqlId": "[concat(variables('vnetPrefix'), '/subnets/', 'aks-subnet-psql')]"
+      "privateDnsZoneName": "[concat(parameters('dbName'), '.private.postgres.database.azure.com')]",
+      "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones',variables('privateDnsZoneName'))]",
+      "virtualNetworkLinkName": "[concat(variables('privateDnsZoneName'), '/', uniqueString(variables('vNetResourceId')))]",
+      "virtualNetworkLinkId": "[resourceId('Microsoft.Network/privateDnsZones/virtualNetworkLinks',variables('privateDnsZoneName'),uniqueString(variables('vNetResourceId')))]",
+      "vnetSubnetPsqlId": "[concat(variables('vNetResourceId'), '/subnets/', 'aks-subnet-psql')]",
+      "vnetSubnetId": "[concat(variables('vNetResourceId'), '/subnets/', 'aks-subnet')]"
+      
   },
   "resources": [
+    {
+        "type": "Microsoft.Network/privateDnsZones",
+        "apiVersion": "2018-09-01",
+        "name": "[variables('privateDnsZoneName')]",
+        "location": "global",
+        "tags": {},
+        "properties": {}
+    },
+    {
+        "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+        "dependsOn": [
+            "[variables('privateDnsZoneName')]"
+        ],
+        "apiVersion": "2018-09-01",
+        "name": "[variables('virtualNetworkLinkName')]",
+        "location": "global",
+        "properties": {
+            "virtualNetwork": {
+                "id": "[variables('vNetResourceId')]"
+            },
+            "registrationEnabled": false
+        }
+    },  
     {
       "type": "Microsoft.DBforPostgreSQL/flexibleServers",
       "apiVersion": "2021-06-01",
       "name": "[parameters('dbName')]",
       "location": "[resourceGroup().location]",
+      "dependsOn": [
+          "[variables('virtualNetworkLinkId')]"
+      ],
       "tags": "[parameters('tags')]",
       "sku": {
         "name": "Standard_D2ds_v4",
@@ -75,16 +105,16 @@
         },
         "highAvailability": {
           "mode": "Disabled"
-          },
+        },
         "network": {
           "delegatedSubnetResourceId": "[variables('vnetSubnetPsqlId')]",
           "privateDnsZoneArmResourceId": "[variables('privateDnsZoneId')]"
-          },
-          "storage": {
+        },
+        "storage": {
             "storageSizeGB": 128
-            },
-          "version": "13"
-        }
+        },
+        "version": "13"
+      }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
