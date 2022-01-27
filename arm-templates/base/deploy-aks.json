@@ -46,7 +46,8 @@
     "variables": {
         "clusterName": "[concat(resourceGroup().name, '-k8s')]",
         "privateDnsZoneName": "[concat('sdpaks-dev-gitlab-psql13', '.private.postgres.database.azure.com')]",
-        "virtualNetworkLinkName": "[concat(variables('privateDnsZoneName'), '/', uniqueString(resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))))]"
+        "virtualNetworkId":"[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]",
+        "virtualNetworkLinkName": "[concat(variables('privateDnsZoneName'), '/', uniqueString(variables('virtualNetworkId')))]"
     },
     "resources": [
         {
@@ -119,7 +120,7 @@
             "location": "global",
             "properties": {
                 "virtualNetwork": {
-                    "id": "[resourceId('Microsoft.Network/virtualNetworks',parameters('vnetName'))]"
+                    "id": "[variables('virtualNetworkId')]"
                 },
                 "registrationEnabled": false
             }

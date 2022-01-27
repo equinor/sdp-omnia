@@ -75,16 +75,16 @@
         },
         "highAvailability": {
           "mode": "Disabled"
-          },
+        },
         "network": {
           "delegatedSubnetResourceId": "[variables('vnetSubnetPsqlId')]",
           "privateDnsZoneArmResourceId": "[variables('privateDnsZoneId')]"
-          },
-          "storage": {
+        },
+        "storage": {
             "storageSizeGB": 128
-            },
-          "version": "13"
-        }
+        },
+        "version": "13"
+      }
     },
     {
       "type": "Microsoft.Storage/storageAccounts",
