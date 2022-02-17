@@ -1,7 +1,7 @@
 # ARM template validate and apply. Should be synced and triggered on changes to the arm-template folder
 # For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
 # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
-name: 'Apply Omnia classic ARM templates'
+name: "Apply Omnia classic ARM templates"
 on:
   workflow_dispatch:
   push:
@@ -9,8 +9,8 @@ on:
       - prod
       - dev
     paths:
-    - 'arm-templates/classic/*'
-    - 'arm-templates/classic-values/*'
+      - "arm-templates/classic/*"
+      - "arm-templates/classic-values/*"
 
 jobs:
   # Classic deployments are made on a group scope
@@ -18,29 +18,29 @@ jobs:
     name: Apply Classic External ARM template
     runs-on: ubuntu-latest
     steps:
-      - name: 'Set env variables'
+      - name: "Set env variables"
         run: |
           echo "LOCATION=norwayeast" >> $GITHUB_ENV
           echo "CLASSIC_SUB=S066-SDP-Tools-Classic" >> $GITHUB_ENV
           echo "EXTERNAL_GROUP=sdp-external-vms" >> $GITHUB_ENV
           echo "INTERNAL_GROUP=sdp-internal-vms" >> $GITHUB_ENV
-          echo "AZCLIVERSION=2.20.0" >> $GITHUB_ENV
+          echo "AZCLIVERSION=2.33.1.0" >> $GITHUB_ENV
           echo "CLASSIC_EXTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-externalvms.json" >> $GITHUB_ENV
           echo "CLASSIC_INTERNAL=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic/deploy-internalvms.json" >> $GITHUB_ENV
           echo "CLASSIC_PARAMS=https://raw.githubusercontent.com/equinor/sdp-omnia/${GITHUB_REF##*/}/arm-templates/classic-values/deploy-vms.parameters.json" >> $GITHUB_ENV
-      - name: 'az login'
+      - name: "az login"
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'az CLASSIC_EXTERNAL deployment what-if'
+      - name: "az CLASSIC_EXTERNAL deployment what-if"
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
             az deployment group what-if --subscription ${{ env.CLASSIC_SUB }} --resource-group ${{ env.EXTERNAL_GROUP }} --template-uri ${{ env.CLASSIC_EXTERNAL }}  --parameters ${{ env.CLASSIC_PARAMS }} > /dev/null
-     
-      - name: 'az CLASSIC_EXTERNAL deployment create'
+
+      - name: "az CLASSIC_EXTERNAL deployment create"
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
@@ -51,19 +51,19 @@ jobs:
     name: Apply Classic Internal ARM template
     runs-on: ubuntu-latest
     steps:
-      - name: 'az login'
+      - name: "az login"
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: 'az CLASSIC_INTERNAL deployment what-if'
+      - name: "az CLASSIC_INTERNAL deployment what-if"
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
             az deployment group what-if --subscription ${{ env.CLASSIC_SUB }} --resource-group ${{ env.INTERNAL_GROUP }} --template-uri ${{ env.CLASSIC_INTERNAL }}  --parameters ${{ env.CLASSIC_PARAMS }} > /dev/null
-      
-      - name: 'az CLASSIC_INTERNAL deployment create'
+
+      - name: "az CLASSIC_INTERNAL deployment create"
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}

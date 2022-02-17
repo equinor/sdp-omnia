@@ -7,21 +7,21 @@ on:
   workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '15 7 6 3 *' #Set specific yearly date in https://crontab.guru/
+    - cron: "15 7 6 3 *" #Set specific yearly date in https://crontab.guru/
 
 jobs:
   run-aks-command:
     name: Job
     runs-on: ubuntu-latest
     steps:
-      - name: 'Set env variables'
+      - name: "Set env variables"
         run: |
-          echo "AZCLIVERSION=2.20.0" >> $GITHUB_ENV
-      - name: 'az login'
+          echo "AZCLIVERSION=2.33.1.0" >> $GITHUB_ENV
+      - name: "az login"
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: 'Run az aks commands'
+      - name: "Run az aks commands"
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}

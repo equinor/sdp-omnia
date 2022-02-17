@@ -231,7 +231,7 @@ Link til doc: https://neprisstore.blob.core.windows.net/sessiondocs/doc_8ac75a77
 - 6.2.17 Ensure no duplicate GIDs exist (Scored)
 - 6.2.18 Ensure no duplicate user names exist (Scored)
 - 6.2.19 Ensure no duplicate group names exist (Scored)
-- 6.2.20 Ensure shadow group is empty (Scored)
+- 6.2.33.1 Ensure shadow group is empty (Scored)
 
 ## Irrelevant / Vanskelig å gjennomføre
 
