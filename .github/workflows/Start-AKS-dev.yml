@@ -4,24 +4,23 @@ on:
   workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '0 5 * * 1-5'
+    - cron: "0 5 * * 1-5"
 
 jobs:
   start-dev-cluster:
     name: Job
     runs-on: ubuntu-latest
     steps:
-      - name: 'Set env variables'
+      - name: "Set env variables"
         run: |
-          echo "AZCLIVERSION=2.20.0" >> $GITHUB_ENV
-      - name: 'az login'
+          echo "AZCLIVERSION=2.33.1" >> $GITHUB_ENV
+      - name: "az login"
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: 'az AKS start cluster'
+      - name: "az AKS start cluster"
         uses: azure/CLI@v1
         with:
           azcliversion: ${{ env.AZCLIVERSION }}
           inlineScript: |
-            az extension add --upgrade -n aks-preview
             az aks start --name sdpaks-dev-k8s --resource-group sdpaks-dev
