@@ -17,8 +17,7 @@ We conver some basic overview information on these topics;
 ## Related Repositories
 
 Flux GitOps Manifests - <https://github.com/equinor/sdp-flux>  
-AKS Puppet - <https://github.com/equinor/sdp-aks-puppet>  
-AKS Node Puppet Setup - <https://github.com/equinor/sdp-aks-node-puppet>
+
 
 The Flux repo should be considered as the "source of truth" of what is actually deployed in the cluster.
 
