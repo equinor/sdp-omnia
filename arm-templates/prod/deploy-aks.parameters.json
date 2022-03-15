@@ -24,7 +24,7 @@
         "value": 6
       },
       "kubernetesVersion":{
-        "value": "1.21.9"
+        "value": "1.22.6"
       }
     }
 }
