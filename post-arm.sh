@@ -89,7 +89,7 @@ helm upgrade --install flux --version 1.6.0 \
 # HelmRelease CRD first
 kubectl apply -f https://raw.githubusercontent.com/fluxcd/helm-operator/master/deploy/crds.yaml
 
-helm upgrade -i helm-operator fluxcd/helm-operator --version 1.2.0  --wait \
+helm upgrade -i helm-operator fluxcd/helm-operator --version 1.4.2  --wait \
     --namespace flux \
     --set git.ssh.secretName="flux-git-deploy" \
     --set helm.versions=v3
