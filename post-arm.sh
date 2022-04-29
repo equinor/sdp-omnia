@@ -76,7 +76,7 @@ helm repo add fluxcd https://charts.fluxcd.io > /dev/null
 # Install Flux
 echo
 echo " Installing or upgrading Flux with Helm operator in the flux namespace"
-helm upgrade --install flux --version 1.6.0 \
+helm upgrade --install flux --version 1.12.0 \
     --namespace flux \
     --set git.url="$FLUX_GITOPS_REPO" \
     --set git.branch="$FLUX_GITOPS_BRANCH" \
