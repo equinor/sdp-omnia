@@ -10,3 +10,5 @@ If you need to upgrade the cluster these are the minimal steps needed. Make sure
 
 - To run cluster upgrade 'manually', do the following.  
   `az aks upgrade --name $AZ_AKS_NAME --kubernetes-version VERSION`
+
+- FluxCD should also be upgraded to match supported kubernetes versions. See <https://fluxcd.io/docs/installation/>
