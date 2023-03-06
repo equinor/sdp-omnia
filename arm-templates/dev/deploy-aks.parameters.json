@@ -27,7 +27,7 @@
         "value": 3
       },
       "kubernetesVersion":{
-        "value": "1.22.6"
+        "value": "1.23.15"
       },
       "enableAutoscaler":{
         "value": true
